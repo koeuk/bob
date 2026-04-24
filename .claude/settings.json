@@ -18,7 +18,14 @@
       "Bash(grep \"\\\\.tsx$\")",
       "Bash(npm uninstall *)",
       "Bash(node -e \"const p=require\\('./package.json'\\); Object.keys\\(p.dependencies\\).sort\\(\\).forEach\\(k=>console.log\\(k\\)\\); console.log\\('---dev:'\\); Object.keys\\(p.devDependencies||{}\\).sort\\(\\).forEach\\(k=>console.log\\(k\\)\\)\")",
-      "Bash(xargs sed *)"
+      "Bash(xargs sed *)",
+      "Bash(node -e \"const p=require\\('./node_modules/@inertiajs/vue3/package.json'\\); console.log\\('version:', p.version\\)\")",
+      "Bash(node -e \"console.log\\(Object.keys\\(require\\('./node_modules/@inertiajs/vue3'\\)\\)\\)\")",
+      "Bash(node -e \"const i = require\\('./node_modules/@inertiajs/vue3'\\); console.log\\(Object.keys\\(i\\)\\)\")",
+      "Bash(sudo -n chown -R koeuk:koeuk /home/koeuk/Desktop/bob)",
+      "Bash(echo \"---exit:$?---\")",
+      "Bash(composer show *)",
+      "Bash(node -e \"console.log\\('version:', require\\('./node_modules/@inertiajs/vue3/package.json'\\).version\\)\")"
     ],
     "additionalDirectories": [
       "/home/koeuk/Desktop/bob/resources/js/composables",
