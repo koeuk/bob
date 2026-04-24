@@ -7,20 +7,25 @@ use App\Models\ActivityLog;
 use App\Models\Page;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class PagesController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Page::query()->with('updatedBy:id,uuid,name');
+        $pages = QueryBuilder::for(Page::class)
+            ->with('updatedBy:id,uuid,name')
+            ->allowedFilters([
+                AllowedFilter::exact('status'),
+                AllowedFilter::partial('title'),
+                AllowedFilter::partial('slug'),
+            ])
+            ->allowedSorts(['title', 'slug', 'updated_at', 'status'])
+            ->defaultSort('-updated_at')
+            ->paginate($request->integer('per_page', 25));
 
-        if ($status = $request->string('status')->trim()->value()) {
-            $query->where('status', $status);
-        }
-
-        return response()->json(
-            $query->latest('updated_at')->paginate($request->integer('per_page', 25))
-        );
+        return response()->json($pages);
     }
 
     public function store(Request $request): JsonResponse

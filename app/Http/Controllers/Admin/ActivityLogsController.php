@@ -6,31 +6,27 @@ use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ActivityLogsController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = ActivityLog::query()->with('admin:id,uuid,name');
+        $logs = QueryBuilder::for(ActivityLog::class)
+            ->with('admin:id,uuid,name')
+            ->allowedFilters([
+                AllowedFilter::partial('action'),
+                AllowedFilter::callback('admin_uuid', function ($q, $value) {
+                    $q->whereHas('admin', fn ($a) => $a->where('uuid', $value));
+                }),
+                AllowedFilter::callback('from', fn ($q, $v) => $q->where('created_at', '>=', $v)),
+                AllowedFilter::callback('to', fn ($q, $v) => $q->where('created_at', '<=', $v)),
+            ])
+            ->allowedSorts(['created_at'])
+            ->defaultSort('-created_at')
+            ->paginate($request->integer('per_page', 50));
 
-        if ($action = $request->string('action')->trim()->value()) {
-            $query->where('action', 'like', "%{$action}%");
-        }
-
-        if ($adminUuid = $request->string('admin_uuid')->trim()->value()) {
-            $query->whereHas('admin', fn ($q) => $q->where('uuid', $adminUuid));
-        }
-
-        if ($from = $request->date('from')) {
-            $query->where('created_at', '>=', $from);
-        }
-
-        if ($to = $request->date('to')) {
-            $query->where('created_at', '<=', $to);
-        }
-
-        return response()->json(
-            $query->latest('created_at')->paginate($request->integer('per_page', 50))
-        );
+        return response()->json($logs);
     }
 }

@@ -8,30 +8,42 @@ use App\Models\Ban;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class BansController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Ban::query()->with(['user:id,uuid,name,email', 'bannedBy:id,uuid,name']);
+        $bans = QueryBuilder::for(Ban::class)
+            ->with(['user:id,uuid,name,email', 'bannedBy:id,uuid,name'])
+            ->allowedFilters([
+                AllowedFilter::callback('search', function ($q, $value) {
+                    $q->whereHas('user', function ($u) use ($value) {
+                        $u->where('name', 'like', "%{$value}%")
+                            ->orWhere('email', 'like', "%{$value}%");
+                    });
+                }),
+                AllowedFilter::callback('active', function ($q, $value) {
+                    if ($value) {
+                        $q->active();
+                    }
+                }),
+            ])
+            ->allowedSorts(['created_at', 'expires_at'])
+            ->defaultSort('-created_at')
+            ->paginate($request->integer('per_page', 25));
 
-        if ($search = $request->string('search')->trim()->value()) {
-            $query->whereHas('user', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        return response()->json(
-            $query->latest()->paginate($request->integer('per_page', 25))
-        );
+        return response()->json($bans);
     }
 
     public function active(Request $request): JsonResponse
     {
-        $bans = Ban::active()
+        $bans = QueryBuilder::for(Ban::class)
+            ->active()
             ->with(['user:id,uuid,name,email', 'bannedBy:id,uuid,name'])
-            ->latest()
+            ->allowedSorts(['created_at', 'expires_at'])
+            ->defaultSort('-created_at')
             ->paginate($request->integer('per_page', 25));
 
         return response()->json($bans);

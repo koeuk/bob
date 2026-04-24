@@ -8,30 +8,32 @@ use App\Models\Ban;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class UsersController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = User::query()
-            ->select(['id', 'uuid', 'name', 'email', 'role', 'created_at', 'email_verified_at']);
-
-        if ($search = $request->string('search')->trim()->value()) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('email', 'like', "%{$search}%");
-            });
-        }
-
-        if ($role = $request->string('role')->trim()->value()) {
-            $query->where('role', $role);
-        }
-
-        if ($request->boolean('banned')) {
-            $query->whereHas('bans', fn ($q) => $q->active());
-        }
-
-        $users = $query->latest()->paginate($request->integer('per_page', 25));
+        $users = QueryBuilder::for(User::class)
+            ->select(['id', 'uuid', 'name', 'email', 'role', 'created_at', 'email_verified_at'])
+            ->allowedFilters([
+                AllowedFilter::callback('search', function ($q, $value) {
+                    $q->where(function ($inner) use ($value) {
+                        $inner->where('name', 'like', "%{$value}%")
+                            ->orWhere('email', 'like', "%{$value}%");
+                    });
+                }),
+                AllowedFilter::exact('role'),
+                AllowedFilter::callback('banned', function ($q, $value) {
+                    if ($value) {
+                        $q->whereHas('bans', fn ($b) => $b->active());
+                    }
+                }),
+            ])
+            ->allowedSorts(['name', 'email', 'created_at'])
+            ->defaultSort('-created_at')
+            ->paginate($request->integer('per_page', 25));
 
         return response()->json($users);
     }
@@ -44,13 +46,11 @@ class UsersController extends Controller
 
         return response()->json([
             'user' => $user,
-            'reports_against' => $user->id
-                ? \App\Models\Report::where('reportable_type', User::class)
-                    ->where('reportable_id', $user->id)
-                    ->latest()
-                    ->limit(20)
-                    ->get()
-                : [],
+            'reports_against' => \App\Models\Report::where('reportable_type', User::class)
+                ->where('reportable_id', $user->id)
+                ->latest()
+                ->limit(20)
+                ->get(),
         ]);
     }
 
@@ -127,13 +127,16 @@ class UsersController extends Controller
 
     public function activity(User $user): JsonResponse
     {
-        $logs = ActivityLog::where(function ($q) use ($user) {
-            $q->where('admin_id', $user->id)
-                ->orWhere(function ($q2) use ($user) {
-                    $q2->where('target_type', User::class)->where('target_id', $user->id);
-                });
-        })
-            ->latest('created_at')
+        $logs = QueryBuilder::for(ActivityLog::class)
+            ->where(function ($q) use ($user) {
+                $q->where('admin_id', $user->id)
+                    ->orWhere(function ($q2) use ($user) {
+                        $q2->where('target_type', User::class)->where('target_id', $user->id);
+                    });
+            })
+            ->allowedFilters([AllowedFilter::partial('action')])
+            ->allowedSorts(['created_at'])
+            ->defaultSort('-created_at')
             ->paginate(30);
 
         return response()->json($logs);

@@ -7,25 +7,24 @@ use App\Models\ActivityLog;
 use App\Models\Report;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ReportsController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Report::query()
-            ->with(['reporter:id,uuid,name', 'reviewer:id,uuid,name', 'reportable']);
+        $reports = QueryBuilder::for(Report::class)
+            ->with(['reporter:id,uuid,name', 'reviewer:id,uuid,name', 'reportable'])
+            ->allowedFilters([
+                AllowedFilter::exact('status'),
+                AllowedFilter::exact('type', 'reportable_type'),
+            ])
+            ->allowedSorts(['created_at', 'status'])
+            ->defaultSort('-created_at')
+            ->paginate($request->integer('per_page', 25));
 
-        if ($status = $request->string('status')->trim()->value()) {
-            $query->where('status', $status);
-        }
-
-        if ($type = $request->string('type')->trim()->value()) {
-            $query->where('reportable_type', $type);
-        }
-
-        return response()->json(
-            $query->latest()->paginate($request->integer('per_page', 25))
-        );
+        return response()->json($reports);
     }
 
     public function show(Report $report): JsonResponse

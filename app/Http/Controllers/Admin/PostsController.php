@@ -7,34 +7,27 @@ use App\Models\ActivityLog;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class PostsController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Post::query()
+        $posts = QueryBuilder::for(Post::class)
             ->with('user:id,uuid,name')
-            ->withCount(['comments', 'likes', 'reports']);
+            ->withCount(['comments', 'likes', 'reports'])
+            ->allowedFilters([
+                AllowedFilter::exact('status'),
+                AllowedFilter::partial('search', 'body'),
+                AllowedFilter::scope('from', 'whereDate'),
+                AllowedFilter::scope('to', 'whereDate'),
+            ])
+            ->allowedSorts(['created_at', 'status'])
+            ->defaultSort('-created_at')
+            ->paginate($request->integer('per_page', 25));
 
-        if ($status = $request->string('status')->trim()->value()) {
-            $query->where('status', $status);
-        }
-
-        if ($search = $request->string('search')->trim()->value()) {
-            $query->where('body', 'like', "%{$search}%");
-        }
-
-        if ($from = $request->date('from')) {
-            $query->where('created_at', '>=', $from);
-        }
-
-        if ($to = $request->date('to')) {
-            $query->where('created_at', '<=', $to);
-        }
-
-        return response()->json(
-            $query->latest()->paginate($request->integer('per_page', 25))
-        );
+        return response()->json($posts);
     }
 
     public function show(Post $post): JsonResponse
