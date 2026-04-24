@@ -175,6 +175,20 @@
             radial-gradient(at 0% 0%, color-mix(in oklch, var(--rust) 8%, transparent) 0%, transparent 45%),
             radial-gradient(at 100% 100%, color-mix(in oklch, var(--moss) 10%, transparent) 0%, transparent 55%);
     }
+
+    /* Tailwind v4 dropped the default cursor:pointer on buttons/links. Bring it back. */
+    button:not(:disabled),
+    [role='button']:not([aria-disabled='true']),
+    a[href],
+    label[for],
+    summary {
+        cursor: pointer;
+    }
+
+    button:disabled,
+    [aria-disabled='true'] {
+        cursor: not-allowed;
+    }
 }
 
 @utility font-serif {

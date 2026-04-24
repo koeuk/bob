@@ -5,14 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Page;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class PagesController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): Response
     {
         $pages = QueryBuilder::for(Page::class)
             ->with('updatedBy:id,uuid,name')
@@ -23,12 +25,23 @@ class PagesController extends Controller
             ])
             ->allowedSorts(['title', 'slug', 'updated_at', 'status'])
             ->defaultSort('-updated_at')
-            ->paginate($request->integer('per_page', 25));
+            ->paginate($request->integer('per_page', 25))
+            ->withQueryString();
 
-        return response()->json($pages);
+        return Inertia::render('admin/pages/index', [
+            'pages' => $pages,
+            'filters' => $request->only(['filter']),
+        ]);
     }
 
-    public function store(Request $request): JsonResponse
+    public function create(): Response
+    {
+        return Inertia::render('admin/pages/edit', [
+            'page' => null,
+        ]);
+    }
+
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'slug' => ['required', 'string', 'max:255', 'unique:pages,slug'],
@@ -41,17 +54,19 @@ class PagesController extends Controller
 
         ActivityLog::record('page.create', $page, null, $page->only(['slug', 'title', 'status']));
 
-        return response()->json(['page' => $page], 201);
+        return redirect()->route('admin.pages.edit', $page)->with('status', 'Page created.');
     }
 
-    public function show(Page $page): JsonResponse
+    public function edit(Page $page): Response
     {
         $page->load('updatedBy:id,uuid,name');
 
-        return response()->json(['page' => $page]);
+        return Inertia::render('admin/pages/edit', [
+            'page' => $page,
+        ]);
     }
 
-    public function update(Request $request, Page $page): JsonResponse
+    public function update(Request $request, Page $page): RedirectResponse
     {
         $data = $request->validate([
             'slug' => ['sometimes', 'string', 'max:255', 'unique:pages,slug,'.$page->id],
@@ -65,14 +80,14 @@ class PagesController extends Controller
 
         ActivityLog::record('page.update', $page, $before, $page->only(array_keys($data)));
 
-        return response()->json(['page' => $page]);
+        return back()->with('status', 'Page updated.');
     }
 
-    public function destroy(Page $page): JsonResponse
+    public function destroy(Page $page): RedirectResponse
     {
         ActivityLog::record('page.delete', $page, $page->only(['slug', 'title']));
         $page->delete();
 
-        return response()->json(['message' => 'Page deleted.']);
+        return redirect()->route('admin.pages.index')->with('status', 'Page deleted.');
     }
 }

@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Setting;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class SettingsController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(): Response
     {
         $grouped = Setting::query()
             ->orderBy('group')
@@ -18,10 +20,12 @@ class SettingsController extends Controller
             ->get()
             ->groupBy('group');
 
-        return response()->json(['groups' => $grouped]);
+        return Inertia::render('admin/settings/index', [
+            'groups' => $grouped,
+        ]);
     }
 
-    public function update(Request $request): JsonResponse
+    public function update(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'settings' => ['required', 'array'],
@@ -30,14 +34,12 @@ class SettingsController extends Controller
             'settings.*.group' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $saved = [];
         foreach ($data['settings'] as $row) {
             $before = Setting::where('key', $row['key'])->first()?->only(['value']);
             $setting = Setting::put($row['key'], $row['value'] ?? null, $row['group'] ?? 'general');
             ActivityLog::record('setting.update', $setting, $before, ['value' => $row['value'] ?? null]);
-            $saved[] = $setting;
         }
 
-        return response()->json(['saved' => $saved]);
+        return back()->with('status', 'Settings saved.');
     }
 }

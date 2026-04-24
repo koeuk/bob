@@ -5,14 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Post;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class PostsController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): Response
     {
         $posts = QueryBuilder::for(Post::class)
             ->with('user:id,uuid,name')
@@ -20,17 +22,19 @@ class PostsController extends Controller
             ->allowedFilters([
                 AllowedFilter::exact('status'),
                 AllowedFilter::partial('search', 'body'),
-                AllowedFilter::scope('from', 'whereDate'),
-                AllowedFilter::scope('to', 'whereDate'),
             ])
             ->allowedSorts(['created_at', 'status'])
             ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 25));
+            ->paginate($request->integer('per_page', 25))
+            ->withQueryString();
 
-        return response()->json($posts);
+        return Inertia::render('admin/posts/index', [
+            'posts' => $posts,
+            'filters' => $request->only(['filter']),
+        ]);
     }
 
-    public function show(Post $post): JsonResponse
+    public function show(Post $post): Response
     {
         $post->load([
             'user:id,uuid,name',
@@ -38,18 +42,20 @@ class PostsController extends Controller
             'reports' => fn ($q) => $q->with('reporter:id,uuid,name')->latest(),
         ])->loadCount(['likes']);
 
-        return response()->json(['post' => $post]);
+        return Inertia::render('admin/posts/show', [
+            'post' => $post,
+        ]);
     }
 
-    public function destroy(Post $post): JsonResponse
+    public function destroy(Post $post): RedirectResponse
     {
         ActivityLog::record('post.delete', $post, $post->only(['body', 'status']));
         $post->delete();
 
-        return response()->json(['message' => 'Post deleted.']);
+        return redirect()->route('admin.posts.index')->with('status', 'Post deleted.');
     }
 
-    public function flag(Request $request, Post $post): JsonResponse
+    public function flag(Request $request, Post $post): RedirectResponse
     {
         $data = $request->validate([
             'status' => ['required', 'in:active,flagged,hidden'],
@@ -60,6 +66,6 @@ class PostsController extends Controller
 
         ActivityLog::record('post.flag', $post, $before, ['status' => $data['status']]);
 
-        return response()->json(['post' => $post]);
+        return back()->with('status', 'Post status updated.');
     }
 }

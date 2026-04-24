@@ -5,14 +5,16 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Report;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class ReportsController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): Response
     {
         $reports = QueryBuilder::for(Report::class)
             ->with(['reporter:id,uuid,name', 'reviewer:id,uuid,name', 'reportable'])
@@ -22,19 +24,31 @@ class ReportsController extends Controller
             ])
             ->allowedSorts(['created_at', 'status'])
             ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 25));
+            ->paginate($request->integer('per_page', 25))
+            ->withQueryString();
 
-        return response()->json($reports);
+        return Inertia::render('admin/reports/index', [
+            'reports' => $reports,
+            'filters' => $request->only(['filter', 'sort']),
+            'counts' => [
+                'pending' => Report::where('status', 'pending')->count(),
+                'reviewed' => Report::where('status', 'reviewed')->count(),
+                'resolved' => Report::where('status', 'resolved')->count(),
+                'dismissed' => Report::where('status', 'dismissed')->count(),
+            ],
+        ]);
     }
 
-    public function show(Report $report): JsonResponse
+    public function show(Report $report): Response
     {
         $report->load(['reporter:id,uuid,name,email', 'reviewer:id,uuid,name', 'reportable']);
 
-        return response()->json(['report' => $report]);
+        return Inertia::render('admin/reports/show', [
+            'report' => $report,
+        ]);
     }
 
-    public function review(Request $request, Report $report): JsonResponse
+    public function review(Request $request, Report $report): RedirectResponse
     {
         $report->update([
             'status' => 'reviewed',
@@ -44,10 +58,10 @@ class ReportsController extends Controller
 
         ActivityLog::record('report.review', $report);
 
-        return response()->json(['report' => $report]);
+        return back()->with('status', 'Report marked as reviewed.');
     }
 
-    public function resolve(Request $request, Report $report): JsonResponse
+    public function resolve(Request $request, Report $report): RedirectResponse
     {
         $data = $request->validate([
             'resolution_note' => ['required', 'string', 'max:2000'],
@@ -62,10 +76,10 @@ class ReportsController extends Controller
 
         ActivityLog::record('report.resolve', $report, null, ['note' => $data['resolution_note']]);
 
-        return response()->json(['report' => $report]);
+        return back()->with('status', 'Report resolved.');
     }
 
-    public function dismiss(Request $request, Report $report): JsonResponse
+    public function dismiss(Request $request, Report $report): RedirectResponse
     {
         $data = $request->validate([
             'resolution_note' => ['nullable', 'string', 'max:2000'],
@@ -80,6 +94,6 @@ class ReportsController extends Controller
 
         ActivityLog::record('report.dismiss', $report);
 
-        return response()->json(['report' => $report]);
+        return back()->with('status', 'Report dismissed.');
     }
 }
