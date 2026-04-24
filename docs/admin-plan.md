@@ -10,15 +10,10 @@ Current state (2026-04-24): nothing in the admin panel is built. The project has
 
 Not code. Blocks everything else.
 
-- [ ] **Copy `.env`** and run `php artisan key:generate`.
-- [ ] **Decide: role model.** [admin.md](admin.md) contradicts itself —
-  - Option A: keep the single `role` enum on `users` (simple, already in place).
-  - Option B: full `roles` + `permissions` + `role_permissions` pivot (matches `/api/admin/roles/*` endpoints).
-  - **Recommendation:** start with A, add B only if per-role permission toggling is actually needed. Drop the `/roles/{id}/permissions` endpoints until then.
-- [ ] **Decide: admin SPA location.** Two options:
-  - Sub-app inside `resources/js/admin/` mounted at `/admin/*` (simpler, one build).
-  - Separate repo/Vite project (more infra).
-  - **Recommendation:** sub-app — same repo, same deploy.
+- [x] **Copy `.env`** and run `php artisan key:generate`. ✅
+- [x] **Composer + npm deps installed.** ✅
+- [x] **Decide: role model.** → Option A (single `role` enum on `users`, already in place). ✅
+- [x] **Decide: admin SPA location.** → sub-app inside `resources/js/admin/`. ✅
 - [x] **Admin SPA framework: Vue 3** (decided — overrides [admin.md](admin.md) which still says React).
   - Vue 3 + `<script setup>` + TypeScript
   - Vue Router 4
@@ -31,6 +26,8 @@ Not code. Blocks everything else.
 ---
 
 ## Phase 1 — Database foundation
+
+⚠️ **BLOCKED**: PHP has `pdo_mysql` only; SQLite driver missing. Run `sudo apt install php8.4-sqlite3` OR provide MySQL creds. Nothing in this phase has started.
 
 Migrations the admin panel depends on directly. No domain content tables yet.
 

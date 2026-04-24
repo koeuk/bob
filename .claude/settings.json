@@ -4,7 +4,14 @@
       "Bash(composer install *)",
       "Bash(npm install *)",
       "Bash(php -m)",
-      "Bash(dpkg -l)"
+      "Bash(dpkg -l)",
+      "Bash(systemctl is-active *)",
+      "Bash(mysql -e \"SHOW DATABASES\")",
+      "Bash(mysql -u bob -pbob -e \"SHOW DATABASES\")",
+      "Bash(mysql -u root -pkoeuk -e \"SHOW DATABASES\")",
+      "Bash(mysql -u root -pkoeuk -e \"CREATE DATABASE IF NOT EXISTS bob\")",
+      "Bash(composer require *)",
+      "Bash(node -e \"console.log\\(require\\('./package.json'\\).dependencies\\)\")"
     ]
   }
 }
