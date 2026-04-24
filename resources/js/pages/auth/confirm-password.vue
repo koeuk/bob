@@ -5,13 +5,12 @@ import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
 import Spinner from '@/components/ui/Spinner.vue';
 import AuthLayout from '@/layouts/auth-layout.vue';
-import { store } from '@/routes/password';
 import { Head, useForm } from '@inertiajs/vue3';
 
 const form = useForm({ password: '' });
 
 function submit() {
-    form.post(store.url(), { onFinish: () => form.reset() });
+    form.post('/user/confirm-password', { onFinish: () => form.reset() });
 }
 </script>
 

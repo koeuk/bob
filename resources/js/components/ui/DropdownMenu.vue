@@ -1,9 +1,10 @@
 <script setup>
-import { DropdownMenuRoot, useForwardPropsEmits } from 'radix-vue';
+import { DropdownMenuRoot } from 'radix-vue';
 
-const forwarded = useForwardPropsEmits(props, emits);
+defineProps({ open: Boolean, defaultOpen: Boolean, modal: { type: Boolean, default: true } });
+defineEmits(['update:open']);
 </script>
 
 <template>
-    <DropdownMenuRoot v-bind="forwarded"><slot /></DropdownMenuRoot>
+    <DropdownMenuRoot v-bind="$attrs"><slot /></DropdownMenuRoot>
 </template>

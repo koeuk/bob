@@ -2,6 +2,7 @@
 import { Link } from '@inertiajs/vue3';
 import { ChevronRight } from 'lucide-vue-next';
 
+defineProps({ breadcrumbs: { type: Array, default: () => [] } });
 </script>
 
 <template>

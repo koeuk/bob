@@ -1,9 +1,10 @@
 <script setup>
-import { DialogRoot, useForwardPropsEmits } from 'radix-vue';
+import { DialogRoot } from 'radix-vue';
 
-const forwarded = useForwardPropsEmits(props, emits);
+defineProps({ open: Boolean, defaultOpen: Boolean, modal: { type: Boolean, default: true } });
+defineEmits(['update:open']);
 </script>
 
 <template>
-    <DialogRoot v-bind="forwarded"><slot /></DialogRoot>
+    <DialogRoot v-bind="$attrs"><slot /></DialogRoot>
 </template>

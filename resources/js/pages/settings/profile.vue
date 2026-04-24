@@ -8,18 +8,17 @@ import Label from '@/components/ui/Label.vue';
 import Spinner from '@/components/ui/Spinner.vue';
 import AppLayout from '@/layouts/app-layout.vue';
 import SettingsLayout from '@/layouts/settings-layout.vue';
-import { send as sendVerification } from '@/routes/verification';
-import { update as updateProfile } from '@/routes/profile';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 
+defineProps({ mustVerifyEmail: Boolean, status: String });
 
-const page = usePage<SharedData>();
+const page = usePage();
 const user = page.props.auth.user;
 
 const form = useForm({ name: user.name, email: user.email });
 
 function submit() {
-    form.patch(updateProfile.url(), { preserveScroll: true });
+    form.patch('/settings/profile', { preserveScroll: true });
 }
 </script>
 
@@ -43,7 +42,7 @@ function submit() {
 
                     <div v-if="mustVerifyEmail && !user.email_verified_at" class="text-sm">
                         Your email is unverified.
-                        <Link :href="sendVerification.url()" method="post" as="button" class="text-primary underline">Resend verification email</Link>
+                        <Link href="/email/verification-notification" method="post" as="button" class="text-primary underline">Resend verification email</Link>
                         <span v-if="status === 'verification-link-sent'" class="ml-2 text-green-600">Sent.</span>
                     </div>
 

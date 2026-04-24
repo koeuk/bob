@@ -4,18 +4,18 @@ import Button from '@/components/ui/Button.vue';
 import AppLayout from '@/layouts/app-layout.vue';
 import SettingsLayout from '@/layouts/settings-layout.vue';
 import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
-import { disable, enable } from '@/routes/two-factor';
 import { Head, router } from '@inertiajs/vue3';
 
+defineProps({ twoFactorEnabled: Boolean, confirmsTwoFactorAuthentication: Boolean });
 
 const { qrCodeSvg, manualSetupKey, recoveryCodesList, fetchSetupData, fetchRecoveryCodes, clearSetupData } = useTwoFactorAuth();
 
 function handleEnable() {
-    router.post(enable.url(), {}, { onSuccess: () => fetchSetupData() });
+    router.post('/user/two-factor-authentication', {}, { onSuccess: () => fetchSetupData() });
 }
 
 function handleDisable() {
-    router.delete(disable.url(), { onSuccess: () => clearSetupData() });
+    router.delete('/user/two-factor-authentication', { onSuccess: () => clearSetupData() });
 }
 </script>
 

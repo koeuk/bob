@@ -7,23 +7,23 @@ import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vue';
 import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vue';
 import UserInfo from '@/components/user-info.vue';
 import UserMenuContent from '@/components/user-menu-content.vue';
-import { dashboard } from '@/routes';
 import { Link, usePage } from '@inertiajs/vue3';
 
+defineProps({ breadcrumbs: { type: Array, default: () => [] } });
 
-const page = usePage<SharedData>();
+const page = usePage();
 </script>
 
 <template>
     <div class="min-h-screen bg-background text-foreground">
         <header class="border-b bg-background">
             <div class="mx-auto flex h-14 max-w-7xl items-center gap-4 px-4 sm:px-6">
-                <Link :href="dashboard.url()" class="flex items-center gap-2">
+                <Link href="/dashboard" class="flex items-center gap-2">
                     <AppLogo />
                 </Link>
 
                 <nav class="ml-6 hidden items-center gap-4 text-sm md:flex">
-                    <Link :href="dashboard.url()" class="text-foreground hover:underline">Dashboard</Link>
+                    <Link href="/dashboard" class="text-foreground hover:underline">Dashboard</Link>
                 </nav>
 
                 <div class="ml-auto flex items-center gap-2">

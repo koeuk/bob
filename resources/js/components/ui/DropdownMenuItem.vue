@@ -3,6 +3,8 @@ import { cn } from '@/lib/utils';
 import { DropdownMenuItem, useForwardProps } from 'radix-vue';
 import { computed } from 'vue';
 
+const props = defineProps({ class: String, inset: Boolean, asChild: Boolean, disabled: Boolean });
+
 const delegated = computed(() => {
     const { class: _, inset: __, ...rest } = props;
     return rest;

@@ -1,11 +1,12 @@
 <script setup>
-import { TooltipProvider, TooltipRoot, useForwardPropsEmits } from 'radix-vue';
+import { TooltipProvider, TooltipRoot } from 'radix-vue';
 
-const forwarded = useForwardPropsEmits(props, emits);
+defineProps({ open: Boolean, defaultOpen: Boolean, delayDuration: Number, disableHoverableContent: Boolean });
+defineEmits(['update:open']);
 </script>
 
 <template>
     <TooltipProvider>
-        <TooltipRoot v-bind="forwarded"><slot /></TooltipRoot>
+        <TooltipRoot v-bind="$attrs"><slot /></TooltipRoot>
     </TooltipProvider>
 </template>

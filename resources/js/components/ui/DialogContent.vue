@@ -4,13 +4,13 @@ import { XIcon } from 'lucide-vue-next';
 import {
     DialogClose,
     DialogContent,
-     
-     
     DialogOverlay,
     DialogPortal,
     useForwardPropsEmits,
 } from 'radix-vue';
 
+const props = defineProps({ class: String, forceMount: Boolean, trapFocus: Boolean });
+const emits = defineEmits(['closeAutoFocus', 'escapeKeyDown', 'pointerDownOutside', 'focusOutside', 'interactOutside']);
 const forwarded = useForwardPropsEmits(props, emits);
 </script>
 

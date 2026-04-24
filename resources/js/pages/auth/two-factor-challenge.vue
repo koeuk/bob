@@ -5,7 +5,6 @@ import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
 import Spinner from '@/components/ui/Spinner.vue';
 import AuthLayout from '@/layouts/auth-layout.vue';
-import { store } from '@/routes/two-factor/login';
 import { Head, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
@@ -14,7 +13,7 @@ const useRecovery = ref(false);
 const form = useForm({ code: '', recovery_code: '' });
 
 function submit() {
-    form.post(store.url());
+    form.post('/two-factor-challenge');
 }
 </script>
 

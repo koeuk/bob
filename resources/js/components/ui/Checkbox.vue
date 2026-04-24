@@ -4,6 +4,8 @@ import { CheckIcon } from 'lucide-vue-next';
 import { CheckboxIndicator, CheckboxRoot, useForwardPropsEmits } from 'radix-vue';
 import { computed } from 'vue';
 
+const props = defineProps({ class: String, checked: [Boolean, String], defaultChecked: [Boolean, String], disabled: Boolean, name: String, value: String, id: String });
+const emits = defineEmits(['update:checked']);
 
 const delegated = computed(() => {
     const { class: _, ...rest } = props;

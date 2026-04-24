@@ -15,7 +15,7 @@ const currentIcon = computed(() => {
     return Monitor;
 });
 
-const options: { value: Appearance; label: string }[] = [
+const options = [
     { value: 'light', label: 'Light' },
     { value: 'dark', label: 'Dark' },
     { value: 'system', label: 'System' },

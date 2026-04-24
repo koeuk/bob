@@ -2,19 +2,15 @@
 import Heading from '@/components/heading.vue';
 import Separator from '@/components/ui/Separator.vue';
 import { cn } from '@/lib/utils';
-import { edit as appearance } from '@/routes/appearance';
-import { edit as password } from '@/routes/password';
-import { edit as profile } from '@/routes/profile';
-import { show as twoFactor } from '@/routes/two-factor';
 import { Link, usePage } from '@inertiajs/vue3';
 
 const page = usePage();
 
 const sidebarItems = [
-    { href: profile.url(), title: 'Profile' },
-    { href: password.url(), title: 'Password' },
-    { href: twoFactor.url(), title: 'Two-Factor Auth' },
-    { href: appearance.url(), title: 'Appearance' },
+    { href: '/settings/profile', title: 'Profile' },
+    { href: '/settings/password', title: 'Password' },
+    { href: '/settings/two-factor', title: 'Two-Factor Auth' },
+    { href: '/settings/appearance', title: 'Appearance' },
 ];
 </script>
 

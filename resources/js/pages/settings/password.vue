@@ -7,13 +7,12 @@ import Label from '@/components/ui/Label.vue';
 import Spinner from '@/components/ui/Spinner.vue';
 import AppLayout from '@/layouts/app-layout.vue';
 import SettingsLayout from '@/layouts/settings-layout.vue';
-import { update as updateUserPassword } from '@/routes/user-password';
 import { Head, useForm } from '@inertiajs/vue3';
 
 const form = useForm({ current_password: '', password: '', password_confirmation: '' });
 
 function submit() {
-    form.put(updateUserPassword.url(), {
+    form.put('/user/password', {
         preserveScroll: true,
         onSuccess: () => form.reset(),
         onError: () => form.reset('password', 'password_confirmation'),

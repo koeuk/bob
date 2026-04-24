@@ -4,6 +4,8 @@ import AvatarFallback from '@/components/ui/AvatarFallback.vue';
 import AvatarImage from '@/components/ui/AvatarImage.vue';
 import { useInitials } from '@/composables/useInitials';
 
+defineProps({ user: { type: Object, required: true }, showEmail: Boolean });
+
 const getInitials = useInitials();
 </script>
 
