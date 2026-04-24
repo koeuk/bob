@@ -14,14 +14,14 @@ Not code. Blocks everything else.
 - [x] **Composer + npm deps installed.** ✅
 - [x] **Decide: role model.** → Option A (single `role` enum on `users`, already in place). ✅
 - [x] **Decide: admin SPA location.** → sub-app inside `resources/js/admin/`. ✅
-- [x] **Admin SPA framework: Vue 3** (decided — overrides [admin.md](admin.md) which still says React).
-  - Vue 3 + `<script setup>` + TypeScript
-  - Vue Router 4
-  - Pinia for state
-  - UI: **shadcn-vue** (Tailwind + Radix-Vue, matches project aesthetic) — alt: Naive UI or PrimeVue
-  - Tables: TanStack Table (Vue adapter)
-  - Charts: Chart.js via `vue-chartjs` (Recharts is React-only)
-  - The main Inertia app stays React — Vue is scoped to the admin sub-app only.
+- [x] **Full-project framework pivot** (overrides [admin.md](admin.md)):
+  - **Vue 3** everywhere. React is removed entirely.
+  - **Inertia-Vue** (`@inertiajs/vue3`) for data — no REST API SPA. Same pattern for admin and main app.
+  - Session auth (Fortify), **not** Sanctum tokens. Admin protected by web middleware + role check.
+  - UI: Tailwind + radix-vue (shadcn-vue style, hand-rolled primitives).
+  - Charts: Chart.js via `vue-chartjs`.
+  - Admin pages live under `resources/js/pages/admin/` alongside main app pages — unified structure.
+  - [x] Torn down the earlier admin REST SPA (`resources/js/admin/`, `routes/api.php`, `admin.blade.php`) — to be rebuilt as Inertia pages.
 
 ---
 
@@ -96,18 +96,16 @@ Each controller: request validation class, resource response, policy check.
 
 ---
 
-## Phase 6 — Admin SPA scaffold (Vue 3)
+## Phase 6 — Admin as Inertia-Vue pages (not a separate SPA)
 
-Sub-app in `resources/js/admin/`, separate from the main React Inertia app.
+Lives alongside the main app under `resources/js/pages/admin/`. No axios, no Vue Router, no Pinia for auth. Shared Inertia props give us the current user.
 
-- [ ] Install Vue deps: `vue`, `vue-router`, `pinia`, `@vueuse/core`, `radix-vue`, `@tanstack/vue-table`, `chart.js`, `vue-chartjs`.
-- [ ] Vite entry: `resources/js/admin/main.ts` + `App.vue`, separate bundle registered in `vite.config.ts`.
-- [ ] Blade route at `/admin/{any?}` serving a minimal wrapper that mounts the Vue app (SPA routing inside).
-- [ ] `vue-router` setup with layout/sidebar/header matching [admin.md](admin.md#project-structure).
-- [ ] Axios client with Sanctum token interceptor, 401 → redirect to login.
-- [ ] Pinia `authStore` + `usePermissions` composable.
-- [ ] shadcn-vue + Tailwind theme (dark mode toggle).
-- [ ] Generic `DataTable.vue` component wrapping TanStack Vue Table (columns/filters/pagination).
+- [ ] Admin routes in `routes/admin.php`, required from `routes/web.php`. Prefix `/admin`, middleware `['auth', 'verified', 'role:...']`.
+- [ ] Rewrite all 10 admin controllers from JSON responses to `Inertia::render('admin/...', [...])`.
+- [ ] Admin layout: `resources/js/layouts/admin-layout.vue` (sidebar + header, session user from `usePage()`).
+- [ ] TanStack Table (Vue) for data grids.
+- [ ] Chart.js + `vue-chartjs` for dashboard charts.
+- [ ] Use Inertia `useForm` for all mutations — no fetch/axios.
 
 ---
 
