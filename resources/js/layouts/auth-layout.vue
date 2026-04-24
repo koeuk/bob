@@ -3,51 +3,52 @@ import AppearanceDropdown from '@/components/appearance-dropdown.vue';
 import { Link } from '@inertiajs/vue3';
 
 defineProps({ title: String, description: String });
-
-const year = new Date().getFullYear();
 </script>
 
 <template>
-    <div class="relative flex min-h-screen flex-col items-center justify-center bg-paper px-4 py-10 text-ink">
-        <!-- corner: theme toggle -->
-        <div class="absolute right-4 top-4">
+    <div class="relative flex min-h-screen flex-col items-center justify-center bg-background px-4 py-10 text-foreground">
+        <!-- ambient glow -->
+        <div class="pointer-events-none absolute inset-0 overflow-hidden">
+            <div class="absolute -left-40 -top-40 h-96 w-96 rounded-full bg-primary/15 blur-3xl"></div>
+            <div class="absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-accent/15 blur-3xl"></div>
+        </div>
+
+        <!-- theme toggle -->
+        <div class="absolute right-4 top-4 z-10">
             <AppearanceDropdown />
         </div>
 
-        <!-- brand wordmark -->
-        <Link href="/" class="mb-8 inline-flex items-baseline gap-1 select-none">
-            <span class="font-serif text-4xl leading-none tracking-tight">bob</span>
-            <span class="font-serif text-4xl leading-none text-rust">.</span>
-        </Link>
+        <div class="relative z-10 flex w-full max-w-sm flex-col items-center">
+            <!-- wordmark -->
+            <Link href="/" class="mb-6 inline-flex items-center gap-2 select-none">
+                <span class="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm shadow-primary/25">
+                    <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M7 20V4h8a4 4 0 0 1 1.7 7.6A4.5 4.5 0 0 1 15 20H7Z" />
+                    </svg>
+                </span>
+                <span class="text-2xl font-semibold tracking-tight">bob</span>
+            </Link>
 
-        <!-- card -->
-        <div
-            class="w-full max-w-sm rounded-md border border-hairline bg-card text-card-foreground shadow-[0_1px_0_rgba(0,0,0,0.02),0_6px_24px_-6px_rgba(0,0,0,0.08)]"
-        >
-            <div class="px-8 pt-8">
-                <!-- section label -->
-                <div class="mb-6 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
-                    <span class="text-rust">&sect;</span>
-                    <span>Access</span>
-                    <span class="h-px flex-1 bg-hairline"></span>
+            <!-- card -->
+            <div class="w-full rounded-2xl border border-border/80 bg-card/80 backdrop-blur-sm shadow-[0_1px_0_rgba(255,255,255,0.5)_inset,0_8px_32px_-12px_rgba(0,0,0,0.12)]">
+                <div class="px-7 pt-7">
+                    <h1 v-if="title" class="text-2xl font-semibold tracking-tight">
+                        {{ title }}
+                    </h1>
+                    <p v-if="description" class="mt-2 text-sm text-muted-foreground">
+                        {{ description }}
+                    </p>
                 </div>
 
-                <h1 v-if="title" class="font-serif text-3xl leading-tight tracking-tight">
-                    {{ title }}<span class="text-rust">.</span>
-                </h1>
-                <p v-if="description" class="mt-2 font-serif text-base italic leading-snug text-muted-foreground">
-                    {{ description }}
-                </p>
+                <div class="px-7 pb-7 pt-6">
+                    <slot />
+                </div>
             </div>
 
-            <div class="px-8 pb-8 pt-6">
-                <slot />
-            </div>
+            <!-- footer -->
+            <p class="mt-6 text-xs text-muted-foreground">
+                Protected by bob &middot; <Link href="/privacy" class="hover:text-foreground">Privacy</Link>
+            </p>
         </div>
-
-        <!-- footer -->
-        <p class="mt-6 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">
-            &copy; bob, {{ year }} &middot; a social journal
-        </p>
     </div>
 </template>

@@ -4,111 +4,148 @@ import Breadcrumbs from '@/components/breadcrumbs.vue';
 import DropdownMenu from '@/components/ui/DropdownMenu.vue';
 import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vue';
 import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vue';
-import UserInfo from '@/components/user-info.vue';
 import UserMenuContent from '@/components/user-menu-content.vue';
+import { useInitials } from '@/composables/useInitials';
 import { Link, usePage } from '@inertiajs/vue3';
-import { Bell, Compass, MessageSquare, Search, Users } from 'lucide-vue-next';
-import { computed } from 'vue';
+import {
+    Bell, BookmarkPlus, ChevronDown, Cog, HelpCircle, Home, Info,
+    LayoutGrid, LogOut, Mail, MessageSquare, Search, Users,
+} from 'lucide-vue-next';
 
 defineProps({ breadcrumbs: { type: Array, default: () => [] } });
 
 const page = usePage();
+const getInitials = useInitials();
 
-const today = new Date();
-const dateLine = today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-const issueNo = String(
-    Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000)
-).padStart(3, '0');
-
-const nav = [
-    { href: '/dashboard', label: 'Front Page', icon: Compass },
-    { href: '/friends', label: 'People', icon: Users },
-    { href: '/messages', label: 'Messages', icon: MessageSquare },
-    { href: '/notifications', label: 'Notices', icon: Bell },
+const tabs = [
+    { href: '/dashboard', label: 'Overview' },
+    { href: '/feed', label: 'Feed' },
+    { href: '/people', label: 'People' },
+    { href: '/pages', label: 'Pages' },
+    { href: '/bookmarks', label: 'Bookmarks' },
+    { href: '/reports', label: 'Reports' },
 ];
 
-const isActive = (href) => page.url === href || (href !== '/' && page.url.startsWith(href));
+const rail = [
+    { href: '/dashboard', icon: Home, label: 'Home' },
+    { href: '/feed', icon: LayoutGrid, label: 'Feed' },
+    { href: '/messages', icon: Mail, label: 'Messages' },
+    { href: '/notifications', icon: MessageSquare, label: 'Notifications' },
+    { href: '/people', icon: Users, label: 'People' },
+    { href: '/bookmarks', icon: BookmarkPlus, label: 'Saved' },
+    { href: '/settings/profile', icon: Cog, label: 'Settings' },
+];
+
+const isActive = (href) =>
+    page.url === href || (href !== '/' && page.url.startsWith(href));
 </script>
 
 <template>
-    <div class="min-h-screen bg-paper text-ink">
-        <!-- Editorial masthead -->
-        <header class="grain relative border-b border-hairline bg-paper">
-            <!-- Top meta rule -->
-            <div class="rule-b">
-                <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground sm:px-8">
-                    <span class="inline-flex items-center gap-2">
-                        <span class="text-rust">&sect;</span>
-                        {{ dateLine }}
-                    </span>
-                    <span class="hidden sm:inline">Vol. I &middot; No. {{ issueNo }}</span>
-                    <span class="inline-flex items-center gap-1">
-                        <span>all systems</span>
-                        <span class="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-moss"></span>
-                    </span>
-                </div>
-            </div>
+    <div class="min-h-screen bg-muted/40 text-foreground">
+        <div class="flex min-h-screen gap-4 p-4 sm:gap-5 sm:p-5">
+            <!-- Left icon rail -->
+            <aside class="sticky top-5 hidden h-[calc(100vh-2.5rem)] w-14 shrink-0 flex-col items-center justify-between rounded-[28px] bg-card shadow-sm lg:flex">
+                <div class="flex flex-col items-center gap-2 py-5">
+                    <Link href="/dashboard" class="mb-2 flex size-10 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-sm shadow-accent/30">
+                        <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 20V4h8a4 4 0 0 1 1.7 7.6A4.5 4.5 0 0 1 15 20H7Z" />
+                        </svg>
+                    </Link>
 
-            <!-- Masthead wordmark + user -->
-            <div class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-5 sm:px-8">
-                <Link href="/dashboard" class="group flex items-end gap-3">
-                    <span class="font-serif text-5xl leading-none tracking-tight">bob<span class="text-rust">.</span></span>
-                    <span class="hidden pb-2 font-mono text-[10px] uppercase tracking-[0.28em] text-muted-foreground sm:inline">
-                        a social journal
-                    </span>
-                </Link>
-
-                <div class="flex items-center gap-2">
-                    <button class="inline-flex h-9 items-center gap-2 rule-l rule-r px-4 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground hover:text-ink">
-                        <Search class="size-3.5" />
-                        <span class="hidden sm:inline">Search</span>
-                    </button>
-                    <AppearanceDropdown />
-                    <DropdownMenu>
-                        <DropdownMenuTrigger class="flex items-center gap-2 rule-l pl-3 pr-1 py-1 hover:text-rust transition-colors">
-                            <UserInfo :user="page.props.auth.user" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" class="w-56">
-                            <UserMenuContent :user="page.props.auth.user" />
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-            </div>
-
-            <!-- Section nav -->
-            <nav class="rule-t">
-                <div class="mx-auto flex max-w-7xl items-center gap-6 overflow-x-auto px-4 py-3 sm:px-8">
                     <Link
-                        v-for="item in nav"
+                        v-for="item in rail"
                         :key="item.href"
                         :href="item.href"
+                        :title="item.label"
                         :class="[
-                            'group relative inline-flex items-center gap-2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.22em] transition-colors',
-                            isActive(item.href) ? 'text-ink' : 'text-muted-foreground hover:text-ink',
+                            'group relative flex size-10 items-center justify-center rounded-xl transition',
+                            isActive(item.href)
+                                ? 'bg-foreground text-background'
+                                : 'text-muted-foreground hover:bg-muted hover:text-foreground',
                         ]"
                     >
-                        <component :is="item.icon" class="size-3.5" />
-                        <span>{{ item.label }}</span>
-                        <span
-                            v-if="isActive(item.href)"
-                            class="pointer-events-none absolute -bottom-[13px] left-0 right-0 h-[2px] bg-rust"
-                        ></span>
+                        <component :is="item.icon" class="size-[18px]" />
                     </Link>
                 </div>
-            </nav>
-        </header>
 
-        <main class="mx-auto max-w-7xl px-4 py-10 sm:px-8">
-            <Breadcrumbs v-if="breadcrumbs?.length" :breadcrumbs="breadcrumbs" class="mb-6" />
-            <slot />
-        </main>
+                <div class="flex flex-col items-center gap-2 py-5">
+                    <button class="flex size-10 items-center justify-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition">
+                        <HelpCircle class="size-[18px]" />
+                    </button>
+                    <button class="flex size-10 items-center justify-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition">
+                        <LogOut class="size-[18px]" />
+                    </button>
+                </div>
+            </aside>
 
-        <footer class="mt-20 rule-t">
-            <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-6 font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground sm:px-8">
-                <span>&copy; bob, {{ today.getFullYear() }}</span>
-                <span class="text-rust">&bull;</span>
-                <span>all dispatches composed by humans</span>
+            <!-- Main column -->
+            <div class="flex min-w-0 flex-1 flex-col gap-5">
+                <!-- Top bar -->
+                <header class="flex h-16 items-center gap-4 rounded-[28px] bg-card px-4 shadow-sm">
+                    <!-- Mobile wordmark -->
+                    <Link href="/dashboard" class="flex items-center gap-2 pl-2 lg:hidden">
+                        <span class="flex size-8 items-center justify-center rounded-full bg-accent text-accent-foreground">
+                            <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M7 20V4h8a4 4 0 0 1 1.7 7.6A4.5 4.5 0 0 1 15 20H7Z" />
+                            </svg>
+                        </span>
+                        <span class="text-lg font-semibold tracking-tight">bob</span>
+                    </Link>
+
+                    <!-- Pill tabs (desktop) -->
+                    <nav class="mx-auto hidden items-center gap-1 rounded-full bg-muted/60 p-1 md:flex">
+                        <Link
+                            v-for="t in tabs"
+                            :key="t.href"
+                            :href="t.href"
+                            :class="[
+                                'rounded-full px-4 py-1.5 text-sm font-medium transition',
+                                isActive(t.href)
+                                    ? 'bg-foreground text-background shadow-sm'
+                                    : 'text-muted-foreground hover:text-foreground',
+                            ]"
+                        >
+                            {{ t.label }}
+                        </Link>
+                    </nav>
+
+                    <div class="ml-auto flex items-center gap-1.5">
+                        <button class="hidden size-10 items-center justify-center rounded-full hover:bg-muted transition sm:inline-flex">
+                            <Search class="size-[18px] text-muted-foreground" />
+                        </button>
+                        <button class="relative hidden size-10 items-center justify-center rounded-full hover:bg-muted transition sm:inline-flex">
+                            <Bell class="size-[18px] text-muted-foreground" />
+                            <span class="absolute right-2.5 top-2.5 size-2 rounded-full bg-accent ring-2 ring-card"></span>
+                        </button>
+                        <button class="hidden size-10 items-center justify-center rounded-full hover:bg-muted transition sm:inline-flex">
+                            <Info class="size-[18px] text-muted-foreground" />
+                        </button>
+                        <AppearanceDropdown />
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger class="flex items-center gap-2.5 rounded-full border border-border/60 bg-background py-1 pl-1 pr-3 hover:border-foreground/20 transition">
+                                <span class="flex size-9 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                                    {{ getInitials(page.props.auth.user?.name ?? '?') }}
+                                </span>
+                                <div class="hidden min-w-0 text-left sm:block">
+                                    <div class="truncate text-sm font-medium leading-tight">{{ page.props.auth.user?.name }}</div>
+                                    <div class="truncate text-[11px] leading-tight text-muted-foreground">{{ page.props.auth.user?.email }}</div>
+                                </div>
+                                <ChevronDown class="size-4 text-muted-foreground" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" class="w-56">
+                                <UserMenuContent :user="page.props.auth.user" />
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </header>
+
+                <!-- Page content -->
+                <main class="min-w-0 flex-1">
+                    <Breadcrumbs v-if="breadcrumbs?.length" :breadcrumbs="breadcrumbs" class="mb-5" />
+                    <slot />
+                </main>
             </div>
-        </footer>
+        </div>
     </div>
 </template>

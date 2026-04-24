@@ -5,18 +5,23 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Ban;
+use App\Models\Report;
 use App\Models\User;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class UsersController extends Controller
 {
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): Response
     {
         $users = QueryBuilder::for(User::class)
             ->select(['id', 'uuid', 'name', 'email', 'role', 'created_at', 'email_verified_at'])
+            ->withCount(['posts', 'comments'])
+            ->with(['bans' => fn ($q) => $q->active()])
             ->allowedFilters([
                 AllowedFilter::callback('search', function ($q, $value) {
                     $q->where(function ($inner) use ($value) {
@@ -33,28 +38,47 @@ class UsersController extends Controller
             ])
             ->allowedSorts(['name', 'email', 'created_at'])
             ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 25));
+            ->paginate($request->integer('per_page', 25))
+            ->withQueryString();
 
-        return response()->json($users);
-    }
-
-    public function show(User $user): JsonResponse
-    {
-        $user->load([
-            'bans' => fn ($q) => $q->active()->with('bannedBy:id,uuid,name'),
-        ])->loadCount(['posts', 'comments', 'reportsFiled']);
-
-        return response()->json([
-            'user' => $user,
-            'reports_against' => \App\Models\Report::where('reportable_type', User::class)
-                ->where('reportable_id', $user->id)
-                ->latest()
-                ->limit(20)
-                ->get(),
+        return Inertia::render('admin/users/index', [
+            'users' => $users,
+            'filters' => $request->only(['filter', 'sort', 'per_page']),
         ]);
     }
 
-    public function update(Request $request, User $user): JsonResponse
+    public function show(User $user): Response
+    {
+        $user->load([
+            'bans' => fn ($q) => $q->with('bannedBy:id,uuid,name')->latest(),
+        ])->loadCount(['posts', 'comments', 'reportsFiled']);
+
+        $reportsAgainst = Report::where('reportable_type', User::class)
+            ->where('reportable_id', $user->id)
+            ->with('reporter:id,uuid,name')
+            ->latest()
+            ->limit(20)
+            ->get();
+
+        $activity = ActivityLog::where(function ($q) use ($user) {
+            $q->where('admin_id', $user->id)
+                ->orWhere(function ($q2) use ($user) {
+                    $q2->where('target_type', User::class)->where('target_id', $user->id);
+                });
+        })
+            ->with('admin:id,uuid,name')
+            ->latest()
+            ->limit(30)
+            ->get();
+
+        return Inertia::render('admin/users/show', [
+            'user' => $user,
+            'reportsAgainst' => $reportsAgainst,
+            'activity' => $activity,
+        ]);
+    }
+
+    public function update(Request $request, User $user): RedirectResponse
     {
         $data = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
@@ -66,22 +90,22 @@ class UsersController extends Controller
 
         ActivityLog::record('user.update', $user, $before, $user->only(array_keys($data)));
 
-        return response()->json(['user' => $user]);
+        return back()->with('status', 'User updated.');
     }
 
-    public function destroy(User $user): JsonResponse
+    public function destroy(User $user): RedirectResponse
     {
         if ($user->isSuperAdmin() && ! request()->user()->isSuperAdmin()) {
-            return response()->json(['message' => 'Cannot delete super admin.'], 403);
+            abort(403, 'Cannot delete super admin.');
         }
 
         ActivityLog::record('user.delete', $user, $user->only(['name', 'email', 'role']));
         $user->delete();
 
-        return response()->json(['message' => 'User deleted.']);
+        return redirect()->route('admin.users.index')->with('status', 'User deleted.');
     }
 
-    public function ban(Request $request, User $user): JsonResponse
+    public function ban(Request $request, User $user): RedirectResponse
     {
         $data = $request->validate([
             'reason' => ['required', 'string', 'max:2000'],
@@ -95,24 +119,28 @@ class UsersController extends Controller
             'expires_at' => $data['expires_at'] ?? null,
         ]);
 
-        $user->tokens()->delete();
+        $user->tokens()?->delete();
 
         ActivityLog::record('user.ban', $user, null, $ban->only(['reason', 'expires_at']));
 
-        return response()->json(['ban' => $ban], 201);
+        return back()->with('status', 'User banned.');
     }
 
-    public function unban(User $user): JsonResponse
+    public function unban(User $user): RedirectResponse
     {
         $user->bans()->active()->update(['expires_at' => now()->subSecond()]);
 
         ActivityLog::record('user.unban', $user);
 
-        return response()->json(['message' => 'User unbanned.']);
+        return back()->with('status', 'User unbanned.');
     }
 
-    public function assignRole(Request $request, User $user): JsonResponse
+    public function assignRole(Request $request, User $user): RedirectResponse
     {
+        if (! $request->user()->isSuperAdmin()) {
+            abort(403, 'Only super admins can change roles.');
+        }
+
         $data = $request->validate([
             'role' => ['required', 'in:user,moderator,admin,super_admin'],
         ]);
@@ -122,23 +150,6 @@ class UsersController extends Controller
 
         ActivityLog::record('user.role_assign', $user, $before, ['role' => $data['role']]);
 
-        return response()->json(['user' => $user]);
-    }
-
-    public function activity(User $user): JsonResponse
-    {
-        $logs = QueryBuilder::for(ActivityLog::class)
-            ->where(function ($q) use ($user) {
-                $q->where('admin_id', $user->id)
-                    ->orWhere(function ($q2) use ($user) {
-                        $q2->where('target_type', User::class)->where('target_id', $user->id);
-                    });
-            })
-            ->allowedFilters([AllowedFilter::partial('action')])
-            ->allowedSorts(['created_at'])
-            ->defaultSort('-created_at')
-            ->paginate(30);
-
-        return response()->json($logs);
+        return back()->with('status', 'Role updated.');
     }
 }

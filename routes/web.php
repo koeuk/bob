@@ -7,10 +7,6 @@ Route::get('/', function () {
     return redirect()->route('login');
 })->name('home');
 
-Route::get('/admin/{any?}', function () {
-    return view('admin');
-})->where('any', '.*')->name('admin.spa');
-
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
@@ -18,3 +14,4 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 require __DIR__.'/settings.php';
+require __DIR__.'/admin.php';

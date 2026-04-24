@@ -1,11 +1,13 @@
 <script setup>
 import AuthLayout from '@/layouts/auth-layout.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ArrowRight, LoaderCircle } from 'lucide-vue-next';
+import { AtSign, CheckCircle2, Eye, EyeOff, Loader2, Lock } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 defineProps({ status: String, canResetPassword: Boolean, canRegister: Boolean });
 
 const form = useForm({ email: '', password: '', remember: false });
+const showPassword = ref(false);
 
 function submit() {
     form.post('/login', { onFinish: () => form.reset('password') });
@@ -13,97 +15,97 @@ function submit() {
 </script>
 
 <template>
-    <AuthLayout title="Welcome back" description="Sign in to continue the conversation.">
+    <AuthLayout title="Welcome back" description="Enter your email and password to continue">
         <Head title="Log in" />
 
         <div
             v-if="status"
-            class="mb-5 rule-t rule-b py-2 font-mono text-[11px] uppercase tracking-wider text-moss"
+            class="mb-5 flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3.5 py-2.5 text-sm text-primary"
         >
-            <span class="mr-1 text-rust">&sect;</span>{{ status }}
+            <CheckCircle2 class="mt-0.5 size-4 shrink-0" />
+            <span>{{ status }}</span>
         </div>
 
-        <form class="space-y-5" @submit.prevent="submit">
+        <form class="space-y-4" @submit.prevent="submit">
             <!-- Email -->
             <div class="space-y-1.5">
-                <div class="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                    <label for="login-email">Email address</label>
-                    <span v-if="form.errors.email" class="text-destructive">&mdash; {{ form.errors.email }}</span>
+                <label for="login-email" class="block text-sm font-medium">Email</label>
+                <div class="relative">
+                    <AtSign class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                        id="login-email"
+                        v-model="form.email"
+                        type="email"
+                        required
+                        autofocus
+                        autocomplete="email"
+                        placeholder="you@example.com"
+                        class="h-11 w-full rounded-xl border border-input bg-background pl-10 pr-3 text-sm text-foreground transition placeholder:text-muted-foreground/60 focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
+                    />
                 </div>
-                <input
-                    id="login-email"
-                    v-model="form.email"
-                    type="email"
-                    required
-                    autofocus
-                    autocomplete="email"
-                    placeholder="hello@bob.world"
-                    class="w-full border-0 border-b border-hairline bg-transparent py-2 font-serif text-lg text-ink placeholder:text-muted-foreground/50 focus:border-ink focus:outline-none focus:ring-0 transition-colors"
-                />
+                <p v-if="form.errors.email" class="text-xs text-destructive">{{ form.errors.email }}</p>
             </div>
 
             <!-- Password -->
             <div class="space-y-1.5">
-                <div class="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                    <label for="login-password">Password</label>
+                <div class="flex items-center justify-between">
+                    <label for="login-password" class="block text-sm font-medium">Password</label>
                     <Link
                         v-if="canResetPassword"
                         href="/forgot-password"
-                        class="text-rust hover:underline hover:underline-offset-4"
+                        class="text-xs font-medium text-muted-foreground hover:text-foreground"
                     >
-                        Forgot &rarr;
+                        Forgot password?
                     </Link>
                 </div>
-                <input
-                    id="login-password"
-                    v-model="form.password"
-                    type="password"
-                    required
-                    autocomplete="current-password"
-                    placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
-                    class="w-full border-0 border-b border-hairline bg-transparent py-2 font-serif text-lg tracking-[0.15em] text-ink placeholder:text-muted-foreground/50 focus:border-ink focus:outline-none focus:ring-0 transition-colors"
-                />
-                <p v-if="form.errors.password" class="font-mono text-[10px] uppercase tracking-[0.18em] text-destructive">
-                    {{ form.errors.password }}
-                </p>
+                <div class="relative">
+                    <Lock class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                    <input
+                        id="login-password"
+                        v-model="form.password"
+                        :type="showPassword ? 'text' : 'password'"
+                        required
+                        autocomplete="current-password"
+                        placeholder="••••••••"
+                        class="h-11 w-full rounded-xl border border-input bg-background pl-10 pr-10 text-sm text-foreground transition placeholder:text-muted-foreground/60 focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
+                    />
+                    <button
+                        type="button"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-muted-foreground hover:text-foreground transition"
+                        :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                        @click="showPassword = !showPassword"
+                    >
+                        <EyeOff v-if="showPassword" class="size-4" />
+                        <Eye v-else class="size-4" />
+                    </button>
+                </div>
+                <p v-if="form.errors.password" class="text-xs text-destructive">{{ form.errors.password }}</p>
             </div>
 
             <!-- Remember -->
             <label class="flex cursor-pointer items-center gap-2.5 select-none pt-1">
-                <span class="relative flex h-4 w-4 shrink-0 items-center justify-center border border-ink">
-                    <input v-model="form.remember" type="checkbox" class="peer sr-only" />
-                    <span class="absolute inset-0.5 bg-ink opacity-0 peer-checked:opacity-100 transition-opacity"></span>
-                </span>
-                <span class="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                    Keep me signed in
-                </span>
+                <input
+                    v-model="form.remember"
+                    type="checkbox"
+                    class="size-4 cursor-pointer rounded border-input accent-primary"
+                />
+                <span class="text-sm text-muted-foreground">Remember me for 30 days</span>
             </label>
 
             <!-- Submit -->
             <button
                 type="submit"
                 :disabled="form.processing"
-                class="group relative flex w-full items-center justify-between overflow-hidden bg-ink px-5 py-3.5 text-paper transition-colors hover:bg-moss disabled:opacity-60"
+                class="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm shadow-primary/20 transition hover:bg-primary/90 disabled:opacity-60"
             >
-                <span class="font-serif text-lg tracking-tight">
-                    {{ form.processing ? 'Signing in&hellip;' : 'Sign in' }}
-                </span>
-                <span class="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.22em] opacity-80">
-                    <LoaderCircle v-if="form.processing" class="size-3.5 animate-spin" />
-                    <ArrowRight v-else class="size-3.5 transition-transform group-hover:translate-x-1" />
-                </span>
-                <span aria-hidden="true" class="pointer-events-none absolute inset-y-0 left-0 w-[3px] bg-rust"></span>
+                <Loader2 v-if="form.processing" class="size-4 animate-spin" />
+                <span>{{ form.processing ? 'Signing in…' : 'Sign in' }}</span>
             </button>
 
-            <!-- Sign up -->
-            <div v-if="canRegister" class="rule-t pt-4">
-                <p class="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                    <span>New here?</span>
-                    <Link href="/register" class="group inline-flex items-center gap-1.5 text-ink hover:text-rust">
-                        <span class="font-serif text-sm normal-case tracking-normal italic">Make an account</span>
-                        <ArrowRight class="size-3 transition-transform group-hover:translate-x-0.5" />
-                    </Link>
-                </p>
+            <!-- Divider + sign up -->
+            <div v-if="canRegister" class="pt-3 text-center text-sm text-muted-foreground">
+                Don&rsquo;t have an account?
+                <Link href="/register" class="font-medium text-foreground hover:text-primary">Sign up</Link>
             </div>
         </form>
     </AuthLayout>
