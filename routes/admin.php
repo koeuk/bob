@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ActivityLogsController;
 use App\Http\Controllers\Admin\BansController;
 use App\Http\Controllers\Admin\CommentsController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\LikesController;
 use App\Http\Controllers\Admin\PagesController;
 use App\Http\Controllers\Admin\PostsController;
 use App\Http\Controllers\Admin\ReportsController;
@@ -52,6 +53,9 @@ Route::middleware(['auth', 'verified', 'role:moderator,admin,super_admin'])
         Route::post('comments', [CommentsController::class, 'store'])->name('comments.store');
         Route::patch('comments/{comment:uuid}', [CommentsController::class, 'update'])->name('comments.update');
         Route::delete('comments/{comment:uuid}', [CommentsController::class, 'destroy'])->name('comments.destroy');
+
+        Route::get('likes', [LikesController::class, 'index'])->name('likes.index');
+        Route::delete('likes/{like:uuid}', [LikesController::class, 'destroy'])->name('likes.destroy');
 
         Route::get('pages', [PagesController::class, 'index'])->name('pages.index');
         Route::get('pages/create', [PagesController::class, 'create'])->name('pages.create');

@@ -12,6 +12,7 @@ import {
     FileText,
     Flag,
     Gauge,
+    Heart,
     MessageSquare,
     Newspaper,
     Settings as SettingsIcon,
@@ -38,6 +39,7 @@ const sideNav = computed(() => [
     { href: '/admin/bans', label: 'Bans', icon: ShieldBan },
     { href: '/admin/posts', label: 'Posts', icon: Newspaper },
     { href: '/admin/comments', label: 'Comments', icon: MessageSquare },
+    { href: '/admin/likes', label: 'Likes', icon: Heart },
     { href: '/admin/pages', label: 'Pages', icon: FileText },
     ...(isSuperOrAdmin.value ? [{ href: '/admin/settings', label: 'Settings', icon: SettingsIcon }] : []),
     { href: '/admin/activity-logs', label: 'Activity', icon: ActivitySquare },
@@ -49,7 +51,7 @@ const isActive = (href) => page.url === href || page.url.startsWith(href + '/') 
 <template>
     <div class="min-h-screen bg-background text-foreground">
         <header class="sticky top-0 z-30 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div class="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-4 sm:px-6">
+            <div class="mx-auto flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
                 <Link href="/admin/dashboard" class="flex items-center gap-2.5">
                     <span class="flex size-10 items-center justify-center rounded-2xl bg-rust text-paper shadow-sm">
                         <span class="font-serif text-xl leading-none">b</span>
@@ -78,7 +80,7 @@ const isActive = (href) => page.url === href || page.url.startsWith(href + '/') 
             </div>
         </header>
 
-        <div class="mx-auto flex max-w-[1400px] gap-4 px-4 pb-10 sm:px-6">
+        <div class="mx-auto flex gap-4 px-4 pb-10 sm:px-6">
             <!-- Expanded sidebar: icon + label -->
             <aside class="sticky top-24 hidden h-[calc(100vh-7rem)] w-56 shrink-0 flex-col justify-between rounded-3xl border border-border/60 bg-card/70 py-4 shadow-sm backdrop-blur md:flex">
                 <nav class="flex flex-col gap-1 px-3">
