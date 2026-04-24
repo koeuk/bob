@@ -1,5 +1,4 @@
-import { InertiaLinkProps } from '@inertiajs/react';
-import { LucideIcon } from 'lucide-react';
+import type { Component } from 'vue';
 
 export interface Auth {
     user: User;
@@ -17,8 +16,8 @@ export interface NavGroup {
 
 export interface NavItem {
     title: string;
-    href: NonNullable<InertiaLinkProps['href']>;
-    icon?: LucideIcon | null;
+    href: string;
+    icon?: Component | null;
     isActive?: boolean;
 }
 
@@ -32,12 +31,14 @@ export interface SharedData {
 
 export interface User {
     id: number;
+    uuid?: string;
     name: string;
     email: string;
     avatar?: string;
     email_verified_at: string | null;
     two_factor_enabled?: boolean;
+    role?: 'user' | 'moderator' | 'admin' | 'super_admin';
     created_at: string;
     updated_at: string;
-    [key: string]: unknown; // This allows for additional properties...
+    [key: string]: unknown;
 }

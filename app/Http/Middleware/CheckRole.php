@@ -13,15 +13,16 @@ class CheckRole
         $user = $request->user();
 
         if (! $user) {
-            return response()->json(['message' => 'Unauthenticated.'], 401);
+            return redirect()->route('login');
         }
 
         if (! in_array($user->role, $roles, true)) {
-            return response()->json(['message' => 'Forbidden. Required role: '.implode('|', $roles)], 403);
+            abort(403, 'Required role: '.implode('|', $roles));
         }
 
         if ($user->isBanned()) {
-            return response()->json(['message' => 'Account is banned.'], 403);
+            auth()->logout();
+            abort(403, 'Account is banned.');
         }
 
         return $next($request);
