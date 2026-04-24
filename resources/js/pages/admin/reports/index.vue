@@ -43,10 +43,6 @@ const statusTone = (s) => {
 <template>
     <Head title="Reports" />
     <AdminLayout title="Reports">
-        <div v-if="page.props.flash?.status" class="rounded-2xl bg-moss/10 px-4 py-3 text-sm text-moss">
-            {{ page.props.flash.status }}
-        </div>
-
         <!-- Tabs -->
         <div class="flex flex-wrap items-center gap-2 rounded-full border border-border/60 bg-card p-1.5 shadow-sm w-fit">
             <button

@@ -30,10 +30,6 @@ const submit = () => {
 <template>
     <Head :title="isNew ? 'New page' : page.title" />
     <AdminLayout>
-        <div v-if="inertiaPage.props.flash?.status" class="rounded-2xl bg-moss/10 px-4 py-3 text-sm text-moss">
-            {{ inertiaPage.props.flash.status }}
-        </div>
-
         <Link href="/admin/pages" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
             <ArrowLeft class="size-4" /> Back to pages
         </Link>

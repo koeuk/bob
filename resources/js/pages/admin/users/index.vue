@@ -57,10 +57,6 @@ const quickUnban = (user) => router.post(`/admin/users/${user.uuid}/unban`, {}, 
 <template>
     <Head title="Users" />
     <AdminLayout title="Users">
-        <div v-if="page.props.flash?.status" class="rounded-2xl bg-moss/10 px-4 py-3 text-sm text-moss">
-            {{ page.props.flash.status }}
-        </div>
-
         <!-- Toolbar -->
         <div class="rounded-3xl border border-border/60 bg-card p-4 shadow-sm">
             <div class="flex flex-wrap items-center gap-3">

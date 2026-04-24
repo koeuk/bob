@@ -34,10 +34,6 @@ const dismiss = () => dismissForm.post(`/admin/reports/${props.report.uuid}/dism
 <template>
     <Head title="Report" />
     <AdminLayout>
-        <div v-if="page.props.flash?.status" class="rounded-2xl bg-moss/10 px-4 py-3 text-sm text-moss">
-            {{ page.props.flash.status }}
-        </div>
-
         <Link href="/admin/reports" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
             <ArrowLeft class="size-4" /> Back to reports
         </Link>

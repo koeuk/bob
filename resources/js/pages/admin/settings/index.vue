@@ -55,10 +55,6 @@ const submit = () => {
 <template>
     <Head title="Settings" />
     <AdminLayout title="Settings">
-        <div v-if="page.props.flash?.status" class="rounded-2xl bg-moss/10 px-4 py-3 text-sm text-moss">
-            {{ page.props.flash.status }}
-        </div>
-
         <div class="flex items-center justify-between">
             <p class="max-w-xl text-sm text-muted-foreground">
                 App-wide key/value settings. Values are stored as JSON — strings, numbers, booleans, arrays.

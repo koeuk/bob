@@ -29,10 +29,6 @@ const truncate = (t, n = 80) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '
 <template>
     <Head title="Comments" />
     <AdminLayout title="Comments">
-        <div v-if="page.props.flash?.status" class="rounded-2xl bg-moss/10 px-4 py-3 text-sm text-moss">
-            {{ page.props.flash.status }}
-        </div>
-
         <div class="flex flex-wrap items-center gap-3 rounded-3xl border border-border/60 bg-card p-4 shadow-sm">
             <div class="relative flex-1">
                 <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />

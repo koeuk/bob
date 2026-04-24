@@ -40,10 +40,6 @@ const submitCreate = () => createForm.post('/admin/bans', {
 <template>
     <Head title="Bans" />
     <AdminLayout title="Bans">
-        <div v-if="page.props.flash?.status" class="rounded-2xl bg-moss/10 px-4 py-3 text-sm text-moss">
-            {{ page.props.flash.status }}
-        </div>
-
         <!-- Stats + filter -->
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex gap-3">

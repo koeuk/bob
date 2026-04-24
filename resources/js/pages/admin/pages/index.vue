@@ -21,10 +21,6 @@ const deletePage = (p) => {
 <template>
     <Head title="Pages" />
     <AdminLayout title="Pages">
-        <div v-if="page.props.flash?.status" class="rounded-2xl bg-moss/10 px-4 py-3 text-sm text-moss">
-            {{ page.props.flash.status }}
-        </div>
-
         <div class="flex justify-end">
             <Link
                 href="/admin/pages/create"
