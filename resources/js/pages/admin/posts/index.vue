@@ -1,7 +1,7 @@
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { Flag, Heart, MessageCircle, Search } from 'lucide-vue-next';
+import { Flag, Heart, MessageCircle, Plus, Search } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 const props = defineProps({
@@ -36,6 +36,15 @@ const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).m
 <template>
     <Head title="Posts" />
     <AdminLayout title="Posts">
+        <div class="flex justify-end">
+            <Link
+                href="/admin/posts/create"
+                class="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
+            >
+                <Plus class="size-4" /> New post
+            </Link>
+        </div>
+
         <div class="flex flex-wrap items-center gap-3 rounded-3xl border border-border/60 bg-card p-4 shadow-sm">
             <div class="relative min-w-0 flex-1">
                 <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />

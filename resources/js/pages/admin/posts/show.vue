@@ -1,7 +1,7 @@
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Eye, EyeOff, Flag, Heart, MessageCircle, Trash2 } from 'lucide-vue-next';
+import { ArrowLeft, Eye, EyeOff, Flag, Heart, MessageCircle, Pencil, Trash2 } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 const props = defineProps({
@@ -36,9 +36,17 @@ const statusTone = computed(() => {
 <template>
     <Head title="Post" />
     <AdminLayout>
-        <Link href="/admin/posts" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
-            <ArrowLeft class="size-4" /> Back to posts
-        </Link>
+        <div class="flex items-center justify-between">
+            <Link href="/admin/posts" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
+                <ArrowLeft class="size-4" /> Back to posts
+            </Link>
+            <Link
+                :href="`/admin/posts/${post.uuid}/edit`"
+                class="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-secondary"
+            >
+                <Pencil class="size-4" /> Edit
+            </Link>
+        </div>
 
         <article class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
             <header class="mb-4 flex flex-wrap items-start justify-between gap-4">

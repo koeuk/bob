@@ -1,7 +1,7 @@
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { Flag, Heart, Search, Trash2 } from 'lucide-vue-next';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { Flag, Heart, Pencil, Search, Trash2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 const props = defineProps({
@@ -24,6 +24,19 @@ const deleteComment = (c) => {
 const dateFmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
 const truncate = (t, n = 80) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '…' : t;
+
+// Edit modal
+const editTarget = ref(null);
+const editForm = useForm({ body: '', reason: '' });
+const openEdit = (c) => {
+    editForm.body = c.body;
+    editForm.reason = '';
+    editTarget.value = c;
+};
+const submitEdit = () => editForm.patch(`/admin/comments/${editTarget.value.uuid}`, {
+    preserveScroll: true,
+    onSuccess: () => { editTarget.value = null; editForm.reset(); },
+});
 </script>
 
 <template>
@@ -64,12 +77,22 @@ const truncate = (t, n = 80) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '
                             </span>
                         </div>
                     </div>
-                    <button
-                        class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-                        @click="deleteComment(c)"
-                    >
-                        <Trash2 class="size-4" />
-                    </button>
+                    <div class="flex items-center gap-1">
+                        <button
+                            class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-ink"
+                            title="Edit"
+                            @click="openEdit(c)"
+                        >
+                            <Pencil class="size-4" />
+                        </button>
+                        <button
+                            class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                            title="Delete"
+                            @click="deleteComment(c)"
+                        >
+                            <Trash2 class="size-4" />
+                        </button>
+                    </div>
                 </li>
             </ul>
             <div v-else class="py-16 text-center text-sm text-muted-foreground">
@@ -94,5 +117,46 @@ const truncate = (t, n = 80) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '
                 </div>
             </div>
         </div>
+
+        <!-- Edit modal -->
+        <Teleport to="body">
+            <div v-if="editTarget" class="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4 backdrop-blur-sm">
+                <div class="w-full max-w-lg rounded-3xl bg-card p-6 shadow-xl">
+                    <h3 class="text-xl font-semibold">Edit comment</h3>
+                    <p class="mt-1 text-sm text-muted-foreground">
+                        by {{ editTarget.user?.name ?? 'unknown' }} · {{ dateFmt(editTarget.created_at) }}
+                    </p>
+                    <form class="mt-5 space-y-4" @submit.prevent="submitEdit">
+                        <div>
+                            <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Body</label>
+                            <textarea
+                                v-model="editForm.body"
+                                rows="5"
+                                class="w-full rounded-2xl bg-secondary/60 p-3 text-sm outline-none focus:bg-secondary"
+                                required
+                            />
+                            <p v-if="editForm.errors.body" class="mt-1 text-xs text-destructive">{{ editForm.errors.body }}</p>
+                        </div>
+                        <div>
+                            <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Moderation reason (optional)</label>
+                            <input
+                                v-model="editForm.reason"
+                                type="text"
+                                class="h-10 w-full rounded-full bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary"
+                                placeholder="Logged in activity log"
+                            />
+                        </div>
+                        <div class="flex justify-end gap-2 pt-2">
+                            <button type="button" class="rounded-full px-4 py-2 text-sm hover:bg-secondary" @click="editTarget = null">
+                                Cancel
+                            </button>
+                            <button type="submit" class="rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90" :disabled="editForm.processing">
+                                Save
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </Teleport>
     </AdminLayout>
 </template>

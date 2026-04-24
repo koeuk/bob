@@ -1,7 +1,7 @@
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { ChevronDown, Filter, MoreHorizontal, Search, ShieldBan, UserCheck, UserX } from 'lucide-vue-next';
+import { ChevronDown, Filter, MoreHorizontal, Plus, Search, ShieldBan, UserCheck, UserX } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -57,6 +57,15 @@ const quickUnban = (user) => router.post(`/admin/users/${user.uuid}/unban`, {}, 
 <template>
     <Head title="Users" />
     <AdminLayout title="Users">
+        <div class="flex justify-end">
+            <Link
+                href="/admin/users/create"
+                class="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
+            >
+                <Plus class="size-4" /> New user
+            </Link>
+        </div>
+
         <!-- Toolbar -->
         <div class="rounded-3xl border border-border/60 bg-card p-4 shadow-sm">
             <div class="flex flex-wrap items-center gap-3">

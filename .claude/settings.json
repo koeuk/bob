@@ -30,7 +30,8 @@
       "Bash(php -l app/Http/Controllers/DashboardController.php)",
       "Bash(php -l routes/web.php)",
       "Bash(awk '{print $2, $3}')",
-      "Bash(mysql -u root -pkoeuk bob -e \"SHOW TABLES\")"
+      "Bash(mysql -u root -pkoeuk bob -e \"SHOW TABLES\")",
+      "Bash(php -l app/Http/Controllers/Admin/LikesController.php routes/admin.php)"
     ],
     "additionalDirectories": [
       "/home/koeuk/Desktop/bob/resources/js/composables",
