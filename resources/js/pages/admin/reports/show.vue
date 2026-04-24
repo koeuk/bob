@@ -1,6 +1,6 @@
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, Check, Eye, Flag, X } from 'lucide-vue-next';
 import { computed } from 'vue';
 
@@ -26,7 +26,7 @@ const statusTone = (s) => {
 const resolveForm = useForm({ resolution_note: '' });
 const dismissForm = useForm({ resolution_note: '' });
 
-const markReviewed = () => useForm({}).post(`/admin/reports/${props.report.uuid}/review`, { preserveScroll: true });
+const markReviewed = () => router.post(`/admin/reports/${props.report.uuid}/review`, {}, { preserveScroll: true });
 const resolve = () => resolveForm.post(`/admin/reports/${props.report.uuid}/resolve`, { preserveScroll: true });
 const dismiss = () => dismissForm.post(`/admin/reports/${props.report.uuid}/dismiss`, { preserveScroll: true });
 </script>
