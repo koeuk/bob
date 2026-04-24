@@ -1,151 +1,165 @@
 <script setup>
 import AppearanceDropdown from '@/components/appearance-dropdown.vue';
-import Breadcrumbs from '@/components/breadcrumbs.vue';
 import DropdownMenu from '@/components/ui/DropdownMenu.vue';
 import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vue';
 import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vue';
 import UserMenuContent from '@/components/user-menu-content.vue';
-import { useInitials } from '@/composables/useInitials';
 import { Link, usePage } from '@inertiajs/vue3';
 import {
-    Bell, BookmarkPlus, ChevronDown, Cog, HelpCircle, Home, Info,
-    LayoutGrid, LogOut, Mail, MessageSquare, Search, Users,
+    Bell,
+    Bookmark,
+    ChevronDown,
+    Compass,
+    HelpCircle,
+    Info,
+    LayoutGrid,
+    LogOut,
+    Mail,
+    MessageSquare,
+    Search,
+    Settings as SettingsIcon,
+    ShieldCheck,
+    Users,
 } from 'lucide-vue-next';
+import { computed } from 'vue';
 
 defineProps({ breadcrumbs: { type: Array, default: () => [] } });
 
 const page = usePage();
-const getInitials = useInitials();
 
-const tabs = [
+const user = computed(() => page.props.auth?.user);
+const initials = computed(() => {
+    const name = user.value?.name ?? '';
+    return name.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase() || 'U';
+});
+const isModerator = computed(() => ['moderator', 'admin', 'super_admin'].includes(user.value?.role));
+
+const pillNav = [
     { href: '/dashboard', label: 'Overview' },
     { href: '/feed', label: 'Feed' },
-    { href: '/people', label: 'People' },
+    { href: '/friends', label: 'People' },
     { href: '/pages', label: 'Pages' },
     { href: '/bookmarks', label: 'Bookmarks' },
     { href: '/reports', label: 'Reports' },
 ];
 
-const rail = [
-    { href: '/dashboard', icon: Home, label: 'Home' },
-    { href: '/feed', icon: LayoutGrid, label: 'Feed' },
-    { href: '/messages', icon: Mail, label: 'Messages' },
-    { href: '/notifications', icon: MessageSquare, label: 'Notifications' },
-    { href: '/people', icon: Users, label: 'People' },
-    { href: '/bookmarks', icon: BookmarkPlus, label: 'Saved' },
-    { href: '/settings/profile', icon: Cog, label: 'Settings' },
-];
+const railNav = computed(() => [
+    { href: '/dashboard', label: 'Home', icon: Compass },
+    { href: '/feed', label: 'Feed', icon: LayoutGrid },
+    { href: '/messages', label: 'Messages', icon: Mail },
+    { href: '/notifications', label: 'Notices', icon: MessageSquare },
+    { href: '/friends', label: 'People', icon: Users },
+    { href: '/bookmarks', label: 'Bookmarks', icon: Bookmark },
+    { href: '/settings/profile', label: 'Settings', icon: SettingsIcon },
+    ...(isModerator.value ? [{ href: '/admin/dashboard', label: 'Admin', icon: ShieldCheck }] : []),
+]);
 
-const isActive = (href) =>
-    page.url === href || (href !== '/' && page.url.startsWith(href));
+const isActive = (href) => page.url === href || page.url.startsWith(href + '/') || page.url.startsWith(href + '?');
 </script>
 
 <template>
-    <div class="min-h-screen bg-muted/40 text-foreground">
-        <div class="flex min-h-screen gap-4 p-4 sm:gap-5 sm:p-5">
-            <!-- Left icon rail -->
-            <aside class="sticky top-5 hidden h-[calc(100vh-2.5rem)] w-14 shrink-0 flex-col items-center justify-between rounded-[28px] bg-card shadow-sm lg:flex">
-                <div class="flex flex-col items-center gap-2 py-5">
-                    <Link href="/dashboard" class="mb-2 flex size-10 items-center justify-center rounded-full bg-accent text-accent-foreground shadow-sm shadow-accent/30">
-                        <svg viewBox="0 0 24 24" class="size-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M7 20V4h8a4 4 0 0 1 1.7 7.6A4.5 4.5 0 0 1 15 20H7Z" />
-                        </svg>
-                    </Link>
+    <div class="min-h-screen bg-background text-foreground">
+        <header class="sticky top-0 z-30 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div class="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-4 sm:px-6">
+                <Link href="/dashboard" class="flex items-center gap-2.5">
+                    <span class="flex size-10 items-center justify-center rounded-2xl bg-rust text-paper shadow-sm">
+                        <span class="font-serif text-xl leading-none">b</span>
+                    </span>
+                </Link>
 
+                <nav class="hidden items-center gap-1 rounded-full border border-border/60 bg-card/70 p-1 shadow-sm backdrop-blur md:flex">
                     <Link
-                        v-for="item in rail"
+                        v-for="item in pillNav"
+                        :key="item.href"
+                        :href="item.href"
+                        :class="[
+                            'rounded-full px-4 py-1.5 text-sm font-medium transition-colors',
+                            isActive(item.href)
+                                ? 'bg-ink text-paper shadow'
+                                : 'text-muted-foreground hover:text-ink',
+                        ]"
+                    >
+                        {{ item.label }}
+                    </Link>
+                </nav>
+
+                <div class="flex items-center gap-2">
+                    <button class="inline-flex size-10 items-center justify-center rounded-full border border-border/60 bg-card/70 text-muted-foreground hover:text-ink">
+                        <Search class="size-4" />
+                    </button>
+                    <button class="relative inline-flex size-10 items-center justify-center rounded-full border border-border/60 bg-card/70 text-muted-foreground hover:text-ink">
+                        <Bell class="size-4" />
+                        <span class="absolute right-2 top-2 size-1.5 rounded-full bg-rust"></span>
+                    </button>
+                    <button class="inline-flex size-10 items-center justify-center rounded-full border border-border/60 bg-card/70 text-muted-foreground hover:text-ink">
+                        <Info class="size-4" />
+                    </button>
+                    <AppearanceDropdown />
+                    <DropdownMenu>
+                        <DropdownMenuTrigger class="flex items-center gap-2 rounded-full border border-border/60 bg-card/70 py-1 pl-1 pr-3 shadow-sm hover:text-rust transition-colors">
+                            <span class="flex size-8 items-center justify-center rounded-full bg-ink text-paper text-xs font-semibold">
+                                {{ initials }}
+                            </span>
+                            <span class="hidden text-left sm:block">
+                                <span class="block text-sm font-medium leading-tight">{{ user?.name }}</span>
+                                <span class="block text-[11px] leading-tight text-muted-foreground">{{ user?.email }}</span>
+                            </span>
+                            <ChevronDown class="hidden size-3.5 text-muted-foreground sm:block" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" class="w-56">
+                            <UserMenuContent :user="user" />
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </div>
+        </header>
+
+        <div class="mx-auto flex max-w-[1400px] gap-4 px-4 pb-10 sm:px-6">
+            <aside class="sticky top-24 hidden h-[calc(100vh-7rem)] shrink-0 flex-col items-center justify-between rounded-3xl border border-border/60 bg-card/70 py-4 shadow-sm backdrop-blur md:flex">
+                <nav class="flex flex-col items-center gap-1.5 px-2">
+                    <Link
+                        v-for="item in railNav"
                         :key="item.href"
                         :href="item.href"
                         :title="item.label"
                         :class="[
-                            'group relative flex size-10 items-center justify-center rounded-xl transition',
+                            'group relative inline-flex size-11 items-center justify-center rounded-2xl transition-colors',
                             isActive(item.href)
-                                ? 'bg-foreground text-background'
-                                : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                                ? 'bg-ink text-paper shadow'
+                                : 'text-muted-foreground hover:bg-secondary hover:text-ink',
                         ]"
                     >
                         <component :is="item.icon" class="size-[18px]" />
                     </Link>
-                </div>
-
-                <div class="flex flex-col items-center gap-2 py-5">
-                    <button class="flex size-10 items-center justify-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition">
+                </nav>
+                <div class="flex flex-col items-center gap-1.5 px-2">
+                    <button class="inline-flex size-11 items-center justify-center rounded-2xl text-muted-foreground hover:bg-secondary hover:text-ink">
                         <HelpCircle class="size-[18px]" />
                     </button>
-                    <button class="flex size-10 items-center justify-center rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground transition">
+                    <Link
+                        href="/logout"
+                        method="post"
+                        as="button"
+                        class="inline-flex size-11 items-center justify-center rounded-2xl text-muted-foreground hover:bg-secondary hover:text-ink"
+                    >
                         <LogOut class="size-[18px]" />
-                    </button>
+                    </Link>
                 </div>
             </aside>
 
-            <!-- Main column -->
-            <div class="flex min-w-0 flex-1 flex-col gap-5">
-                <!-- Top bar -->
-                <header class="flex h-16 items-center gap-4 rounded-[28px] bg-card px-4 shadow-sm">
-                    <!-- Mobile wordmark -->
-                    <Link href="/dashboard" class="flex items-center gap-2 pl-2 lg:hidden">
-                        <span class="flex size-8 items-center justify-center rounded-full bg-accent text-accent-foreground">
-                            <svg viewBox="0 0 24 24" class="size-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M7 20V4h8a4 4 0 0 1 1.7 7.6A4.5 4.5 0 0 1 15 20H7Z" />
-                            </svg>
-                        </span>
-                        <span class="text-lg font-semibold tracking-tight">bob</span>
-                    </Link>
-
-                    <!-- Pill tabs (desktop) -->
-                    <nav class="mx-auto hidden items-center gap-1 rounded-full bg-muted/60 p-1 md:flex">
-                        <Link
-                            v-for="t in tabs"
-                            :key="t.href"
-                            :href="t.href"
-                            :class="[
-                                'rounded-full px-4 py-1.5 text-sm font-medium transition',
-                                isActive(t.href)
-                                    ? 'bg-foreground text-background shadow-sm'
-                                    : 'text-muted-foreground hover:text-foreground',
-                            ]"
-                        >
-                            {{ t.label }}
-                        </Link>
-                    </nav>
-
-                    <div class="ml-auto flex items-center gap-1.5">
-                        <button class="hidden size-10 items-center justify-center rounded-full hover:bg-muted transition sm:inline-flex">
-                            <Search class="size-[18px] text-muted-foreground" />
-                        </button>
-                        <button class="relative hidden size-10 items-center justify-center rounded-full hover:bg-muted transition sm:inline-flex">
-                            <Bell class="size-[18px] text-muted-foreground" />
-                            <span class="absolute right-2.5 top-2.5 size-2 rounded-full bg-accent ring-2 ring-card"></span>
-                        </button>
-                        <button class="hidden size-10 items-center justify-center rounded-full hover:bg-muted transition sm:inline-flex">
-                            <Info class="size-[18px] text-muted-foreground" />
-                        </button>
-                        <AppearanceDropdown />
-
-                        <DropdownMenu>
-                            <DropdownMenuTrigger class="flex items-center gap-2.5 rounded-full border border-border/60 bg-background py-1 pl-1 pr-3 hover:border-foreground/20 transition">
-                                <span class="flex size-9 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-                                    {{ getInitials(page.props.auth.user?.name ?? '?') }}
-                                </span>
-                                <div class="hidden min-w-0 text-left sm:block">
-                                    <div class="truncate text-sm font-medium leading-tight">{{ page.props.auth.user?.name }}</div>
-                                    <div class="truncate text-[11px] leading-tight text-muted-foreground">{{ page.props.auth.user?.email }}</div>
-                                </div>
-                                <ChevronDown class="size-4 text-muted-foreground" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" class="w-56">
-                                <UserMenuContent :user="page.props.auth.user" />
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+            <main class="min-w-0 flex-1 space-y-6">
+                <Transition
+                    enter-active-class="transition duration-200 ease-out"
+                    enter-from-class="-translate-y-1 opacity-0"
+                    leave-active-class="transition duration-150 ease-in"
+                    leave-to-class="-translate-y-1 opacity-0"
+                >
+                    <div v-if="page.props.flash?.status" class="rounded-2xl bg-moss/10 px-4 py-3 text-sm text-moss">
+                        {{ page.props.flash.status }}
                     </div>
-                </header>
-
-                <!-- Page content -->
-                <main class="min-w-0 flex-1">
-                    <Breadcrumbs v-if="breadcrumbs?.length" :breadcrumbs="breadcrumbs" class="mb-5" />
-                    <slot />
-                </main>
-            </div>
+                </Transition>
+                <slot />
+            </main>
         </div>
     </div>
 </template>
