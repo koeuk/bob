@@ -32,9 +32,26 @@ class CommentsController extends Controller
             ->paginate($request->integer('per_page', 30))
             ->withQueryString();
 
+        $posts = Post::select('id', 'uuid', 'body')
+            ->where('status', '!=', 'hidden')
+            ->latest()
+            ->limit(200)
+            ->get()
+            ->map(fn ($p) => [
+                'uuid' => $p->uuid,
+                'preview' => mb_strlen($p->body) > 80 ? mb_substr($p->body, 0, 80).'…' : $p->body,
+            ]);
+
+        $authors = User::select('id', 'uuid', 'name', 'email', 'role')
+            ->orderBy('name')
+            ->limit(500)
+            ->get();
+
         return Inertia::render('admin/comments/index', [
             'comments' => $comments,
             'filters' => $request->only(['filter']),
+            'posts' => $posts,
+            'authors' => $authors,
         ]);
     }
 

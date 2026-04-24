@@ -1,12 +1,14 @@
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { Flag, Heart, Pencil, Search, Trash2 } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { ChevronDown, Flag, Heart, Pencil, Plus, Search, Trash2 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     comments: { type: Object, required: true },
     filters: { type: Object, default: () => ({}) },
+    posts: { type: Array, default: () => [] },
+    authors: { type: Array, default: () => [] },
 });
 
 const page = usePage();
@@ -37,11 +39,68 @@ const submitEdit = () => editForm.patch(`/admin/comments/${editTarget.value.uuid
     preserveScroll: true,
     onSuccess: () => { editTarget.value = null; editForm.reset(); },
 });
+
+// Create modal
+const me = computed(() => page.props.auth?.user);
+const showCreate = ref(false);
+const createForm = useForm({ post_uuid: '', user_uuid: '', body: '' });
+
+const postSearch = ref('');
+const postPickerOpen = ref(false);
+const selectedPost = computed(() => props.posts.find((p) => p.uuid === createForm.post_uuid));
+const filteredPosts = computed(() => {
+    const q = postSearch.value.trim().toLowerCase();
+    if (!q) return props.posts.slice(0, 50);
+    return props.posts.filter((p) => p.preview.toLowerCase().includes(q)).slice(0, 50);
+});
+const pickPost = (p) => { createForm.post_uuid = p.uuid; postSearch.value = ''; postPickerOpen.value = false; };
+const clearPost = () => { createForm.post_uuid = ''; postSearch.value = ''; };
+
+const authorSearch = ref('');
+const authorPickerOpen = ref(false);
+const selectedAuthor = computed(() => props.authors.find((a) => a.uuid === createForm.user_uuid));
+const filteredAuthors = computed(() => {
+    const q = authorSearch.value.trim().toLowerCase();
+    if (!q) return props.authors.slice(0, 50);
+    return props.authors
+        .filter((a) => a.name.toLowerCase().includes(q) || a.email.toLowerCase().includes(q))
+        .slice(0, 50);
+});
+const pickAuthor = (a) => { createForm.user_uuid = a.uuid; authorSearch.value = ''; authorPickerOpen.value = false; };
+const clearAuthor = () => { createForm.user_uuid = ''; authorSearch.value = ''; };
+
+const openCreate = () => {
+    createForm.reset();
+    createForm.user_uuid = me.value?.uuid ?? '';
+    showCreate.value = true;
+};
+const submitCreate = () => createForm.post('/admin/comments', {
+    preserveScroll: true,
+    onSuccess: () => { showCreate.value = false; createForm.reset(); postSearch.value = ''; authorSearch.value = ''; },
+});
+
+const roleTone = (role) => {
+    switch (role) {
+        case 'super_admin': return 'bg-rust/15 text-rust';
+        case 'admin': return 'bg-ink/10 text-ink';
+        case 'moderator': return 'bg-moss/15 text-moss';
+        default: return 'bg-secondary text-muted-foreground';
+    }
+};
 </script>
 
 <template>
     <Head title="Comments" />
     <AdminLayout title="Comments">
+        <div class="flex justify-end">
+            <button
+                class="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
+                @click="openCreate"
+            >
+                <Plus class="size-4" /> New comment
+            </button>
+        </div>
+
         <div class="flex flex-wrap items-center gap-3 rounded-3xl border border-border/60 bg-card p-4 shadow-sm">
             <div class="relative flex-1">
                 <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -117,6 +176,155 @@ const submitEdit = () => editForm.patch(`/admin/comments/${editTarget.value.uuid
                 </div>
             </div>
         </div>
+
+        <!-- Create modal -->
+        <Teleport to="body">
+            <div v-if="showCreate" class="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4 backdrop-blur-sm">
+                <div class="w-full max-w-lg rounded-3xl bg-card p-6 shadow-xl">
+                    <h3 class="text-xl font-semibold">New comment</h3>
+                    <p class="mt-1 text-sm text-muted-foreground">Post a comment on behalf of any user.</p>
+                    <form class="mt-5 space-y-4" @submit.prevent="submitCreate">
+                        <!-- Post picker -->
+                        <div>
+                            <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Post</label>
+                            <div v-if="selectedPost" class="flex items-center justify-between gap-3 rounded-2xl bg-secondary p-3">
+                                <p class="min-w-0 flex-1 truncate text-sm">{{ selectedPost.preview }}</p>
+                                <button type="button" class="text-xs text-muted-foreground hover:text-ink" @click="clearPost">Change</button>
+                            </div>
+                            <div v-else class="relative">
+                                <button
+                                    type="button"
+                                    class="flex h-11 w-full items-center justify-between rounded-full bg-secondary/60 px-4 text-sm hover:bg-secondary"
+                                    @click="postPickerOpen = !postPickerOpen"
+                                >
+                                    <span class="text-muted-foreground">Select a post…</span>
+                                    <ChevronDown class="size-4 text-muted-foreground" />
+                                </button>
+                                <div
+                                    v-if="postPickerOpen"
+                                    class="absolute left-0 right-0 z-10 mt-1 overflow-hidden rounded-2xl border border-border/60 bg-popover shadow-lg"
+                                >
+                                    <div class="relative border-b border-border/60">
+                                        <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                                        <input
+                                            v-model="postSearch"
+                                            type="search"
+                                            placeholder="Search post body..."
+                                            class="h-10 w-full bg-transparent pl-9 pr-3 text-sm outline-none"
+                                            autofocus
+                                        />
+                                    </div>
+                                    <ul class="max-h-64 overflow-y-auto">
+                                        <li
+                                            v-for="p in filteredPosts"
+                                            :key="p.uuid"
+                                            class="cursor-pointer px-3 py-2 text-sm hover:bg-secondary"
+                                            @click="pickPost(p)"
+                                        >
+                                            {{ p.preview }}
+                                        </li>
+                                        <li v-if="!filteredPosts.length" class="px-3 py-6 text-center text-xs text-muted-foreground">
+                                            No matches.
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <p v-if="createForm.errors.post_uuid" class="mt-1 text-xs text-destructive">{{ createForm.errors.post_uuid }}</p>
+                        </div>
+
+                        <!-- Author picker -->
+                        <div>
+                            <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Author</label>
+                            <div v-if="selectedAuthor" class="flex items-center justify-between rounded-2xl bg-secondary p-3">
+                                <div class="flex items-center gap-3">
+                                    <span class="flex size-9 items-center justify-center rounded-full bg-ink text-xs font-semibold text-paper">
+                                        {{ initials(selectedAuthor.name) }}
+                                    </span>
+                                    <div class="min-w-0">
+                                        <div class="flex items-center gap-2 text-sm font-medium">
+                                            {{ selectedAuthor.name }}
+                                            <span :class="['rounded-full px-2 py-0.5 text-[10px] font-medium', roleTone(selectedAuthor.role)]">
+                                                {{ selectedAuthor.role }}
+                                            </span>
+                                        </div>
+                                        <div class="truncate text-[11px] text-muted-foreground">{{ selectedAuthor.email }}</div>
+                                    </div>
+                                </div>
+                                <button type="button" class="text-xs text-muted-foreground hover:text-ink" @click="clearAuthor">Change</button>
+                            </div>
+                            <div v-else class="relative">
+                                <button
+                                    type="button"
+                                    class="flex h-11 w-full items-center justify-between rounded-full bg-secondary/60 px-4 text-sm hover:bg-secondary"
+                                    @click="authorPickerOpen = !authorPickerOpen"
+                                >
+                                    <span class="text-muted-foreground">Select an author…</span>
+                                    <ChevronDown class="size-4 text-muted-foreground" />
+                                </button>
+                                <div
+                                    v-if="authorPickerOpen"
+                                    class="absolute left-0 right-0 z-10 mt-1 overflow-hidden rounded-2xl border border-border/60 bg-popover shadow-lg"
+                                >
+                                    <div class="relative border-b border-border/60">
+                                        <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                                        <input
+                                            v-model="authorSearch"
+                                            type="search"
+                                            placeholder="Search name or email..."
+                                            class="h-10 w-full bg-transparent pl-9 pr-3 text-sm outline-none"
+                                            autofocus
+                                        />
+                                    </div>
+                                    <ul class="max-h-64 overflow-y-auto">
+                                        <li
+                                            v-for="a in filteredAuthors"
+                                            :key="a.uuid"
+                                            class="flex cursor-pointer items-center gap-3 px-3 py-2 hover:bg-secondary"
+                                            @click="pickAuthor(a)"
+                                        >
+                                            <span class="flex size-8 items-center justify-center rounded-full bg-ink text-[10px] font-semibold text-paper">
+                                                {{ initials(a.name) }}
+                                            </span>
+                                            <div class="min-w-0 flex-1">
+                                                <div class="text-sm font-medium">{{ a.name }}</div>
+                                                <div class="truncate text-[11px] text-muted-foreground">{{ a.email }}</div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <p v-if="createForm.errors.user_uuid" class="mt-1 text-xs text-destructive">{{ createForm.errors.user_uuid }}</p>
+                        </div>
+
+                        <!-- Body -->
+                        <div>
+                            <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Body</label>
+                            <textarea
+                                v-model="createForm.body"
+                                rows="5"
+                                class="w-full rounded-2xl bg-secondary/60 p-3 text-sm outline-none focus:bg-secondary"
+                                placeholder="Write the comment..."
+                                required
+                                maxlength="2000"
+                            />
+                            <p class="mt-1 text-[11px] text-muted-foreground">{{ createForm.body.length }}/2000</p>
+                            <p v-if="createForm.errors.body" class="mt-1 text-xs text-destructive">{{ createForm.errors.body }}</p>
+                        </div>
+
+                        <div class="flex justify-end gap-2 pt-2">
+                            <button type="button" class="rounded-full px-4 py-2 text-sm hover:bg-secondary" @click="showCreate = false">Cancel</button>
+                            <button
+                                type="submit"
+                                class="rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40"
+                                :disabled="createForm.processing || !createForm.post_uuid || !createForm.body.trim()"
+                            >
+                                Post comment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </Teleport>
 
         <!-- Edit modal -->
         <Teleport to="body">

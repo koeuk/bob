@@ -37,6 +37,14 @@ class BansController extends Controller
             ->paginate($request->integer('per_page', 25))
             ->withQueryString();
 
+        // Users eligible for banning: not super_admin, not currently banned
+        $bannableUsers = User::select('id', 'uuid', 'name', 'email', 'role')
+            ->where('role', '!=', 'super_admin')
+            ->whereDoesntHave('bans', fn ($q) => $q->active())
+            ->orderBy('name')
+            ->limit(500)
+            ->get();
+
         return Inertia::render('admin/bans/index', [
             'bans' => $bans,
             'filters' => $request->only(['filter']),
@@ -44,6 +52,7 @@ class BansController extends Controller
                 'all' => Ban::count(),
                 'active' => Ban::active()->count(),
             ],
+            'bannableUsers' => $bannableUsers,
         ]);
     }
 
