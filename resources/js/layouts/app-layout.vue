@@ -6,16 +6,12 @@ import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vue';
 import UserMenuContent from '@/components/user-menu-content.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import {
-    Bell,
     ChevronDown,
     Compass,
     Flag,
-    HelpCircle,
-    Info,
     LayoutGrid,
     LogOut,
     Newspaper,
-    Search,
     Settings as SettingsIcon,
     ShieldCheck,
 } from 'lucide-vue-next';
@@ -32,16 +28,8 @@ const initials = computed(() => {
 });
 const isModerator = computed(() => ['moderator', 'admin', 'super_admin'].includes(user.value?.role));
 
-const pillNav = computed(() => [
-    { href: '/dashboard', label: 'Overview' },
-    { href: '/feed', label: 'Feed' },
-    { href: '/posts/mine', label: 'My Posts' },
-    { href: '/reports/mine', label: 'Reports' },
-    ...(isModerator.value ? [{ href: '/admin/dashboard', label: 'Admin' }] : []),
-]);
-
 const railNav = computed(() => [
-    { href: '/dashboard', label: 'Home', icon: Compass },
+    { href: '/dashboard', label: 'Overview', icon: Compass },
     { href: '/feed', label: 'Feed', icon: LayoutGrid },
     { href: '/posts/mine', label: 'My Posts', icon: Newspaper },
     { href: '/reports/mine', label: 'Reports', icon: Flag },
@@ -60,37 +48,10 @@ const isActive = (href) => href && (page.url === href || page.url.startsWith(hre
                     <span class="flex size-10 items-center justify-center rounded-2xl bg-rust text-paper shadow-sm">
                         <span class="font-serif text-xl leading-none">b</span>
                     </span>
+                    <span class="font-sans text-lg font-semibold tracking-tight">bob</span>
                 </Link>
 
-                <nav class="hidden items-center gap-1 rounded-full border border-border/60 bg-card/70 p-1 shadow-sm backdrop-blur md:flex">
-                    <template v-for="item in pillNav" :key="item.label">
-                        <Link
-                            v-if="item.href"
-                            :href="item.href"
-                            :class="[
-                                'rounded-full px-4 py-1.5 text-sm font-medium transition-colors',
-                                isActive(item.href) ? 'bg-ink text-paper shadow' : 'text-muted-foreground hover:text-ink',
-                            ]"
-                        >{{ item.label }}</Link>
-                        <span
-                            v-else
-                            :title="`${item.label} — coming soon`"
-                            class="cursor-not-allowed rounded-full px-4 py-1.5 text-sm font-medium text-muted-foreground/60"
-                        >{{ item.label }}</span>
-                    </template>
-                </nav>
-
                 <div class="flex items-center gap-2">
-                    <button class="inline-flex size-10 items-center justify-center rounded-full border border-border/60 bg-card/70 text-muted-foreground hover:text-ink">
-                        <Search class="size-4" />
-                    </button>
-                    <button class="relative inline-flex size-10 items-center justify-center rounded-full border border-border/60 bg-card/70 text-muted-foreground hover:text-ink">
-                        <Bell class="size-4" />
-                        <span class="absolute right-2 top-2 size-1.5 rounded-full bg-rust"></span>
-                    </button>
-                    <button class="inline-flex size-10 items-center justify-center rounded-full border border-border/60 bg-card/70 text-muted-foreground hover:text-ink">
-                        <Info class="size-4" />
-                    </button>
                     <AppearanceDropdown />
                     <DropdownMenu>
                         <DropdownMenuTrigger class="flex items-center gap-2 rounded-full border border-border/60 bg-card/70 py-1 pl-1 pr-3 shadow-sm hover:text-rust transition-colors">
@@ -112,40 +73,33 @@ const isActive = (href) => href && (page.url === href || page.url.startsWith(hre
         </header>
 
         <div class="mx-auto flex max-w-[1400px] gap-4 px-4 pb-10 sm:px-6">
-            <aside class="sticky top-24 hidden h-[calc(100vh-7rem)] shrink-0 flex-col items-center justify-between rounded-3xl border border-border/60 bg-card/70 py-4 shadow-sm backdrop-blur md:flex">
-                <nav class="flex flex-col items-center gap-1.5 px-2">
-                    <template v-for="item in railNav" :key="item.label">
-                        <Link
-                            v-if="item.href"
-                            :href="item.href"
-                            :title="item.label"
-                            :class="[
-                                'group relative inline-flex size-11 items-center justify-center rounded-2xl transition-colors',
-                                isActive(item.href) ? 'bg-ink text-paper shadow' : 'text-muted-foreground hover:bg-secondary hover:text-ink',
-                            ]"
-                        >
-                            <component :is="item.icon" class="size-[18px]" />
-                        </Link>
-                        <span
-                            v-else
-                            :title="`${item.label} — coming soon`"
-                            class="inline-flex size-11 cursor-not-allowed items-center justify-center rounded-2xl text-muted-foreground/50"
-                        >
-                            <component :is="item.icon" class="size-[18px]" />
-                        </span>
-                    </template>
+            <!-- Expanded sidebar: icon + label -->
+            <aside class="sticky top-24 hidden h-[calc(100vh-7rem)] w-56 shrink-0 flex-col justify-between rounded-3xl border border-border/60 bg-card/70 py-4 shadow-sm backdrop-blur md:flex">
+                <nav class="flex flex-col gap-1 px-3">
+                    <Link
+                        v-for="item in railNav"
+                        :key="item.label"
+                        :href="item.href"
+                        :class="[
+                            'group inline-flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium transition-colors',
+                            isActive(item.href)
+                                ? 'bg-ink text-paper shadow'
+                                : 'text-muted-foreground hover:bg-secondary hover:text-ink',
+                        ]"
+                    >
+                        <component :is="item.icon" class="size-[18px] shrink-0" />
+                        <span>{{ item.label }}</span>
+                    </Link>
                 </nav>
-                <div class="flex flex-col items-center gap-1.5 px-2">
-                    <button class="inline-flex size-11 items-center justify-center rounded-2xl text-muted-foreground hover:bg-secondary hover:text-ink">
-                        <HelpCircle class="size-[18px]" />
-                    </button>
+                <div class="px-3">
                     <Link
                         href="/logout"
                         method="post"
                         as="button"
-                        class="inline-flex size-11 items-center justify-center rounded-2xl text-muted-foreground hover:bg-secondary hover:text-ink"
+                        class="inline-flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-ink"
                     >
-                        <LogOut class="size-[18px]" />
+                        <LogOut class="size-[18px] shrink-0" />
+                        <span>Log out</span>
                     </Link>
                 </div>
             </aside>
