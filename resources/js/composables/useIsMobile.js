@@ -4,7 +4,7 @@ const MOBILE_BREAKPOINT = 768;
 
 export function useIsMobile() {
     const isMobile = ref(false);
-    let mql: MediaQueryList | null = null;
+    let mql = null;
 
     const update = () => {
         isMobile.value = mql?.matches ?? false;

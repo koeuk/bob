@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import HeadingSmall from '@/components/heading-small.vue';
 import Button from '@/components/ui/Button.vue';
 import AppLayout from '@/layouts/app-layout.vue';
@@ -7,7 +7,6 @@ import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
 import { disable, enable } from '@/routes/two-factor';
 import { Head, router } from '@inertiajs/vue3';
 
-defineProps<{ twoFactorEnabled: boolean; confirmsTwoFactorAuthentication: boolean }>();
 
 const { qrCodeSvg, manualSetupKey, recoveryCodesList, fetchSetupData, fetchRecoveryCodes, clearSetupData } = useTwoFactorAuth();
 

@@ -1,11 +1,9 @@
-<script setup lang="ts">
+<script setup>
 import Avatar from '@/components/ui/Avatar.vue';
 import AvatarFallback from '@/components/ui/AvatarFallback.vue';
 import AvatarImage from '@/components/ui/AvatarImage.vue';
 import { useInitials } from '@/composables/useInitials';
-import type { User } from '@/types';
 
-defineProps<{ user: User; showEmail?: boolean }>();
 const getInitials = useInitials();
 </script>
 

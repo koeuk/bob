@@ -1,8 +1,6 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
-import type { Component } from 'vue';
 
-defineProps<{ iconNode: Component; class?: string }>();
 </script>
 
 <template>

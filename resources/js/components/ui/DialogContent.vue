@@ -1,18 +1,16 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
 import { XIcon } from 'lucide-vue-next';
 import {
     DialogClose,
     DialogContent,
-    type DialogContentEmits,
-    type DialogContentProps,
+     
+     
     DialogOverlay,
     DialogPortal,
     useForwardPropsEmits,
 } from 'radix-vue';
 
-const props = defineProps<DialogContentProps & { class?: string }>();
-const emits = defineEmits<DialogContentEmits>();
 const forwarded = useForwardPropsEmits(props, emits);
 </script>
 

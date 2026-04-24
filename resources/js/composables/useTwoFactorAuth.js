@@ -1,34 +1,24 @@
-import { qrCode, recoveryCodes, secretKey } from '@/routes/two-factor';
 import { computed, ref } from 'vue';
-
-interface TwoFactorSetupData {
-    svg: string;
-    url: string;
-}
-
-interface TwoFactorSecretKey {
-    secretKey: string;
-}
 
 export const OTP_MAX_LENGTH = 6;
 
-async function fetchJson<T>(url: string): Promise<T> {
+async function fetchJson(url) {
     const response = await fetch(url, { headers: { Accept: 'application/json' } });
     if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
     return response.json();
 }
 
 export function useTwoFactorAuth() {
-    const qrCodeSvg = ref<string | null>(null);
-    const manualSetupKey = ref<string | null>(null);
-    const recoveryCodesList = ref<string[]>([]);
-    const errors = ref<string[]>([]);
+    const qrCodeSvg = ref(null);
+    const manualSetupKey = ref(null);
+    const recoveryCodesList = ref([]);
+    const errors = ref([]);
 
     const hasSetupData = computed(() => qrCodeSvg.value !== null && manualSetupKey.value !== null);
 
     async function fetchQrCode() {
         try {
-            const { svg } = await fetchJson<TwoFactorSetupData>(qrCode.url());
+            const { svg } = await fetchJson('/user/two-factor-qr-code');
             qrCodeSvg.value = svg;
         } catch {
             errors.value = [...errors.value, 'Failed to fetch QR code'];
@@ -38,8 +28,8 @@ export function useTwoFactorAuth() {
 
     async function fetchSetupKey() {
         try {
-            const { secretKey: key } = await fetchJson<TwoFactorSecretKey>(secretKey.url());
-            manualSetupKey.value = key;
+            const { secretKey } = await fetchJson('/user/two-factor-secret-key');
+            manualSetupKey.value = secretKey;
         } catch {
             errors.value = [...errors.value, 'Failed to fetch a setup key'];
             manualSetupKey.value = null;
@@ -59,7 +49,7 @@ export function useTwoFactorAuth() {
     async function fetchRecoveryCodes() {
         try {
             clearErrors();
-            const codes = await fetchJson<string[]>(recoveryCodes.url());
+            const codes = await fetchJson('/user/two-factor-recovery-codes');
             recoveryCodesList.value = codes;
         } catch {
             errors.value = [...errors.value, 'Failed to fetch recovery codes'];
@@ -78,16 +68,7 @@ export function useTwoFactorAuth() {
     }
 
     return {
-        qrCodeSvg,
-        manualSetupKey,
-        recoveryCodesList,
-        hasSetupData,
-        errors,
-        clearErrors,
-        clearSetupData,
-        fetchQrCode,
-        fetchSetupKey,
-        fetchSetupData,
-        fetchRecoveryCodes,
+        qrCodeSvg, manualSetupKey, recoveryCodesList, hasSetupData, errors,
+        clearErrors, clearSetupData, fetchQrCode, fetchSetupKey, fetchSetupData, fetchRecoveryCodes,
     };
 }

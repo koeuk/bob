@@ -1,14 +1,13 @@
 import { ref } from 'vue';
 
 export function useClipboard() {
-    const copiedText = ref<string | null>(null);
+    const copiedText = ref(null);
 
-    async function copy(text: string): Promise<boolean> {
+    async function copy(text) {
         if (!navigator?.clipboard) {
             console.warn('Clipboard not supported');
             return false;
         }
-
         try {
             await navigator.clipboard.writeText(text);
             copiedText.value = text;

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import HeadingSmall from '@/components/heading-small.vue';
 import InputError from '@/components/input-error.vue';
 import Button from '@/components/ui/Button.vue';

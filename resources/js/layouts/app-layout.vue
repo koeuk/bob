@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import AppLogo from '@/components/app-logo.vue';
 import AppearanceDropdown from '@/components/appearance-dropdown.vue';
 import Breadcrumbs from '@/components/breadcrumbs.vue';
@@ -8,10 +8,8 @@ import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vue';
 import UserInfo from '@/components/user-info.vue';
 import UserMenuContent from '@/components/user-menu-content.vue';
 import { dashboard } from '@/routes';
-import type { BreadcrumbItem, SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 
-defineProps<{ breadcrumbs?: BreadcrumbItem[] }>();
 
 const page = usePage<SharedData>();
 </script>

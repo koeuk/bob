@@ -1,20 +1,17 @@
-<script setup lang="ts">
+<script setup>
 import DropdownMenuGroup from '@/components/ui/DropdownMenuGroup.vue';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem.vue';
 import DropdownMenuLabel from '@/components/ui/DropdownMenuLabel.vue';
 import DropdownMenuSeparator from '@/components/ui/DropdownMenuSeparator.vue';
 import UserInfo from '@/components/user-info.vue';
-import { edit as editProfile } from '@/routes/profile';
-import { logout } from '@/routes';
-import type { User } from '@/types';
 import { Link, router } from '@inertiajs/vue3';
 import { LogOut, Settings } from 'lucide-vue-next';
 
-defineProps<{ user: User }>();
+defineProps({ user: { type: Object, required: true } });
 
-function handleLogout(e: Event) {
+function handleLogout(e) {
     e.preventDefault();
-    router.post(logout.url());
+    router.post('/logout');
 }
 </script>
 
@@ -27,7 +24,7 @@ function handleLogout(e: Event) {
     <DropdownMenuSeparator />
     <DropdownMenuGroup>
         <DropdownMenuItem as-child>
-            <Link :href="editProfile.url()" class="block w-full" prefetch>
+            <Link href="/settings/profile" class="block w-full" prefetch>
                 <Settings class="mr-2 size-4" /> Settings
             </Link>
         </DropdownMenuItem>

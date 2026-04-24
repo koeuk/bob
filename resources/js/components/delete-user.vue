@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import HeadingSmall from '@/components/heading-small.vue';
 import InputError from '@/components/input-error.vue';
 import Button from '@/components/ui/Button.vue';
@@ -11,16 +11,15 @@ import DialogTitle from '@/components/ui/DialogTitle.vue';
 import DialogTrigger from '@/components/ui/DialogTrigger.vue';
 import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
-import { destroy as destroyProfile } from '@/routes/profile';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 const form = useForm({ password: '' });
 const open = ref(false);
-const passwordInput = ref<HTMLInputElement | null>(null);
+const passwordInput = ref(null);
 
 function submit() {
-    form.delete(destroyProfile.url(), {
+    form.delete('/profile', {
         preserveScroll: true,
         onSuccess: () => {
             open.value = false;

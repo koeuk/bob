@@ -1,7 +1,6 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
-import { DialogDescription as RDialogDescription, type DialogDescriptionProps } from 'radix-vue';
-defineProps<DialogDescriptionProps & { class?: string }>();
+import { DialogDescription as RDialogDescription } from 'radix-vue';
 </script>
 
 <template>

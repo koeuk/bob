@@ -1,10 +1,9 @@
-<script setup lang="ts">
+<script setup>
 import Alert from '@/components/ui/Alert.vue';
 import AlertDescription from '@/components/ui/AlertDescription.vue';
 import AlertTitle from '@/components/ui/AlertTitle.vue';
 import { AlertCircle } from 'lucide-vue-next';
 
-defineProps<{ title?: string; errors?: string[] | string | null }>();
 </script>
 
 <template>

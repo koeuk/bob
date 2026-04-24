@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import InputError from '@/components/input-error.vue';
 import Button from '@/components/ui/Button.vue';
 import Input from '@/components/ui/Input.vue';
@@ -8,7 +8,6 @@ import AuthLayout from '@/layouts/auth-layout.vue';
 import { store } from '@/routes/password';
 import { Head, useForm } from '@inertiajs/vue3';
 
-const props = defineProps<{ token: string; email: string }>();
 
 const form = useForm({
     token: props.token,

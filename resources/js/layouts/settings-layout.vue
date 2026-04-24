@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import Heading from '@/components/heading.vue';
 import Separator from '@/components/ui/Separator.vue';
 import { cn } from '@/lib/utils';

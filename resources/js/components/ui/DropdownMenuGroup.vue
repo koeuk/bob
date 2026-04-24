@@ -1,6 +1,5 @@
-<script setup lang="ts">
-import { DropdownMenuGroup, type DropdownMenuGroupProps } from 'radix-vue';
-defineProps<DropdownMenuGroupProps>();
+<script setup>
+import { DropdownMenuGroup } from 'radix-vue';
 </script>
 
 <template>

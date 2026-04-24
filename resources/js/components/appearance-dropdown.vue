@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script setup>
 import DropdownMenu from '@/components/ui/DropdownMenu.vue';
 import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vue';
 import DropdownMenuItem from '@/components/ui/DropdownMenuItem.vue';
 import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vue';
-import { type Appearance, useAppearance } from '@/composables/useAppearance';
+import {  useAppearance } from '@/composables/useAppearance';
 import { Monitor, Moon, Sun } from 'lucide-vue-next';
 import { computed } from 'vue';
 

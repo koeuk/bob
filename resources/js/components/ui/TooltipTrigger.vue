@@ -1,6 +1,5 @@
-<script setup lang="ts">
-import { TooltipTrigger, type TooltipTriggerProps } from 'radix-vue';
-defineProps<TooltipTriggerProps>();
+<script setup>
+import { TooltipTrigger } from 'radix-vue';
 </script>
 
 <template>

@@ -1,6 +1,5 @@
-<script setup lang="ts">
-import { DropdownMenuTrigger, type DropdownMenuTriggerProps } from 'radix-vue';
-defineProps<DropdownMenuTriggerProps>();
+<script setup>
+import { DropdownMenuTrigger } from 'radix-vue';
 </script>
 
 <template>

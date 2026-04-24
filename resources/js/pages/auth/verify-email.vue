@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import Button from '@/components/ui/Button.vue';
 import Spinner from '@/components/ui/Spinner.vue';
 import AuthLayout from '@/layouts/auth-layout.vue';
@@ -6,7 +6,6 @@ import { logout } from '@/routes';
 import { send } from '@/routes/verification';
 import { Head, useForm } from '@inertiajs/vue3';
 
-defineProps<{ status?: string }>();
 
 const form = useForm({});
 

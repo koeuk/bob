@@ -1,7 +1,6 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
 
-defineProps<{ message?: string; class?: string }>();
 </script>
 
 <template>

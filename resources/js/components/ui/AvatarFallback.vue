@@ -1,7 +1,6 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
-import { AvatarFallback, type AvatarFallbackProps } from 'radix-vue';
-defineProps<AvatarFallbackProps & { class?: string }>();
+import { AvatarFallback } from 'radix-vue';
 </script>
 
 <template>

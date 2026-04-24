@@ -1,7 +1,7 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { Primitive, type PrimitiveProps } from 'radix-vue';
+import { cva } from 'class-variance-authority';
+import { Primitive } from 'radix-vue';
 import { computed } from 'vue';
 
 const badgeVariants = cva(
@@ -19,10 +19,12 @@ const badgeVariants = cva(
     },
 );
 
-const props = withDefaults(
-    defineProps<PrimitiveProps & { variant?: VariantProps<typeof badgeVariants>['variant']; class?: string }>(),
-    { as: 'span' },
-);
+const props = defineProps({
+    as: { type: String, default: 'span' },
+    asChild: Boolean,
+    variant: String,
+    class: String,
+});
 
 const classes = computed(() => cn(badgeVariants({ variant: props.variant }), props.class));
 </script>

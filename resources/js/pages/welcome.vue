@@ -1,10 +1,7 @@
-<script setup lang="ts">
-import { login, register } from '@/routes';
-import { dashboard } from '@/routes';
-import type { SharedData } from '@/types';
+<script setup>
 import { Head, Link, usePage } from '@inertiajs/vue3';
 
-const page = usePage<SharedData>();
+const page = usePage();
 </script>
 
 <template>
@@ -14,9 +11,9 @@ const page = usePage<SharedData>();
             <h1 class="text-4xl font-semibold tracking-tight">Welcome to {{ page.props.name }}</h1>
             <p class="text-muted-foreground">Laravel 12 · Vue 3 · Inertia</p>
             <div class="flex justify-center gap-3">
-                <Link v-if="!page.props.auth.user" :href="login.url()" class="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90">Log in</Link>
-                <Link v-if="!page.props.auth.user" :href="register.url()" class="rounded-md border px-4 py-2 text-sm hover:bg-accent">Register</Link>
-                <Link v-else :href="dashboard.url()" class="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90">Dashboard</Link>
+                <Link v-if="!page.props.auth.user" href="/login" class="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90">Log in</Link>
+                <Link v-if="!page.props.auth.user" href="/register" class="rounded-md border px-4 py-2 text-sm hover:bg-accent">Register</Link>
+                <Link v-else href="/dashboard" class="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90">Dashboard</Link>
             </div>
         </div>
     </div>

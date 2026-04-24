@@ -1,7 +1,7 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { Primitive, type PrimitiveProps } from 'radix-vue';
+import { cva } from 'class-variance-authority';
+import { Primitive } from 'radix-vue';
 import { computed } from 'vue';
 
 const buttonVariants = cva(
@@ -27,18 +27,14 @@ const buttonVariants = cva(
     },
 );
 
-type ButtonVariants = VariantProps<typeof buttonVariants>;
 
-const props = withDefaults(
-    defineProps<
-        PrimitiveProps & {
-            variant?: ButtonVariants['variant'];
-            size?: ButtonVariants['size'];
-            class?: string;
-        }
-    >(),
-    { as: 'button' },
-);
+const props = defineProps({
+    as: { type: String, default: 'button' },
+    asChild: Boolean,
+    variant: String,
+    size: String,
+    class: String,
+});
 
 const classes = computed(() => cn(buttonVariants({ variant: props.variant, size: props.size }), props.class));
 </script>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import AppLogoIcon from '@/components/app-logo-icon.vue';
 </script>
 

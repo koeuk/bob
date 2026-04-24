@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import DeleteUser from '@/components/delete-user.vue';
 import HeadingSmall from '@/components/heading-small.vue';
 import InputError from '@/components/input-error.vue';
@@ -10,10 +10,8 @@ import AppLayout from '@/layouts/app-layout.vue';
 import SettingsLayout from '@/layouts/settings-layout.vue';
 import { send as sendVerification } from '@/routes/verification';
 import { update as updateProfile } from '@/routes/profile';
-import type { SharedData } from '@/types';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 
-defineProps<{ mustVerifyEmail: boolean; status?: string }>();
 
 const page = usePage<SharedData>();
 const user = page.props.auth.user;

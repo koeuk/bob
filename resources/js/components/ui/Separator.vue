@@ -1,10 +1,11 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
-import { Separator as RSeparator, type SeparatorProps } from 'radix-vue';
+import { Separator as RSeparator } from 'radix-vue';
 
-const props = withDefaults(defineProps<SeparatorProps & { class?: string }>(), {
-    orientation: 'horizontal',
-    decorative: true,
+const props = defineProps({
+    orientation: { type: String, default: 'horizontal' },
+    decorative: { type: Boolean, default: true },
+    class: String,
 });
 </script>
 

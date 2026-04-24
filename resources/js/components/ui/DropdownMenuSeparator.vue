@@ -1,7 +1,6 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
-import { DropdownMenuSeparator as RSep, type DropdownMenuSeparatorProps } from 'radix-vue';
-defineProps<DropdownMenuSeparatorProps & { class?: string }>();
+import { DropdownMenuSeparator as RSep } from 'radix-vue';
 </script>
 
 <template>

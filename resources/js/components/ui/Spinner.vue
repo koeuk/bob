@@ -1,8 +1,7 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
 import { LoaderCircle } from 'lucide-vue-next';
 
-defineProps<{ class?: string }>();
 </script>
 
 <template>

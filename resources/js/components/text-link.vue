@@ -1,8 +1,7 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
 import { Link } from '@inertiajs/vue3';
 
-defineProps<{ href: string; class?: string; as?: string; method?: string }>();
 </script>
 
 <template>

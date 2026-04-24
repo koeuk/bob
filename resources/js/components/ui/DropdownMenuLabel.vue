@@ -1,7 +1,6 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
-import { DropdownMenuLabel as RLabel, type DropdownMenuLabelProps } from 'radix-vue';
-defineProps<DropdownMenuLabelProps & { class?: string; inset?: boolean }>();
+import { DropdownMenuLabel as RLabel } from 'radix-vue';
 </script>
 
 <template>

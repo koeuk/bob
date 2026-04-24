@@ -1,9 +1,7 @@
-<script setup lang="ts">
-import type { BreadcrumbItem } from '@/types';
+<script setup>
 import { Link } from '@inertiajs/vue3';
 import { ChevronRight } from 'lucide-vue-next';
 
-defineProps<{ breadcrumbs: BreadcrumbItem[] }>();
 </script>
 
 <template>

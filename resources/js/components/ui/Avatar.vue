@@ -1,7 +1,6 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
-import { AvatarRoot, type AvatarRootProps } from 'radix-vue';
-defineProps<AvatarRootProps & { class?: string }>();
+import { AvatarRoot } from 'radix-vue';
 </script>
 
 <template>

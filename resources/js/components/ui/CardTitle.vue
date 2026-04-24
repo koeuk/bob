@@ -1,6 +1,5 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
-defineProps<{ class?: string }>();
 </script>
 
 <template>

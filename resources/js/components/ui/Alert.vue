@@ -1,6 +1,6 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { computed } from 'vue';
 
 const alertVariants = cva(
@@ -16,10 +16,10 @@ const alertVariants = cva(
     },
 );
 
-const props = defineProps<{
-    variant?: VariantProps<typeof alertVariants>['variant'];
-    class?: string;
-}>();
+const props = defineProps({
+    variant: String,
+    class: String,
+});
 
 const classes = computed(() => cn(alertVariants({ variant: props.variant }), props.class));
 </script>

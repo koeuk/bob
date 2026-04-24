@@ -1,6 +1,5 @@
-<script setup lang="ts">
-import { DialogClose as RDialogClose, type DialogCloseProps } from 'radix-vue';
-defineProps<DialogCloseProps>();
+<script setup>
+import { DialogClose as RDialogClose } from 'radix-vue';
 </script>
 
 <template>

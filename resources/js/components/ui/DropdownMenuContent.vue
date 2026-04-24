@@ -1,15 +1,19 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
 import {
     DropdownMenuContent,
-    type DropdownMenuContentEmits,
-    type DropdownMenuContentProps,
+     
+     
     DropdownMenuPortal,
     useForwardPropsEmits,
 } from 'radix-vue';
 
-const props = withDefaults(defineProps<DropdownMenuContentProps & { class?: string }>(), { sideOffset: 4 });
-const emits = defineEmits<DropdownMenuContentEmits>();
+const props = defineProps({
+    align: String,
+    sideOffset: { type: Number, default: 4 },
+    class: String,
+});
+const emits = defineEmits(['closeAutoFocus', 'escapeKeyDown', 'pointerDownOutside', 'focusOutside', 'interactOutside']);
 const forwarded = useForwardPropsEmits(props, emits);
 </script>
 

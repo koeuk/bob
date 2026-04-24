@@ -1,11 +1,9 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
 import { CheckIcon } from 'lucide-vue-next';
-import { CheckboxIndicator, CheckboxRoot, type CheckboxRootProps, useForwardPropsEmits } from 'radix-vue';
+import { CheckboxIndicator, CheckboxRoot, useForwardPropsEmits } from 'radix-vue';
 import { computed } from 'vue';
 
-const props = defineProps<CheckboxRootProps & { class?: string }>();
-const emits = defineEmits<{ (e: 'update:checked', v: boolean): void }>();
 
 const delegated = computed(() => {
     const { class: _, ...rest } = props;

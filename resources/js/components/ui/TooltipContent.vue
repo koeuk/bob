@@ -1,9 +1,12 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
-import { TooltipContent, type TooltipContentEmits, type TooltipContentProps, TooltipPortal, useForwardPropsEmits } from 'radix-vue';
+import { TooltipContent, TooltipPortal, useForwardPropsEmits } from 'radix-vue';
 
-const props = withDefaults(defineProps<TooltipContentProps & { class?: string }>(), { sideOffset: 4 });
-const emits = defineEmits<TooltipContentEmits>();
+const props = defineProps({
+    sideOffset: { type: Number, default: 4 },
+    class: String,
+});
+const emits = defineEmits(['escapeKeyDown', 'pointerDownOutside']);
 const forwarded = useForwardPropsEmits(props, emits);
 </script>
 

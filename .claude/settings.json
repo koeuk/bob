@@ -17,7 +17,11 @@
       "Bash(grep -v \"^ui$\")",
       "Bash(grep \"\\\\.tsx$\")",
       "Bash(npm uninstall *)",
-      "Bash(node -e \"const p=require\\('./package.json'\\); Object.keys\\(p.dependencies\\).sort\\(\\).forEach\\(k=>console.log\\(k\\)\\); console.log\\('---dev:'\\); Object.keys\\(p.devDependencies||{}\\).sort\\(\\).forEach\\(k=>console.log\\(k\\)\\)\")"
+      "Bash(node -e \"const p=require\\('./package.json'\\); Object.keys\\(p.dependencies\\).sort\\(\\).forEach\\(k=>console.log\\(k\\)\\); console.log\\('---dev:'\\); Object.keys\\(p.devDependencies||{}\\).sort\\(\\).forEach\\(k=>console.log\\(k\\)\\)\")",
+      "Bash(xargs sed *)"
+    ],
+    "additionalDirectories": [
+      "/home/koeuk/Desktop/bob/resources/js/composables"
     ]
   }
 }

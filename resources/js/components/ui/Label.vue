@@ -1,8 +1,7 @@
-<script setup lang="ts">
+<script setup>
 import { cn } from '@/lib/utils';
-import { Label as RLabel, type LabelProps } from 'radix-vue';
+import { Label as RLabel } from 'radix-vue';
 
-defineProps<LabelProps & { class?: string }>();
 </script>
 
 <template>

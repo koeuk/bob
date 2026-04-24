@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup>
 import InputError from '@/components/input-error.vue';
 import TextLink from '@/components/text-link.vue';
 import Button from '@/components/ui/Button.vue';
@@ -7,17 +7,14 @@ import Input from '@/components/ui/Input.vue';
 import Label from '@/components/ui/Label.vue';
 import Spinner from '@/components/ui/Spinner.vue';
 import AuthLayout from '@/layouts/auth-layout.vue';
-import { register } from '@/routes';
-import { store } from '@/routes/login';
-import { request } from '@/routes/password';
 import { Head, useForm } from '@inertiajs/vue3';
 
-defineProps<{ status?: string; canResetPassword: boolean; canRegister: boolean }>();
+defineProps({ status: String, canResetPassword: Boolean, canRegister: Boolean });
 
 const form = useForm({ email: '', password: '', remember: false });
 
 function submit() {
-    form.post(store.url(), { onFinish: () => form.reset('password') });
+    form.post('/login', { onFinish: () => form.reset('password') });
 }
 </script>
 
@@ -37,7 +34,7 @@ function submit() {
             <div class="grid gap-2">
                 <div class="flex items-center">
                     <Label for="password">Password</Label>
-                    <TextLink v-if="canResetPassword" :href="request.url()" class="ml-auto text-sm">Forgot password?</TextLink>
+                    <TextLink v-if="canResetPassword" href="/forgot-password" class="ml-auto text-sm">Forgot password?</TextLink>
                 </div>
                 <Input id="password" v-model="form.password" type="password" required autocomplete="current-password" placeholder="Password" />
                 <InputError :message="form.errors.password" />
@@ -55,7 +52,7 @@ function submit() {
 
             <div v-if="canRegister" class="text-center text-sm text-muted-foreground">
                 Don't have an account?
-                <TextLink :href="register.url()">Sign up</TextLink>
+                <TextLink href="/register">Sign up</TextLink>
             </div>
         </form>
     </AuthLayout>
