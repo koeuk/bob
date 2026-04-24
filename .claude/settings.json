@@ -25,7 +25,8 @@
       "Bash(sudo -n chown -R koeuk:koeuk /home/koeuk/Desktop/bob)",
       "Bash(echo \"---exit:$?---\")",
       "Bash(composer show *)",
-      "Bash(node -e \"console.log\\('version:', require\\('./node_modules/@inertiajs/vue3/package.json'\\).version\\)\")"
+      "Bash(node -e \"console.log\\('version:', require\\('./node_modules/@inertiajs/vue3/package.json'\\).version\\)\")",
+      "Bash(php -l app/Providers/AuthServiceProvider.php app/Http/Controllers/Admin/UsersController.php app/Http/Controllers/Admin/BansController.php)"
     ],
     "additionalDirectories": [
       "/home/koeuk/Desktop/bob/resources/js/composables",
