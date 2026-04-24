@@ -21,7 +21,8 @@
       "Bash(xargs sed *)"
     ],
     "additionalDirectories": [
-      "/home/koeuk/Desktop/bob/resources/js/composables"
+      "/home/koeuk/Desktop/bob/resources/js/composables",
+      "/tmp"
     ]
   }
 }
