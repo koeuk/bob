@@ -20,11 +20,11 @@ class PostsController extends Controller
         $posts = QueryBuilder::for(Post::class)
             ->with('user:id,uuid,name')
             ->withCount(['comments', 'likes', 'reports'])
-            ->allowedFilters([
+            ->allowedFilters(...[
                 AllowedFilter::exact('status'),
                 AllowedFilter::partial('search', 'body'),
             ])
-            ->allowedSorts(['created_at', 'status'])
+            ->allowedSorts(...['created_at', 'status'])
             ->defaultSort('-created_at')
             ->paginate($request->integer('per_page', 25))
             ->withQueryString();

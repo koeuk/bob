@@ -22,7 +22,7 @@ class UsersController extends Controller
             ->select(['id', 'uuid', 'name', 'email', 'role', 'created_at', 'email_verified_at'])
             ->withCount(['posts', 'comments'])
             ->with(['bans' => fn ($q) => $q->active()])
-            ->allowedFilters([
+            ->allowedFilters(...[
                 AllowedFilter::callback('search', function ($q, $value) {
                     $q->where(function ($inner) use ($value) {
                         $inner->where('name', 'like', "%{$value}%")
@@ -36,7 +36,7 @@ class UsersController extends Controller
                     }
                 }),
             ])
-            ->allowedSorts(['name', 'email', 'created_at'])
+            ->allowedSorts(...['name', 'email', 'created_at'])
             ->defaultSort('-created_at')
             ->paginate($request->integer('per_page', 25))
             ->withQueryString();
