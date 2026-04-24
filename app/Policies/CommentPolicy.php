@@ -12,6 +12,16 @@ class CommentPolicy
         return $user->isModerator();
     }
 
+    public function create(User $user): bool
+    {
+        return $user->isModerator() || ! $user->isBanned();
+    }
+
+    public function update(User $user, Comment $comment): bool
+    {
+        return $user->isModerator() || $comment->user_id === $user->id;
+    }
+
     public function delete(User $user, Comment $comment): bool
     {
         return $user->isModerator() || $comment->user_id === $user->id;

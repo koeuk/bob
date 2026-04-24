@@ -7,19 +7,17 @@ import UserMenuContent from '@/components/user-menu-content.vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import {
     Bell,
-    Bookmark,
     ChevronDown,
     Compass,
+    Flag,
     HelpCircle,
     Info,
     LayoutGrid,
     LogOut,
-    Mail,
-    MessageSquare,
+    Newspaper,
     Search,
     Settings as SettingsIcon,
     ShieldCheck,
-    Users,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 
@@ -34,27 +32,24 @@ const initials = computed(() => {
 });
 const isModerator = computed(() => ['moderator', 'admin', 'super_admin'].includes(user.value?.role));
 
-const pillNav = [
+const pillNav = computed(() => [
     { href: '/dashboard', label: 'Overview' },
     { href: '/feed', label: 'Feed' },
-    { href: '/friends', label: 'People' },
-    { href: '/pages', label: 'Pages' },
-    { href: '/bookmarks', label: 'Bookmarks' },
-    { href: '/reports', label: 'Reports' },
-];
+    { href: '/posts/mine', label: 'My Posts' },
+    { href: '/reports/mine', label: 'Reports' },
+    ...(isModerator.value ? [{ href: '/admin/dashboard', label: 'Admin' }] : []),
+]);
 
 const railNav = computed(() => [
     { href: '/dashboard', label: 'Home', icon: Compass },
     { href: '/feed', label: 'Feed', icon: LayoutGrid },
-    { href: '/messages', label: 'Messages', icon: Mail },
-    { href: '/notifications', label: 'Notices', icon: MessageSquare },
-    { href: '/friends', label: 'People', icon: Users },
-    { href: '/bookmarks', label: 'Bookmarks', icon: Bookmark },
+    { href: '/posts/mine', label: 'My Posts', icon: Newspaper },
+    { href: '/reports/mine', label: 'Reports', icon: Flag },
     { href: '/settings/profile', label: 'Settings', icon: SettingsIcon },
     ...(isModerator.value ? [{ href: '/admin/dashboard', label: 'Admin', icon: ShieldCheck }] : []),
 ]);
 
-const isActive = (href) => page.url === href || page.url.startsWith(href + '/') || page.url.startsWith(href + '?');
+const isActive = (href) => href && (page.url === href || page.url.startsWith(href + '/') || page.url.startsWith(href + '?'));
 </script>
 
 <template>
@@ -68,19 +63,21 @@ const isActive = (href) => page.url === href || page.url.startsWith(href + '/') 
                 </Link>
 
                 <nav class="hidden items-center gap-1 rounded-full border border-border/60 bg-card/70 p-1 shadow-sm backdrop-blur md:flex">
-                    <Link
-                        v-for="item in pillNav"
-                        :key="item.href"
-                        :href="item.href"
-                        :class="[
-                            'rounded-full px-4 py-1.5 text-sm font-medium transition-colors',
-                            isActive(item.href)
-                                ? 'bg-ink text-paper shadow'
-                                : 'text-muted-foreground hover:text-ink',
-                        ]"
-                    >
-                        {{ item.label }}
-                    </Link>
+                    <template v-for="item in pillNav" :key="item.label">
+                        <Link
+                            v-if="item.href"
+                            :href="item.href"
+                            :class="[
+                                'rounded-full px-4 py-1.5 text-sm font-medium transition-colors',
+                                isActive(item.href) ? 'bg-ink text-paper shadow' : 'text-muted-foreground hover:text-ink',
+                            ]"
+                        >{{ item.label }}</Link>
+                        <span
+                            v-else
+                            :title="`${item.label} — coming soon`"
+                            class="cursor-not-allowed rounded-full px-4 py-1.5 text-sm font-medium text-muted-foreground/60"
+                        >{{ item.label }}</span>
+                    </template>
                 </nav>
 
                 <div class="flex items-center gap-2">
@@ -117,20 +114,26 @@ const isActive = (href) => page.url === href || page.url.startsWith(href + '/') 
         <div class="mx-auto flex max-w-[1400px] gap-4 px-4 pb-10 sm:px-6">
             <aside class="sticky top-24 hidden h-[calc(100vh-7rem)] shrink-0 flex-col items-center justify-between rounded-3xl border border-border/60 bg-card/70 py-4 shadow-sm backdrop-blur md:flex">
                 <nav class="flex flex-col items-center gap-1.5 px-2">
-                    <Link
-                        v-for="item in railNav"
-                        :key="item.href"
-                        :href="item.href"
-                        :title="item.label"
-                        :class="[
-                            'group relative inline-flex size-11 items-center justify-center rounded-2xl transition-colors',
-                            isActive(item.href)
-                                ? 'bg-ink text-paper shadow'
-                                : 'text-muted-foreground hover:bg-secondary hover:text-ink',
-                        ]"
-                    >
-                        <component :is="item.icon" class="size-[18px]" />
-                    </Link>
+                    <template v-for="item in railNav" :key="item.label">
+                        <Link
+                            v-if="item.href"
+                            :href="item.href"
+                            :title="item.label"
+                            :class="[
+                                'group relative inline-flex size-11 items-center justify-center rounded-2xl transition-colors',
+                                isActive(item.href) ? 'bg-ink text-paper shadow' : 'text-muted-foreground hover:bg-secondary hover:text-ink',
+                            ]"
+                        >
+                            <component :is="item.icon" class="size-[18px]" />
+                        </Link>
+                        <span
+                            v-else
+                            :title="`${item.label} — coming soon`"
+                            class="inline-flex size-11 cursor-not-allowed items-center justify-center rounded-2xl text-muted-foreground/50"
+                        >
+                            <component :is="item.icon" class="size-[18px]" />
+                        </span>
+                    </template>
                 </nav>
                 <div class="flex flex-col items-center gap-1.5 px-2">
                     <button class="inline-flex size-11 items-center justify-center rounded-2xl text-muted-foreground hover:bg-secondary hover:text-ink">

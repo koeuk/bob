@@ -47,6 +47,38 @@ class UsersController extends Controller
         ]);
     }
 
+    public function create(): Response
+    {
+        return Inertia::render('admin/users/edit', [
+            'user' => null,
+        ]);
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'string', 'min:8'],
+            'role' => ['required', 'in:user,moderator,admin,super_admin'],
+        ]);
+
+        if (in_array($data['role'], ['admin', 'super_admin'], true) && ! $request->user()->isSuperAdmin()) {
+            abort(403, 'Only super admins can create admin-level users.');
+        }
+
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => $data['password'],
+            'role' => $data['role'],
+        ]);
+
+        ActivityLog::record('user.create', $user, null, $user->only(['name', 'email', 'role']));
+
+        return redirect()->route('admin.users.show', $user)->with('status', 'User created.');
+    }
+
     public function show(User $user): Response
     {
         $user->load([

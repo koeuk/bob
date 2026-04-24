@@ -156,16 +156,16 @@ const refLabel = (idx) => `ACT-${String(idx + 1).padStart(4, '0')}`;
 
                 <div class="mt-5 flex gap-2">
                     <Link
-                        href="/posts/new"
+                        href="/feed"
                         class="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-medium text-paper hover:opacity-90"
                     >
                         <Pencil class="size-4" /> New post
                     </Link>
                     <Link
-                        href="/friends"
+                        href="/posts/mine"
                         class="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border px-4 py-2.5 text-sm font-medium hover:bg-secondary"
                     >
-                        <Send class="size-4" /> Invite
+                        <Send class="size-4" /> My posts
                     </Link>
                 </div>
             </div>
@@ -240,13 +240,14 @@ const refLabel = (idx) => `ACT-${String(idx + 1).padStart(4, '0')}`;
             <div class="rounded-3xl border border-border/60 bg-card p-5 shadow-sm">
                 <div class="mb-3 flex items-center justify-between">
                     <span class="text-sm font-medium">My recent posts</span>
-                    <Link href="/posts" class="text-[11px] text-rust hover:underline">View all &rarr;</Link>
+                    <Link href="/posts/mine" class="text-[11px] text-rust hover:underline">View all &rarr;</Link>
                 </div>
                 <div v-if="myPosts.length" class="space-y-3">
-                    <div
+                    <Link
                         v-for="p in myPosts"
                         :key="p.uuid"
-                        class="rounded-2xl bg-secondary/40 p-3"
+                        :href="`/posts/${p.uuid}`"
+                        class="block rounded-2xl bg-secondary/40 p-3 transition-colors hover:bg-secondary"
                     >
                         <div class="flex items-start justify-between gap-2">
                             <div class="min-w-0 flex-1 text-sm">{{ truncate(p.body) }}</div>
@@ -263,10 +264,11 @@ const refLabel = (idx) => `ACT-${String(idx + 1).padStart(4, '0')}`;
                             <span class="inline-flex items-center gap-1"><Heart class="size-3" /> {{ p.likes_count }}</span>
                             <span class="inline-flex items-center gap-1"><MessageCircle class="size-3" /> {{ p.comments_count }}</span>
                         </div>
-                    </div>
+                    </Link>
                 </div>
                 <div v-else class="rounded-2xl bg-secondary/40 py-8 text-center text-xs text-muted-foreground">
-                    You haven't posted yet. Start your first dispatch.
+                    You haven't posted yet.
+                    <Link href="/feed" class="font-medium text-rust hover:underline">Write your first →</Link>
                 </div>
             </div>
         </section>
@@ -290,14 +292,11 @@ const refLabel = (idx) => `ACT-${String(idx + 1).padStart(4, '0')}`;
 
                 <div class="mt-6 flex gap-2">
                     <Link
-                        href="/posts/new"
+                        href="/feed"
                         class="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-ink px-4 py-2.5 text-sm font-medium text-paper hover:opacity-90"
                     >
-                        <Pencil class="size-4" /> Add draft
+                        <Pencil class="size-4" /> Write a post
                     </Link>
-                    <button class="inline-flex size-11 items-center justify-center rounded-full border border-border hover:bg-secondary">
-                        <ImagePlus class="size-4" />
-                    </button>
                 </div>
             </div>
 

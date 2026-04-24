@@ -17,6 +17,11 @@ class PostPolicy
         return $user->isModerator() || $post->user_id === $user->id;
     }
 
+    public function create(User $user): bool
+    {
+        return $user->isModerator() || ! $user->isBanned();
+    }
+
     public function update(User $user, Post $post): bool
     {
         return $user->isModerator() || $post->user_id === $user->id;
