@@ -9,7 +9,7 @@ A Facebook-like social media platform supporting multiple clients from a single 
 | Platform | Type | Auth | Description |
 |----------|------|------|-------------|
 | [Web](./web.md) | Inertia.js (SSR) | Session/Cookie | Main website with full features |
-| [Frontend SPA](./frontend-spa.md) | React SPA | Sanctum Token | Standalone single-page app |
+| [API](./frontend-api.md) | HTTP + WebSocket | Sanctum Token / SPA | Backend API contract for all non-Inertia clients |
 | [Mobile](./mobile.md) | React Native / Flutter | Sanctum Token | iOS & Android apps |
 | [Admin](./admin.md) | React SPA | Sanctum Token + Role | Admin dashboard for moderation |
 

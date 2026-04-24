@@ -2,7 +2,7 @@
 
 ## Overview
 
-Native mobile apps consuming the same Laravel API. Shares all `/api/v1/*` endpoints with the Frontend SPA.
+Native mobile apps consuming the Laravel API. See [API Platform](./frontend-api.md) for the full endpoint catalog and auth flow.
 
 ## Tech Options
 
@@ -29,7 +29,7 @@ User → Login Screen → POST /api/v1/auth/login
 
 ## API Endpoints
 
-Same as [Frontend SPA](./frontend-spa.md#api-endpoints) — all `/api/v1/*` routes.
+Same as [API Platform](./frontend-api.md#api-endpoints) — all `/api/v1/*` routes.
 
 ### Mobile-Specific Endpoints
 
