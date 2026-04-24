@@ -1,7 +1,7 @@
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Crown, Hash, Mail, ShieldBan, Trash2, UserCheck } from 'lucide-vue-next';
+import { ArrowLeft, Crown, Hash, Mail, Save, ShieldBan, Trash2, UserCheck } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -32,6 +32,9 @@ const unban = () => router.post(`/admin/users/${props.user.uuid}/unban`, {}, { p
 
 const roleForm = useForm({ role: props.user.role });
 const submitRole = () => roleForm.post(`/admin/users/${props.user.uuid}/role`, { preserveScroll: true });
+
+const profileForm = useForm({ name: props.user.name, email: props.user.email });
+const submitProfile = () => profileForm.patch(`/admin/users/${props.user.uuid}`, { preserveScroll: true });
 
 const deleteUser = () => {
     if (!window.confirm(`Delete ${props.user.name}? This cannot be undone.`)) return;
@@ -121,6 +124,40 @@ const roleClasses = (role) => {
                 <div class="mt-2 font-sans text-3xl font-semibold tracking-tight">{{ user.reports_filed_count ?? 0 }}</div>
             </div>
         </section>
+
+        <!-- Profile edit -->
+        <form class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm" @submit.prevent="submitProfile">
+            <div class="mb-4 flex items-center justify-between gap-2">
+                <h3 class="text-lg font-semibold">Profile</h3>
+                <button
+                    type="submit"
+                    class="inline-flex h-9 items-center gap-2 rounded-full bg-ink px-4 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40"
+                    :disabled="profileForm.processing || !profileForm.isDirty"
+                >
+                    <Save class="size-4" /> Save
+                </button>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                    <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Name</label>
+                    <input
+                        v-model="profileForm.name"
+                        type="text"
+                        class="h-10 w-full rounded-full bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary"
+                    />
+                    <p v-if="profileForm.errors.name" class="mt-1 text-xs text-destructive">{{ profileForm.errors.name }}</p>
+                </div>
+                <div>
+                    <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</label>
+                    <input
+                        v-model="profileForm.email"
+                        type="email"
+                        class="h-10 w-full rounded-full bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary"
+                    />
+                    <p v-if="profileForm.errors.email" class="mt-1 text-xs text-destructive">{{ profileForm.errors.email }}</p>
+                </div>
+            </div>
+        </form>
 
         <div class="grid gap-4 lg:grid-cols-2">
             <!-- Role assignment -->

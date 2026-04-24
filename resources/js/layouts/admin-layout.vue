@@ -156,6 +156,24 @@ const isActive = (href) => page.url === href || page.url.startsWith(href + '/') 
                 <div v-if="title" class="flex items-end justify-between gap-4 pt-2">
                     <h1 class="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h1>
                 </div>
+                <Transition
+                    enter-active-class="transition duration-200 ease-out"
+                    enter-from-class="-translate-y-1 opacity-0"
+                    leave-active-class="transition duration-150 ease-in"
+                    leave-to-class="-translate-y-1 opacity-0"
+                >
+                    <div v-if="page.props.flash?.status" class="rounded-2xl bg-moss/10 px-4 py-3 text-sm text-moss">
+                        {{ page.props.flash.status }}
+                    </div>
+                </Transition>
+                <Transition
+                    enter-active-class="transition duration-200 ease-out"
+                    enter-from-class="-translate-y-1 opacity-0"
+                >
+                    <div v-if="page.props.flash?.error" class="rounded-2xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                        {{ page.props.flash.error }}
+                    </div>
+                </Transition>
                 <slot />
             </main>
         </div>
