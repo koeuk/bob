@@ -35,8 +35,7 @@ class PostsController extends Controller
             ->where('user_id', $request->user()->id)
             ->withCount(['comments', 'likes'])
             ->latest()
-            ->paginate(20)
-            ->withQueryString();
+            ->get();
 
         return response()->json($posts);
     }

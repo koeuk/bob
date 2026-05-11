@@ -57,6 +57,12 @@
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-2">
+                <Link
+                    :href="`/admin/users/${user.uuid}/edit`"
+                    class="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
+                >
+                    <Pencil class="size-4" /> Edit
+                </Link>
                 <button
                     v-if="!isBanned"
                     class="inline-flex items-center gap-2 rounded-full bg-rust px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
@@ -267,7 +273,7 @@
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Camera, Crown, Hash, Mail, Save, ShieldBan, Trash2, UserCheck } from 'lucide-vue-next';
+import { ArrowLeft, Camera, Crown, Hash, Mail, Pencil, Save, ShieldBan, Trash2, UserCheck } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 const props = defineProps({

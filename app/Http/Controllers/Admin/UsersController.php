@@ -117,6 +117,13 @@ class UsersController extends Controller
         ]);
     }
 
+    public function edit(User $user): Response
+    {
+        return Inertia::render('admin/users/edit', [
+            'user' => $user,
+        ]);
+    }
+
     public function update(Request $request, User $user): RedirectResponse
     {
         $data = $request->validate([

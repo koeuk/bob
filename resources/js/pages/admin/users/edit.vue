@@ -109,7 +109,7 @@
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, Camera, Save } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
@@ -150,9 +150,12 @@ const clearAvatar = () => {
 
 const submit = () => {
     if (isNew.value) {
-        form.post('/admin/users', { preserveScroll: true, forceFormData: true });
+        form.post('/admin/users', { forceFormData: true });
     } else {
-        form.patch(`/admin/users/${props.user.uuid}`, { preserveScroll: true, forceFormData: true });
+        form.patch(`/admin/users/${props.user.uuid}`, {
+            forceFormData: true,
+            onSuccess: () => router.visit(`/admin/users/${props.user.uuid}`),
+        });
     }
 };
 </script>

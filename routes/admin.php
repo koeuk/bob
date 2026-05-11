@@ -24,6 +24,7 @@ Route::middleware(['auth', 'verified', 'role:moderator,admin,super_admin'])
         Route::get('users/create', [UsersController::class, 'create'])->name('users.create');
         Route::post('users', [UsersController::class, 'store'])->name('users.store');
         Route::get('users/{user:uuid}', [UsersController::class, 'show'])->name('users.show');
+        Route::get('users/{user:uuid}/edit', [UsersController::class, 'edit'])->name('users.edit');
         Route::patch('users/{user:uuid}', [UsersController::class, 'update'])->name('users.update');
         Route::delete('users/{user:uuid}', [UsersController::class, 'destroy'])->name('users.destroy');
         Route::post('users/{user:uuid}/ban', [UsersController::class, 'ban'])->name('users.ban');

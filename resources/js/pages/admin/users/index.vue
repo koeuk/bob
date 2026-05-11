@@ -102,6 +102,7 @@
                             class="absolute right-0 top-10 z-10 w-44 overflow-hidden rounded-2xl border border-border/60 bg-popover shadow-lg"
                         >
                             <Link :href="`/admin/users/${u.uuid}`" class="block px-4 py-2 text-sm hover:bg-secondary">View profile</Link>
+                            <Link :href="`/admin/users/${u.uuid}/edit`" class="block px-4 py-2 text-sm hover:bg-secondary">Edit user</Link>
                             <button
                                 v-if="!isBanned(u)"
                                 class="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-rust hover:bg-secondary"
