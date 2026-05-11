@@ -55,7 +55,9 @@ class PostsController extends Controller
      */
     public function show(Request $request, Post $post): JsonResponse
     {
-        abort_if($post->status === 'hidden' && $post->user_id !== $request->user()->id, 404);
+        $userId = $request->user('sanctum')?->id;
+
+        abort_if($post->status === 'hidden' && $post->user_id !== ($userId ?? -1), 404);
 
         $post->load(['user:id,uuid,name']);
         $post->loadCount(['likes']);
@@ -66,18 +68,21 @@ class PostsController extends Controller
             ->latest()
             ->get();
 
-        $userId = $request->user()->id;
+        if ($userId) {
+            $likedPost = Like::where('user_id', $userId)
+                ->where('likeable_type', Post::class)
+                ->where('likeable_id', $post->id)
+                ->exists();
 
-        $likedPost = Like::where('user_id', $userId)
-            ->where('likeable_type', Post::class)
-            ->where('likeable_id', $post->id)
-            ->exists();
-
-        $likedCommentIds = Like::where('user_id', $userId)
-            ->where('likeable_type', Comment::class)
-            ->whereIn('likeable_id', $comments->pluck('id'))
-            ->pluck('likeable_id')
-            ->all();
+            $likedCommentIds = Like::where('user_id', $userId)
+                ->where('likeable_type', Comment::class)
+                ->whereIn('likeable_id', $comments->pluck('id'))
+                ->pluck('likeable_id')
+                ->all();
+        } else {
+            $likedPost = false;
+            $likedCommentIds = [];
+        }
 
         $comments->transform(function (Comment $c) use ($likedCommentIds) {
             $c->liked_by_me = in_array($c->id, $likedCommentIds, true);

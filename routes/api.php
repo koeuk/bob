@@ -22,13 +22,15 @@ Route::prefix('auth')->group(function () {
     });
 });
 
+// Public routes — guests can browse, logged-in users get liked_by_me
+Route::get('feed', [FeedController::class, 'index']);
+Route::get('posts/{post:uuid}', [PostsController::class, 'show']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index']);
-    Route::get('feed', [FeedController::class, 'index']);
 
     Route::get('posts/mine', [PostsController::class, 'mine']);
     Route::post('posts', [PostsController::class, 'store']);
-    Route::get('posts/{post:uuid}', [PostsController::class, 'show']);
     Route::delete('posts/{post:uuid}', [PostsController::class, 'destroy']);
     Route::post('posts/{post:uuid}/like', [PostsController::class, 'like']);
 

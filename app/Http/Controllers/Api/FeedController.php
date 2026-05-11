@@ -34,7 +34,7 @@ class FeedController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $userId = $request->user()->id;
+        $userId = $request->user('sanctum')?->id;
 
         $posts = Post::with('user:id,uuid,name')
             ->where('status', 'active')
@@ -44,11 +44,13 @@ class FeedController extends Controller
             ->withQueryString();
 
         $ids = collect($posts->items())->pluck('id')->all();
-        $likedIds = Like::where('user_id', $userId)
-            ->where('likeable_type', Post::class)
-            ->whereIn('likeable_id', $ids)
-            ->pluck('likeable_id')
-            ->all();
+        $likedIds = $userId
+            ? Like::where('user_id', $userId)
+                ->where('likeable_type', Post::class)
+                ->whereIn('likeable_id', $ids)
+                ->pluck('likeable_id')
+                ->all()
+            : [];
 
         $posts->getCollection()->transform(function (Post $p) use ($likedIds) {
             $p->liked_by_me = in_array($p->id, $likedIds, true);
