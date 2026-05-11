@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Super Admin',
-                'password' => 'password',
+                'password' => '12345678',
                 'role' => 'super_admin',
                 'email_verified_at' => now(),
             ],
@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'mod@gmail.com'],
             [
                 'name' => 'Mod User',
-                'password' => 'password',
+                'password' => '12345678',
                 'role' => 'moderator',
                 'email_verified_at' => now(),
             ],
@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'test@gmail.com'],
             [
                 'name' => 'Test User',
-                'password' => 'password',
+                'password' => '12345678',
                 'email_verified_at' => now(),
             ],
         );

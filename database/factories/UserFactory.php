@@ -43,7 +43,7 @@ class UserFactory extends Factory
             'name' => $lastName . ' ' . $firstName,
             'email' => fake()->unique()->userName() . '@gmail.com',
             'email_verified_at' => now(),
-            'password' => static::$password ??= 'password',
+            'password' => static::$password ??= '12345678',
             'role' => 'user',
             'remember_token' => Str::random(10),
             'two_factor_secret' => Str::random(10),
