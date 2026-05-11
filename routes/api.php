@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\FriendRequestsController;
 use App\Http\Controllers\Api\NotificationsController;
 use App\Http\Controllers\Api\PostsController;
 use App\Http\Controllers\Api\ReportsController;
+use App\Http\Controllers\Api\UsersController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -34,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::get('posts/{post:uuid}', [PostsController::class, 'show']);
+Route::get('users/{user:uuid}', [UsersController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index']);
