@@ -12,7 +12,7 @@ class UsersController extends Controller
 {
     public function show(Request $request, User $user): JsonResponse
     {
-        $viewer = $request->user();
+        $viewer = $request->user('sanctum');
 
         $posts = $user->posts()
             ->where('visibility', 'public')
