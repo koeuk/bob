@@ -43,6 +43,15 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
+        User::firstOrCreate(
+            ['email' => 'name@gmail.com'],
+            [
+                'name' => 'Name',
+                'password' => '12345678',
+                'email_verified_at' => now(),
+            ],
+        );
+
         if (app()->environment('local', 'testing') && User::count() < 30) {
             $users = User::factory(25)->create();
 
