@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommentsController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\FeedController;
+use App\Http\Controllers\Api\FriendRequestsController;
 use App\Http\Controllers\Api\NotificationsController;
 use App\Http\Controllers\Api\PostsController;
 use App\Http\Controllers\Api\ReportsController;
@@ -48,6 +49,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('notifications', [NotificationsController::class, 'index']);
     Route::post('notifications/read-all', [NotificationsController::class, 'markAllRead']);
     Route::post('notifications/{id}/read', [NotificationsController::class, 'markRead']);
+
+    Route::post('friend-requests', [FriendRequestsController::class, 'store']);
+    Route::post('friend-requests/{id}/accept', [FriendRequestsController::class, 'accept']);
+    Route::post('friend-requests/{id}/decline', [FriendRequestsController::class, 'decline']);
+    Route::delete('friend-requests/{id}', [FriendRequestsController::class, 'cancel']);
 
     Route::get('reports/mine', [ReportsController::class, 'mine']);
     Route::post('reports', [ReportsController::class, 'store']);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\FriendRequest;
 use App\Models\Like;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
@@ -60,10 +61,43 @@ class FeedController extends Controller
                 ->keyBy('likeable_id')
             : collect();
 
-        $posts->getCollection()->transform(function (Post $p) use ($myLikes) {
+        // Build friendship status map for post authors
+        $friendMap = [];
+        if ($userId) {
+            $authorIds = collect($posts->items())
+                ->pluck('user_id')
+                ->filter(fn ($id) => $id !== $userId)
+                ->unique()
+                ->values()
+                ->all();
+
+            if (!empty($authorIds)) {
+                $friendRequests = FriendRequest::where(function ($q) use ($userId, $authorIds) {
+                    $q->where('sender_id', $userId)->whereIn('receiver_id', $authorIds);
+                })->orWhere(function ($q) use ($userId, $authorIds) {
+                    $q->where('receiver_id', $userId)->whereIn('sender_id', $authorIds);
+                })->get();
+
+                foreach ($friendRequests as $fr) {
+                    if ($fr->sender_id === $userId) {
+                        $otherId = $fr->receiver_id;
+                        $status  = $fr->status === 'accepted' ? 'friends' : 'pending_sent';
+                    } else {
+                        $otherId = $fr->sender_id;
+                        $status  = $fr->status === 'accepted' ? 'friends' : 'pending_received';
+                    }
+                    $friendMap[$otherId] = ['status' => $status, 'request_id' => $fr->id];
+                }
+            }
+        }
+
+        $posts->getCollection()->transform(function (Post $p) use ($myLikes, $userId, $friendMap) {
             $like = $myLikes->get($p->id);
             $p->liked_by_me = (bool) $like;
             $p->my_reaction = $like?->type;
+            $p->friendship_status = ($userId && $p->user_id !== $userId)
+                ? ($friendMap[$p->user_id] ?? ['status' => 'none'])
+                : null;
             return $p;
         });
 
