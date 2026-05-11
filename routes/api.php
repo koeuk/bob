@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommentsController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\FeedController;
+use App\Http\Controllers\Api\NotificationsController;
 use App\Http\Controllers\Api\PostsController;
 use App\Http\Controllers\Api\ReportsController;
 use Illuminate\Support\Facades\Route;
@@ -24,12 +25,16 @@ Route::prefix('auth')->group(function () {
 
 // Public routes — guests can browse, logged-in users get liked_by_me
 Route::get('feed', [FeedController::class, 'index']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    // must be before the public posts/{uuid} wildcard
+    Route::get('posts/mine', [PostsController::class, 'mine']);
+});
+
 Route::get('posts/{post:uuid}', [PostsController::class, 'show']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index']);
-
-    Route::get('posts/mine', [PostsController::class, 'mine']);
     Route::post('posts', [PostsController::class, 'store']);
     Route::post('posts/{post:uuid}', [PostsController::class, 'update']);
     Route::delete('posts/{post:uuid}', [PostsController::class, 'destroy']);
@@ -38,6 +43,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('posts/{post:uuid}/comments', [CommentsController::class, 'store']);
     Route::delete('comments/{comment:uuid}', [CommentsController::class, 'destroy']);
     Route::post('comments/{comment:uuid}/like', [CommentsController::class, 'like']);
+
+    Route::get('notifications', [NotificationsController::class, 'index']);
+    Route::post('notifications/read-all', [NotificationsController::class, 'markAllRead']);
+    Route::post('notifications/{id}/read', [NotificationsController::class, 'markRead']);
 
     Route::get('reports/mine', [ReportsController::class, 'mine']);
     Route::post('reports', [ReportsController::class, 'store']);

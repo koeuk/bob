@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Post;
+use App\Notifications\PostCommented;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -43,6 +44,12 @@ class CommentsController extends Controller
         ]);
 
         $comment->load('user:id,uuid,name');
+
+        // Notify post owner (skip if commenter is the post owner)
+        $post->load('user');
+        if ($post->user_id !== $request->user()->id) {
+            $post->user->notify(new PostCommented($request->user(), $post, $comment));
+        }
 
         return response()->json($comment, 201);
     }

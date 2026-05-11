@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Post;
+use App\Notifications\PostLiked;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -242,6 +243,11 @@ class PostsController extends Controller
                     'type'          => $type,
                 ]);
                 $myReaction = $type;
+
+                // Notify post owner (skip self-reactions)
+                if ($post->user_id !== $user->id) {
+                    $post->user->notify(new PostLiked($user, $post, $type));
+                }
             } else {
                 $myReaction = null;
             }
