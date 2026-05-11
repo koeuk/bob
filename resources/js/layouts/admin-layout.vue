@@ -52,14 +52,36 @@ const isActive = (href) => page.url === href || page.url.startsWith(href + '/') 
     <div class="min-h-screen bg-background text-foreground">
         <header class="sticky top-0 z-30 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div class="mx-auto flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
-                <Link href="/admin/dashboard" class="flex items-center gap-2.5">
+                <Link href="/admin/dashboard" class="flex shrink-0 items-center gap-2.5 mr-2">
                     <span class="flex size-10 items-center justify-center rounded-2xl bg-rust text-paper shadow-sm">
                         <span class="font-serif text-xl leading-none">b</span>
                     </span>
                     <span class="font-sans text-lg font-semibold tracking-tight">bob<span class="text-rust">/</span>admin</span>
                 </Link>
 
-                <div class="flex items-center gap-2">
+                <div class="flex items-center rounded-xl border border-border/60 bg-card/70 p-1 shadow-sm shrink-0">
+                    <Link href="/dashboard" class="rounded-lg px-4 py-1.5 text-sm font-medium text-muted-foreground hover:text-ink transition-colors">App</Link>
+                    <Link href="/admin/dashboard" class="rounded-lg px-4 py-1.5 text-sm font-medium bg-ink text-paper shadow-sm transition-colors">Admin</Link>
+                </div>
+
+                <nav class="hidden flex-1 items-center justify-center gap-1 md:flex">
+                    <Link
+                        v-for="item in sideNav"
+                        :key="item.label"
+                        :href="item.href"
+                        :class="[
+                            'flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-sm font-medium transition-colors',
+                            isActive(item.href)
+                                ? 'bg-ink text-paper shadow-sm'
+                                : 'text-muted-foreground hover:bg-secondary hover:text-ink',
+                        ]"
+                    >
+                        <component :is="item.icon" class="size-4 shrink-0" />
+                        <span>{{ item.label }}</span>
+                    </Link>
+                </nav>
+
+                <div class="flex shrink-0 items-center gap-2">
                     <AppearanceDropdown />
                     <DropdownMenu>
                         <DropdownMenuTrigger class="flex items-center gap-2 rounded-full border border-border/60 bg-card/70 py-1 pl-1 pr-3 shadow-sm hover:text-rust transition-colors">
@@ -81,8 +103,8 @@ const isActive = (href) => page.url === href || page.url.startsWith(href + '/') 
         </header>
 
         <div class="mx-auto flex gap-4 px-4 pb-10 sm:px-6">
-            <!-- Expanded sidebar: icon + label -->
-            <aside class="sticky top-24 hidden h-[calc(100vh-7rem)] w-56 shrink-0 flex-col justify-between rounded-3xl border border-border/60 bg-card/70 py-4 shadow-sm backdrop-blur md:flex">
+            <!-- Sidebar (mobile only — tabs handle desktop nav) -->
+            <aside class="sticky top-24 hidden h-[calc(100vh-7rem)] w-56 shrink-0 flex-col justify-between rounded-3xl border border-border/60 bg-card/70 py-4 shadow-sm backdrop-blur">
                 <nav class="flex flex-col gap-1 px-3">
                     <Link
                         v-for="item in sideNav"
@@ -110,7 +132,7 @@ const isActive = (href) => page.url === href || page.url.startsWith(href + '/') 
                 </div>
             </aside>
 
-            <main class="min-w-0 flex-1 space-y-6">
+            <main class="min-w-0 w-full space-y-6">
                 <div v-if="title" class="flex items-end justify-between gap-4 pt-2">
                     <h1 class="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h1>
                 </div>

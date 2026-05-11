@@ -44,12 +44,17 @@ const isActive = (href) => href && (page.url === href || page.url.startsWith(hre
     <div class="min-h-screen bg-background text-foreground">
         <header class="sticky top-0 z-30 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div class="mx-auto flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
-                <Link href="/dashboard" class="flex items-center gap-2.5">
+                <Link href="/dashboard" class="flex shrink-0 items-center gap-2.5">
                     <span class="flex size-10 items-center justify-center rounded-2xl bg-rust text-paper shadow-sm">
                         <span class="font-serif text-xl leading-none">b</span>
                     </span>
                     <span class="font-sans text-lg font-semibold tracking-tight">bob</span>
                 </Link>
+
+                <div v-if="isModerator" class="flex items-center rounded-xl border border-border/60 bg-card/70 p-1 shadow-sm">
+                    <Link href="/dashboard" class="rounded-lg px-4 py-1.5 text-sm font-medium bg-ink text-paper shadow-sm transition-colors">App</Link>
+                    <Link href="/admin/dashboard" class="rounded-lg px-4 py-1.5 text-sm font-medium text-muted-foreground hover:text-ink transition-colors">Admin</Link>
+                </div>
 
                 <div class="flex items-center gap-2">
                     <AppearanceDropdown />
