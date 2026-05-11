@@ -36,6 +36,8 @@ class FeedController extends Controller
     {
         $userId = $request->user('sanctum')?->id;
 
+        $seed = (int) $request->query('seed', rand(1, 999999));
+
         $posts = Post::with('user:id,uuid,name')
             ->where('status', 'active')
             ->where(function ($q) use ($userId) {
@@ -45,7 +47,7 @@ class FeedController extends Controller
                 }
             })
             ->withCount(['comments', 'likes'])
-            ->latest()
+            ->orderByRaw('RAND(' . $seed . ')')
             ->paginate(15)
             ->withQueryString();
 
