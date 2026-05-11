@@ -13,7 +13,6 @@ import {
     LogOut,
     Newspaper,
     Settings as SettingsIcon,
-    ShieldCheck,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 
@@ -34,7 +33,6 @@ const railNav = computed(() => [
     { href: '/posts/mine', label: 'My Posts', icon: Newspaper },
     { href: '/reports/mine', label: 'Reports', icon: Flag },
     { href: '/settings/profile', label: 'Settings', icon: SettingsIcon },
-    ...(isModerator.value ? [{ href: '/admin/dashboard', label: 'Admin', icon: ShieldCheck }] : []),
 ]);
 
 const isActive = (href) => href && (page.url === href || page.url.startsWith(href + '/') || page.url.startsWith(href + '?'));
