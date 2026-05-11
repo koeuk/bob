@@ -3,8 +3,37 @@
     <AppLayout>
         <SettingsLayout>
             <div class="space-y-6">
-                <HeadingSmall title="Profile information" description="Update your name and email address" />
+                <HeadingSmall title="Profile information" description="Update your name, email address and profile photo" />
                 <form class="space-y-6" @submit.prevent="submit">
+                    <!-- Avatar -->
+                    <div class="flex items-center gap-5">
+                        <div class="group relative size-20 shrink-0">
+                            <div class="flex size-20 items-center justify-center overflow-hidden rounded-full bg-muted text-xl font-semibold">
+                                <img v-if="avatarPreview || user.avatar" :src="avatarPreview || `/storage/${user.avatar}`" class="size-20 object-cover" alt="Avatar" />
+                                <template v-else>{{ initials(user.name) }}</template>
+                            </div>
+                            <label
+                                class="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"
+                                title="Change photo"
+                            >
+                                <Camera class="size-5 text-white" />
+                                <input ref="fileInput" type="file" accept="image/*" class="sr-only" @change="onFileChange" />
+                            </label>
+                        </div>
+                        <div class="space-y-1">
+                            <p class="text-sm font-medium">Profile photo</p>
+                            <p class="text-xs text-muted-foreground">JPG, PNG or GIF · max 2 MB</p>
+                            <button
+                                v-if="avatarPreview || user.avatar"
+                                type="button"
+                                class="text-xs text-destructive hover:underline"
+                                @click="removeAvatar"
+                            >
+                                Remove photo
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="grid gap-2">
                         <Label for="name">Name</Label>
                         <Input id="name" v-model="form.name" required autocomplete="name" />
@@ -48,15 +77,42 @@ import Spinner from '@/components/ui/Spinner.vue';
 import AppLayout from '@/layouts/app-layout.vue';
 import SettingsLayout from '@/layouts/settings-layout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { Camera } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 defineProps({ mustVerifyEmail: Boolean, status: String });
 
 const page = usePage();
 const user = page.props.auth.user;
 
-const form = useForm({ name: user.name, email: user.email });
+const fileInput = ref(null);
+const avatarPreview = ref(null);
+
+const form = useForm({
+    name: user.name,
+    email: user.email,
+    avatar: null,
+    remove_avatar: false,
+});
+
+const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+
+const onFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    form.avatar = file;
+    form.remove_avatar = false;
+    avatarPreview.value = URL.createObjectURL(file);
+};
+
+const removeAvatar = () => {
+    form.avatar = null;
+    form.remove_avatar = true;
+    avatarPreview.value = null;
+    if (fileInput.value) fileInput.value.value = '';
+};
 
 function submit() {
-    form.patch('/settings/profile', { preserveScroll: true });
+    form.patch('/settings/profile', { preserveScroll: true, forceFormData: true });
 }
 </script>

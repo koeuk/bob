@@ -18,6 +18,7 @@ Route::prefix('auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('me', [AuthController::class, 'me']);
         Route::patch('me', [AuthController::class, 'update']);
+        Route::post('me', [AuthController::class, 'update']); // for multipart avatar upload
         Route::delete('me', [AuthController::class, 'destroy']);
         Route::patch('password', [AuthController::class, 'password']);
     });

@@ -129,12 +129,18 @@ class AuthController extends Controller
         $user = $request->user();
 
         $data = $request->validate([
-            'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'email', 'max:255', 'unique:users,email,'.$user->id],
+            'name'   => ['sometimes', 'string', 'max:255'],
+            'email'  => ['sometimes', 'email', 'max:255', 'unique:users,email,'.$user->id],
+            'avatar' => ['sometimes', 'image', 'max:4096'],
         ]);
 
         if (isset($data['email']) && $data['email'] !== $user->email) {
             $data['email_verified_at'] = null;
+        }
+
+        if ($request->hasFile('avatar')) {
+            $path = $request->file('avatar')->store('avatars', 'public');
+            $data['avatar'] = url('storage/' . $path);
         }
 
         $user->update($data);
