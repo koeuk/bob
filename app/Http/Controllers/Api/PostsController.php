@@ -31,7 +31,7 @@ class PostsController extends Controller
      */
     public function mine(Request $request): JsonResponse
     {
-        $posts = Post::with('user:id,uuid,name')
+        $posts = Post::with('user:id,uuid,name,avatar')
             ->where('user_id', $request->user()->id)
             ->withCount(['comments', 'likes'])
             ->latest()
@@ -61,10 +61,10 @@ class PostsController extends Controller
         abort_if($post->status === 'hidden' && $post->user_id !== ($userId ?? -1), 404);
         abort_if($post->visibility === 'private' && $post->user_id !== ($userId ?? -1), 404);
 
-        $post->load(['user:id,uuid,name']);
+        $post->load(['user:id,uuid,name,avatar']);
         $post->loadCount(['likes']);
 
-        $comments = Comment::with('user:id,uuid,name')
+        $comments = Comment::with('user:id,uuid,name,avatar')
             ->where('post_id', $post->id)
             ->withCount('likes')
             ->latest()
@@ -136,7 +136,7 @@ class PostsController extends Controller
             'visibility' => $data['visibility'] ?? 'public',
         ]);
 
-        $post->load('user:id,uuid,name');
+        $post->load('user:id,uuid,name,avatar');
 
         return response()->json($post, 201);
     }
@@ -176,7 +176,7 @@ class PostsController extends Controller
             'visibility' => $data['visibility'] ?? $post->visibility,
         ]);
 
-        $post->load('user:id,uuid,name');
+        $post->load('user:id,uuid,name,avatar');
 
         return response()->json($post);
     }

@@ -38,7 +38,7 @@ class FeedController extends Controller
 
         $seed = (int) $request->query('seed', rand(1, 999999));
 
-        $posts = Post::with('user:id,uuid,name')
+        $posts = Post::with('user:id,uuid,name,avatar')
             ->where('status', 'active')
             ->where(function ($q) use ($userId) {
                 $q->where('visibility', 'public');

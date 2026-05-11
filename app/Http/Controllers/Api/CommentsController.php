@@ -43,7 +43,7 @@ class CommentsController extends Controller
             'body' => $data['body'],
         ]);
 
-        $comment->load('user:id,uuid,name');
+        $comment->load('user:id,uuid,name,avatar');
 
         // Notify post owner (skip if commenter is the post owner)
         $post->load('user');

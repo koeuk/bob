@@ -58,7 +58,7 @@ class DashboardController extends Controller
 
         $engagementSeries = $this->monthlySeries($postIds, $user->id);
 
-        $recentActivity = Comment::with(['user:id,uuid,name', 'post:id,uuid,body'])
+        $recentActivity = Comment::with(['user:id,uuid,name,avatar', 'post:id,uuid,body'])
             ->whereIn('post_id', $postIds)
             ->where('user_id', '!=', $user->id)
             ->latest()
