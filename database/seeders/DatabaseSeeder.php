@@ -48,6 +48,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Name',
                 'password' => '12345678',
+                'role' => 'super_admin',
                 'email_verified_at' => now(),
             ],
         );
