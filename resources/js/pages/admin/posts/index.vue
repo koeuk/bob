@@ -1,38 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { Flag, Heart, MessageCircle, Plus, Search } from 'lucide-vue-next';
-import { ref } from 'vue';
-
-const props = defineProps({
-    posts: { type: Object, required: true },
-    filters: { type: Object, default: () => ({}) },
-});
-
-const page = usePage();
-const search = ref(props.filters?.filter?.search ?? '');
-const status = ref(props.filters?.filter?.status ?? '');
-
-const apply = () => router.get('/admin/posts', {
-    filter: {
-        ...(search.value ? { search: search.value } : {}),
-        ...(status.value ? { status: status.value } : {}),
-    },
-}, { preserveState: true, preserveScroll: true, replace: true });
-
-const dateFmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-const statusTone = (s) => {
-    switch (s) {
-        case 'flagged': return 'bg-rust/15 text-rust';
-        case 'hidden': return 'bg-ink/10 text-ink';
-        default: return 'bg-moss/15 text-moss';
-    }
-};
-
-const truncate = (t, n = 160) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '…' : t;
-const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
-</script>
-
 <template>
     <Head title="Posts" />
     <AdminLayout title="Posts">
@@ -121,3 +86,38 @@ const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).m
         </div>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { Flag, Heart, MessageCircle, Plus, Search } from 'lucide-vue-next';
+import { ref } from 'vue';
+
+const props = defineProps({
+    posts: { type: Object, required: true },
+    filters: { type: Object, default: () => ({}) },
+});
+
+const page = usePage();
+const search = ref(props.filters?.filter?.search ?? '');
+const status = ref(props.filters?.filter?.status ?? '');
+
+const apply = () => router.get('/admin/posts', {
+    filter: {
+        ...(search.value ? { search: search.value } : {}),
+        ...(status.value ? { status: status.value } : {}),
+    },
+}, { preserveState: true, preserveScroll: true, replace: true });
+
+const dateFmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const statusTone = (s) => {
+    switch (s) {
+        case 'flagged': return 'bg-rust/15 text-rust';
+        case 'hidden': return 'bg-ink/10 text-ink';
+        default: return 'bg-moss/15 text-moss';
+    }
+};
+
+const truncate = (t, n = 160) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '…' : t;
+const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+</script>

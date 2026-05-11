@@ -1,3 +1,9 @@
+<template>
+    <Primitive :as="as" :as-child="asChild" :class="classes" data-slot="button">
+        <slot />
+    </Primitive>
+</template>
+
 <script setup>
 import { cn } from '@/lib/utils';
 import { cva } from 'class-variance-authority';
@@ -38,9 +44,3 @@ const props = defineProps({
 
 const classes = computed(() => cn(buttonVariants({ variant: props.variant, size: props.size }), props.class));
 </script>
-
-<template>
-    <Primitive :as="as" :as-child="asChild" :class="classes" data-slot="button">
-        <slot />
-    </Primitive>
-</template>

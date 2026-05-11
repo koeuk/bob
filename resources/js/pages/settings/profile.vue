@@ -1,27 +1,3 @@
-<script setup>
-import DeleteUser from '@/components/delete-user.vue';
-import HeadingSmall from '@/components/heading-small.vue';
-import InputError from '@/components/input-error.vue';
-import Button from '@/components/ui/Button.vue';
-import Input from '@/components/ui/Input.vue';
-import Label from '@/components/ui/Label.vue';
-import Spinner from '@/components/ui/Spinner.vue';
-import AppLayout from '@/layouts/app-layout.vue';
-import SettingsLayout from '@/layouts/settings-layout.vue';
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-
-defineProps({ mustVerifyEmail: Boolean, status: String });
-
-const page = usePage();
-const user = page.props.auth.user;
-
-const form = useForm({ name: user.name, email: user.email });
-
-function submit() {
-    form.patch('/settings/profile', { preserveScroll: true });
-}
-</script>
-
 <template>
     <Head title="Profile" />
     <AppLayout>
@@ -60,3 +36,27 @@ function submit() {
         </SettingsLayout>
     </AppLayout>
 </template>
+
+<script setup>
+import DeleteUser from '@/components/delete-user.vue';
+import HeadingSmall from '@/components/heading-small.vue';
+import InputError from '@/components/input-error.vue';
+import Button from '@/components/ui/Button.vue';
+import Input from '@/components/ui/Input.vue';
+import Label from '@/components/ui/Label.vue';
+import Spinner from '@/components/ui/Spinner.vue';
+import AppLayout from '@/layouts/app-layout.vue';
+import SettingsLayout from '@/layouts/settings-layout.vue';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+
+defineProps({ mustVerifyEmail: Boolean, status: String });
+
+const page = usePage();
+const user = page.props.auth.user;
+
+const form = useForm({ name: user.name, email: user.email });
+
+function submit() {
+    form.patch('/settings/profile', { preserveScroll: true });
+}
+</script>

@@ -1,52 +1,3 @@
-<script setup>
-import AppLayout from '@/layouts/app-layout.vue';
-import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { Flag, Heart, MessageCircle, Send } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
-
-const props = defineProps({
-    posts: { type: Object, required: true },
-});
-
-const page = usePage();
-const me = computed(() => page.props.auth?.user);
-
-const composer = useForm({ body: '' });
-const submitPost = () => composer.post('/posts', {
-    preserveScroll: true,
-    onSuccess: () => composer.reset('body'),
-});
-
-const toggleLike = (post) => {
-    router.post(`/posts/${post.uuid}/like`, {}, { preserveScroll: true });
-};
-
-const reportTarget = ref(null);
-const reportForm = useForm({ type: 'post', target_uuid: '', reason: '' });
-const openReport = (post) => {
-    reportForm.type = 'post';
-    reportForm.target_uuid = post.uuid;
-    reportForm.reason = '';
-    reportTarget.value = post;
-};
-const submitReport = () => reportForm.post('/reports', {
-    preserveScroll: true,
-    onSuccess: () => { reportTarget.value = null; reportForm.reset(); },
-});
-
-const dateFmt = (iso) => {
-    const d = new Date(iso);
-    const diff = (Date.now() - d.getTime()) / 1000;
-    if (diff < 60) return `${Math.floor(diff)}s ago`;
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-};
-const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
-const truncate = (t, n = 320) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '…' : t;
-</script>
-
 <template>
     <Head title="Feed" />
     <AppLayout>
@@ -198,3 +149,52 @@ const truncate = (t, n = 320) => (t ?? '').length > n ? (t ?? '').slice(0, n) + 
         </Teleport>
     </AppLayout>
 </template>
+
+<script setup>
+import AppLayout from '@/layouts/app-layout.vue';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { Flag, Heart, MessageCircle, Send } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+
+const props = defineProps({
+    posts: { type: Object, required: true },
+});
+
+const page = usePage();
+const me = computed(() => page.props.auth?.user);
+
+const composer = useForm({ body: '' });
+const submitPost = () => composer.post('/posts', {
+    preserveScroll: true,
+    onSuccess: () => composer.reset('body'),
+});
+
+const toggleLike = (post) => {
+    router.post(`/posts/${post.uuid}/like`, {}, { preserveScroll: true });
+};
+
+const reportTarget = ref(null);
+const reportForm = useForm({ type: 'post', target_uuid: '', reason: '' });
+const openReport = (post) => {
+    reportForm.type = 'post';
+    reportForm.target_uuid = post.uuid;
+    reportForm.reason = '';
+    reportTarget.value = post;
+};
+const submitReport = () => reportForm.post('/reports', {
+    preserveScroll: true,
+    onSuccess: () => { reportTarget.value = null; reportForm.reset(); },
+});
+
+const dateFmt = (iso) => {
+    const d = new Date(iso);
+    const diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 60) return `${Math.floor(diff)}s ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+const truncate = (t, n = 320) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '…' : t;
+</script>

@@ -1,22 +1,3 @@
-<script setup>
-import InputError from '@/components/input-error.vue';
-import TextLink from '@/components/text-link.vue';
-import Button from '@/components/ui/Button.vue';
-import Input from '@/components/ui/Input.vue';
-import Label from '@/components/ui/Label.vue';
-import Spinner from '@/components/ui/Spinner.vue';
-import AuthLayout from '@/layouts/auth-layout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
-
-defineProps({ status: String });
-
-const form = useForm({ email: '' });
-
-function submit() {
-    form.post('/forgot-password');
-}
-</script>
-
 <template>
     <AuthLayout title="Forgot password" description="Enter your email to receive a password reset link">
         <Head title="Forgot password" />
@@ -37,3 +18,22 @@ function submit() {
         </form>
     </AuthLayout>
 </template>
+
+<script setup>
+import InputError from '@/components/input-error.vue';
+import TextLink from '@/components/text-link.vue';
+import Button from '@/components/ui/Button.vue';
+import Input from '@/components/ui/Input.vue';
+import Label from '@/components/ui/Label.vue';
+import Spinner from '@/components/ui/Spinner.vue';
+import AuthLayout from '@/layouts/auth-layout.vue';
+import { Head, useForm } from '@inertiajs/vue3';
+
+defineProps({ status: String });
+
+const form = useForm({ email: '' });
+
+function submit() {
+    form.post('/forgot-password');
+}
+</script>

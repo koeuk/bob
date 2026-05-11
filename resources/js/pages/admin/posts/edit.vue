@@ -1,38 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Save, Trash2 } from 'lucide-vue-next';
-import { computed } from 'vue';
-
-const props = defineProps({
-    post: { type: Object, default: null },
-    authors: { type: Array, default: () => [] },
-});
-
-const page = usePage();
-const isNew = computed(() => !props.post);
-
-const form = useForm({
-    body: props.post?.body ?? '',
-    status: props.post?.status ?? 'active',
-    user_uuid: props.post?.user?.uuid ?? props.authors[0]?.uuid ?? '',
-    reason: '',
-});
-
-const submit = () => {
-    if (isNew.value) {
-        form.post('/admin/posts', { preserveScroll: true });
-    } else {
-        form.patch(`/admin/posts/${props.post.uuid}`, { preserveScroll: true });
-    }
-};
-
-const destroy = () => {
-    if (!window.confirm('Delete this post? It will be soft-removed.')) return;
-    form.delete(`/admin/posts/${props.post.uuid}`);
-};
-</script>
-
 <template>
     <Head :title="isNew ? 'New post' : 'Edit post'" />
     <AdminLayout>
@@ -122,3 +87,38 @@ const destroy = () => {
         </form>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { ArrowLeft, Save, Trash2 } from 'lucide-vue-next';
+import { computed } from 'vue';
+
+const props = defineProps({
+    post: { type: Object, default: null },
+    authors: { type: Array, default: () => [] },
+});
+
+const page = usePage();
+const isNew = computed(() => !props.post);
+
+const form = useForm({
+    body: props.post?.body ?? '',
+    status: props.post?.status ?? 'active',
+    user_uuid: props.post?.user?.uuid ?? props.authors[0]?.uuid ?? '',
+    reason: '',
+});
+
+const submit = () => {
+    if (isNew.value) {
+        form.post('/admin/posts', { preserveScroll: true });
+    } else {
+        form.patch(`/admin/posts/${props.post.uuid}`, { preserveScroll: true });
+    }
+};
+
+const destroy = () => {
+    if (!window.confirm('Delete this post? It will be soft-removed.')) return;
+    form.delete(`/admin/posts/${props.post.uuid}`);
+};
+</script>

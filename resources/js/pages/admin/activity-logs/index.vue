@@ -1,32 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { ActivitySquare, Hash, Search } from 'lucide-vue-next';
-import { ref } from 'vue';
-
-const props = defineProps({
-    logs: { type: Object, required: true },
-    filters: { type: Object, default: () => ({}) },
-});
-
-const page = usePage();
-const actionFilter = ref(props.filters?.filter?.action ?? '');
-
-const apply = () => router.get('/admin/activity-logs', actionFilter.value ? { filter: { action: actionFilter.value } } : {}, {
-    preserveState: true, preserveScroll: true, replace: true,
-});
-
-const dateFmt = (iso) => new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
-const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
-const actionTone = (action) => {
-    if (action.includes('delete')) return 'bg-rust/15 text-rust';
-    if (action.includes('ban')) return 'bg-rust/15 text-rust';
-    if (action.includes('unban') || action.includes('resolve')) return 'bg-moss/15 text-moss';
-    if (action.includes('update') || action.includes('flag')) return 'bg-ink/10 text-ink';
-    return 'bg-secondary text-muted-foreground';
-};
-</script>
-
 <template>
     <Head title="Activity" />
     <AdminLayout title="Activity log">
@@ -91,3 +62,32 @@ const actionTone = (action) => {
         </div>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { ActivitySquare, Hash, Search } from 'lucide-vue-next';
+import { ref } from 'vue';
+
+const props = defineProps({
+    logs: { type: Object, required: true },
+    filters: { type: Object, default: () => ({}) },
+});
+
+const page = usePage();
+const actionFilter = ref(props.filters?.filter?.action ?? '');
+
+const apply = () => router.get('/admin/activity-logs', actionFilter.value ? { filter: { action: actionFilter.value } } : {}, {
+    preserveState: true, preserveScroll: true, replace: true,
+});
+
+const dateFmt = (iso) => new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+const actionTone = (action) => {
+    if (action.includes('delete')) return 'bg-rust/15 text-rust';
+    if (action.includes('ban')) return 'bg-rust/15 text-rust';
+    if (action.includes('unban') || action.includes('resolve')) return 'bg-moss/15 text-moss';
+    if (action.includes('update') || action.includes('flag')) return 'bg-ink/10 text-ink';
+    return 'bg-secondary text-muted-foreground';
+};
+</script>

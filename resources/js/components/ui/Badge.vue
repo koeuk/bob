@@ -1,3 +1,7 @@
+<template>
+    <Primitive :as="as" :as-child="asChild" data-slot="badge" :class="classes"><slot /></Primitive>
+</template>
+
 <script setup>
 import { cn } from '@/lib/utils';
 import { cva } from 'class-variance-authority';
@@ -28,7 +32,3 @@ const props = defineProps({
 
 const classes = computed(() => cn(badgeVariants({ variant: props.variant }), props.class));
 </script>
-
-<template>
-    <Primitive :as="as" :as-child="asChild" data-slot="badge" :class="classes"><slot /></Primitive>
-</template>

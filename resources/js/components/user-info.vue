@@ -1,14 +1,3 @@
-<script setup>
-import Avatar from '@/components/ui/Avatar.vue';
-import AvatarFallback from '@/components/ui/AvatarFallback.vue';
-import AvatarImage from '@/components/ui/AvatarImage.vue';
-import { useInitials } from '@/composables/useInitials';
-
-defineProps({ user: { type: Object, required: true }, showEmail: Boolean });
-
-const getInitials = useInitials();
-</script>
-
 <template>
     <Avatar class="size-8 overflow-hidden rounded-full">
         <AvatarImage v-if="user.avatar" :src="user.avatar" :alt="user.name" />
@@ -21,3 +10,14 @@ const getInitials = useInitials();
         <span v-if="showEmail" class="truncate text-xs text-muted-foreground">{{ user.email }}</span>
     </div>
 </template>
+
+<script setup>
+import Avatar from '@/components/ui/Avatar.vue';
+import AvatarFallback from '@/components/ui/AvatarFallback.vue';
+import AvatarImage from '@/components/ui/AvatarImage.vue';
+import { useInitials } from '@/composables/useInitials';
+
+defineProps({ user: { type: Object, required: true }, showEmail: Boolean });
+
+const getInitials = useInitials();
+</script>

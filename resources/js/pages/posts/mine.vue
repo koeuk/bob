@@ -1,37 +1,3 @@
-<script setup>
-import AppLayout from '@/layouts/app-layout.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { Heart, MessageCircle, Pencil, Trash2 } from 'lucide-vue-next';
-import { computed } from 'vue';
-
-const props = defineProps({
-    posts: { type: Object, required: true },
-});
-
-const page = usePage();
-
-const dateFmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-const statusTone = (s) => {
-    switch (s) {
-        case 'flagged': return 'bg-rust/15 text-rust';
-        case 'hidden': return 'bg-ink/10 text-ink';
-        default: return 'bg-moss/15 text-moss';
-    }
-};
-const truncate = (t, n = 200) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '…' : t;
-
-const deletePost = (p) => {
-    if (!window.confirm('Delete this post?')) return;
-    router.delete(`/posts/${p.uuid}`, { preserveScroll: true });
-};
-
-const totals = computed(() => ({
-    total: props.posts.total,
-    active: props.posts.data.filter((p) => p.status === 'active').length,
-    flagged: props.posts.data.filter((p) => p.status === 'flagged').length,
-}));
-</script>
-
 <template>
     <Head title="My Posts" />
     <AppLayout>
@@ -128,3 +94,37 @@ const totals = computed(() => ({
         </div>
     </AppLayout>
 </template>
+
+<script setup>
+import AppLayout from '@/layouts/app-layout.vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { Heart, MessageCircle, Pencil, Trash2 } from 'lucide-vue-next';
+import { computed } from 'vue';
+
+const props = defineProps({
+    posts: { type: Object, required: true },
+});
+
+const page = usePage();
+
+const dateFmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const statusTone = (s) => {
+    switch (s) {
+        case 'flagged': return 'bg-rust/15 text-rust';
+        case 'hidden': return 'bg-ink/10 text-ink';
+        default: return 'bg-moss/15 text-moss';
+    }
+};
+const truncate = (t, n = 200) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '…' : t;
+
+const deletePost = (p) => {
+    if (!window.confirm('Delete this post?')) return;
+    router.delete(`/posts/${p.uuid}`, { preserveScroll: true });
+};
+
+const totals = computed(() => ({
+    total: props.posts.total,
+    active: props.posts.data.filter((p) => p.status === 'active').length,
+    flagged: props.posts.data.filter((p) => p.status === 'flagged').length,
+}));
+</script>

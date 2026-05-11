@@ -1,3 +1,16 @@
+<template>
+    <DropdownMenu>
+        <DropdownMenuTrigger class="inline-flex size-9 items-center justify-center rounded-md hover:bg-accent">
+            <component :is="currentIcon" class="size-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+            <DropdownMenuItem v-for="o in options" :key="o.value" @click="updateAppearance(o.value)">
+                {{ o.label }}
+            </DropdownMenuItem>
+        </DropdownMenuContent>
+    </DropdownMenu>
+</template>
+
 <script setup>
 import DropdownMenu from '@/components/ui/DropdownMenu.vue';
 import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vue';
@@ -21,16 +34,3 @@ const options = [
     { value: 'system', label: 'System' },
 ];
 </script>
-
-<template>
-    <DropdownMenu>
-        <DropdownMenuTrigger class="inline-flex size-9 items-center justify-center rounded-md hover:bg-accent">
-            <component :is="currentIcon" class="size-4" />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-            <DropdownMenuItem v-for="o in options" :key="o.value" @click="updateAppearance(o.value)">
-                {{ o.label }}
-            </DropdownMenuItem>
-        </DropdownMenuContent>
-    </DropdownMenu>
-</template>

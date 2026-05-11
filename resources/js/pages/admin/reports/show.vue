@@ -1,36 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Check, Eye, Flag, X } from 'lucide-vue-next';
-import { computed } from 'vue';
-
-const props = defineProps({
-    report: { type: Object, required: true },
-});
-
-const page = usePage();
-
-const reportableLabel = computed(() => props.report.reportable_type?.split('\\').pop() ?? 'Item');
-
-const dateFmt = (iso) => iso ? new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—';
-
-const statusTone = (s) => {
-    switch (s) {
-        case 'pending': return 'bg-rust/15 text-rust';
-        case 'resolved': return 'bg-moss/15 text-moss';
-        case 'dismissed': return 'bg-secondary text-muted-foreground';
-        default: return 'bg-ink/10 text-ink';
-    }
-};
-
-const resolveForm = useForm({ resolution_note: '' });
-const dismissForm = useForm({ resolution_note: '' });
-
-const markReviewed = () => router.post(`/admin/reports/${props.report.uuid}/review`, {}, { preserveScroll: true });
-const resolve = () => resolveForm.post(`/admin/reports/${props.report.uuid}/resolve`, { preserveScroll: true });
-const dismiss = () => dismissForm.post(`/admin/reports/${props.report.uuid}/dismiss`, { preserveScroll: true });
-</script>
-
 <template>
     <Head title="Report" />
     <AdminLayout>
@@ -131,3 +98,36 @@ const dismiss = () => dismissForm.post(`/admin/reports/${props.report.uuid}/dism
         </section>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { ArrowLeft, Check, Eye, Flag, X } from 'lucide-vue-next';
+import { computed } from 'vue';
+
+const props = defineProps({
+    report: { type: Object, required: true },
+});
+
+const page = usePage();
+
+const reportableLabel = computed(() => props.report.reportable_type?.split('\\').pop() ?? 'Item');
+
+const dateFmt = (iso) => iso ? new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—';
+
+const statusTone = (s) => {
+    switch (s) {
+        case 'pending': return 'bg-rust/15 text-rust';
+        case 'resolved': return 'bg-moss/15 text-moss';
+        case 'dismissed': return 'bg-secondary text-muted-foreground';
+        default: return 'bg-ink/10 text-ink';
+    }
+};
+
+const resolveForm = useForm({ resolution_note: '' });
+const dismissForm = useForm({ resolution_note: '' });
+
+const markReviewed = () => router.post(`/admin/reports/${props.report.uuid}/review`, {}, { preserveScroll: true });
+const resolve = () => resolveForm.post(`/admin/reports/${props.report.uuid}/resolve`, { preserveScroll: true });
+const dismiss = () => dismissForm.post(`/admin/reports/${props.report.uuid}/dismiss`, { preserveScroll: true });
+</script>

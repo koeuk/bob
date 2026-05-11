@@ -1,19 +1,3 @@
-<script setup>
-import AuthLayout from '@/layouts/auth-layout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { AtSign, CheckCircle2, Eye, EyeOff, Loader2, Lock } from 'lucide-vue-next';
-import { ref } from 'vue';
-
-defineProps({ status: String, canResetPassword: Boolean, canRegister: Boolean });
-
-const form = useForm({ email: '', password: '', remember: false });
-const showPassword = ref(false);
-
-function submit() {
-    form.post('/login', { onFinish: () => form.reset('password') });
-}
-</script>
-
 <template>
     <AuthLayout title="Welcome back" description="Enter your email and password to continue">
         <Head title="Log in" />
@@ -110,3 +94,19 @@ function submit() {
         </form>
     </AuthLayout>
 </template>
+
+<script setup>
+import AuthLayout from '@/layouts/auth-layout.vue';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import { AtSign, CheckCircle2, Eye, EyeOff, Loader2, Lock } from 'lucide-vue-next';
+import { ref } from 'vue';
+
+defineProps({ status: String, canResetPassword: Boolean, canRegister: Boolean });
+
+const form = useForm({ email: '', password: '', remember: false });
+const showPassword = ref(false);
+
+function submit() {
+    form.post('/login', { onFinish: () => form.reset('password') });
+}
+</script>

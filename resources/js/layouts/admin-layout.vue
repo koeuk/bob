@@ -1,53 +1,3 @@
-<script setup>
-import AppearanceDropdown from '@/components/appearance-dropdown.vue';
-import DropdownMenu from '@/components/ui/DropdownMenu.vue';
-import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vue';
-import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vue';
-import UserMenuContent from '@/components/user-menu-content.vue';
-import { Link, usePage } from '@inertiajs/vue3';
-import {
-    ActivitySquare,
-    ArrowLeft,
-    ChevronDown,
-    FileText,
-    Flag,
-    Gauge,
-    Heart,
-    MessageSquare,
-    Newspaper,
-    Settings as SettingsIcon,
-    ShieldBan,
-    Users,
-} from 'lucide-vue-next';
-import { computed } from 'vue';
-
-defineProps({ title: { type: String, default: '' } });
-
-const page = usePage();
-
-const user = computed(() => page.props.auth?.user);
-const initials = computed(() => {
-    const name = user.value?.name ?? '';
-    return name.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase() || 'A';
-});
-const isSuperOrAdmin = computed(() => ['admin', 'super_admin'].includes(user.value?.role));
-
-const sideNav = computed(() => [
-    { href: '/admin/dashboard', label: 'Dashboard', icon: Gauge },
-    { href: '/admin/users', label: 'Users', icon: Users },
-    { href: '/admin/reports', label: 'Reports', icon: Flag },
-    { href: '/admin/bans', label: 'Bans', icon: ShieldBan },
-    { href: '/admin/posts', label: 'Posts', icon: Newspaper },
-    { href: '/admin/comments', label: 'Comments', icon: MessageSquare },
-    { href: '/admin/likes', label: 'Likes', icon: Heart },
-    { href: '/admin/pages', label: 'Pages', icon: FileText },
-    ...(isSuperOrAdmin.value ? [{ href: '/admin/settings', label: 'Settings', icon: SettingsIcon }] : []),
-    { href: '/admin/activity-logs', label: 'Activity', icon: ActivitySquare },
-]);
-
-const isActive = (href) => page.url === href || page.url.startsWith(href + '/') || page.url.startsWith(href + '?');
-</script>
-
 <template>
     <div class="min-h-screen bg-background text-foreground">
         <header class="sticky top-0 z-30 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -141,3 +91,53 @@ const isActive = (href) => page.url === href || page.url.startsWith(href + '/') 
         </div>
     </div>
 </template>
+
+<script setup>
+import AppearanceDropdown from '@/components/appearance-dropdown.vue';
+import DropdownMenu from '@/components/ui/DropdownMenu.vue';
+import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vue';
+import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vue';
+import UserMenuContent from '@/components/user-menu-content.vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import {
+    ActivitySquare,
+    ArrowLeft,
+    ChevronDown,
+    FileText,
+    Flag,
+    Gauge,
+    Heart,
+    MessageSquare,
+    Newspaper,
+    Settings as SettingsIcon,
+    ShieldBan,
+    Users,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
+
+defineProps({ title: { type: String, default: '' } });
+
+const page = usePage();
+
+const user = computed(() => page.props.auth?.user);
+const initials = computed(() => {
+    const name = user.value?.name ?? '';
+    return name.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase() || 'A';
+});
+const isSuperOrAdmin = computed(() => ['admin', 'super_admin'].includes(user.value?.role));
+
+const sideNav = computed(() => [
+    { href: '/admin/dashboard', label: 'Dashboard', icon: Gauge },
+    { href: '/admin/users', label: 'Users', icon: Users },
+    { href: '/admin/reports', label: 'Reports', icon: Flag },
+    { href: '/admin/bans', label: 'Bans', icon: ShieldBan },
+    { href: '/admin/posts', label: 'Posts', icon: Newspaper },
+    { href: '/admin/comments', label: 'Comments', icon: MessageSquare },
+    { href: '/admin/likes', label: 'Likes', icon: Heart },
+    { href: '/admin/pages', label: 'Pages', icon: FileText },
+    ...(isSuperOrAdmin.value ? [{ href: '/admin/settings', label: 'Settings', icon: SettingsIcon }] : []),
+    { href: '/admin/activity-logs', label: 'Activity', icon: ActivitySquare },
+]);
+
+const isActive = (href) => page.url === href || page.url.startsWith(href + '/') || page.url.startsWith(href + '?');
+</script>

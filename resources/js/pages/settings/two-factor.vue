@@ -1,24 +1,3 @@
-<script setup>
-import HeadingSmall from '@/components/heading-small.vue';
-import Button from '@/components/ui/Button.vue';
-import AppLayout from '@/layouts/app-layout.vue';
-import SettingsLayout from '@/layouts/settings-layout.vue';
-import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
-import { Head, router } from '@inertiajs/vue3';
-
-defineProps({ twoFactorEnabled: Boolean, confirmsTwoFactorAuthentication: Boolean });
-
-const { qrCodeSvg, manualSetupKey, recoveryCodesList, fetchSetupData, fetchRecoveryCodes, clearSetupData } = useTwoFactorAuth();
-
-function handleEnable() {
-    router.post('/user/two-factor-authentication', {}, { onSuccess: () => fetchSetupData() });
-}
-
-function handleDisable() {
-    router.delete('/user/two-factor-authentication', { onSuccess: () => clearSetupData() });
-}
-</script>
-
 <template>
     <Head title="Two-Factor Auth" />
     <AppLayout>
@@ -50,3 +29,24 @@ function handleDisable() {
         </SettingsLayout>
     </AppLayout>
 </template>
+
+<script setup>
+import HeadingSmall from '@/components/heading-small.vue';
+import Button from '@/components/ui/Button.vue';
+import AppLayout from '@/layouts/app-layout.vue';
+import SettingsLayout from '@/layouts/settings-layout.vue';
+import { useTwoFactorAuth } from '@/composables/useTwoFactorAuth';
+import { Head, router } from '@inertiajs/vue3';
+
+defineProps({ twoFactorEnabled: Boolean, confirmsTwoFactorAuthentication: Boolean });
+
+const { qrCodeSvg, manualSetupKey, recoveryCodesList, fetchSetupData, fetchRecoveryCodes, clearSetupData } = useTwoFactorAuth();
+
+function handleEnable() {
+    router.post('/user/two-factor-authentication', {}, { onSuccess: () => fetchSetupData() });
+}
+
+function handleDisable() {
+    router.delete('/user/two-factor-authentication', { onSuccess: () => clearSetupData() });
+}
+</script>

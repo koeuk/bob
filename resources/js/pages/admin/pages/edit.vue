@@ -1,32 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Save } from 'lucide-vue-next';
-import { computed } from 'vue';
-
-const props = defineProps({
-    page: { type: Object, default: null },
-});
-
-const inertiaPage = usePage();
-const isNew = computed(() => !props.page);
-
-const form = useForm({
-    slug: props.page?.slug ?? '',
-    title: props.page?.title ?? '',
-    body: props.page?.body ?? '',
-    status: props.page?.status ?? 'draft',
-});
-
-const submit = () => {
-    if (isNew.value) {
-        form.post('/admin/pages', { preserveScroll: true });
-    } else {
-        form.patch(`/admin/pages/${props.page.uuid}`, { preserveScroll: true });
-    }
-};
-</script>
-
 <template>
     <Head :title="isNew ? 'New page' : page.title" />
     <AdminLayout>
@@ -103,3 +74,32 @@ const submit = () => {
         </form>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { ArrowLeft, Save } from 'lucide-vue-next';
+import { computed } from 'vue';
+
+const props = defineProps({
+    page: { type: Object, default: null },
+});
+
+const inertiaPage = usePage();
+const isNew = computed(() => !props.page);
+
+const form = useForm({
+    slug: props.page?.slug ?? '',
+    title: props.page?.title ?? '',
+    body: props.page?.body ?? '',
+    status: props.page?.status ?? 'draft',
+});
+
+const submit = () => {
+    if (isNew.value) {
+        form.post('/admin/pages', { preserveScroll: true });
+    } else {
+        form.patch(`/admin/pages/${props.page.uuid}`, { preserveScroll: true });
+    }
+};
+</script>

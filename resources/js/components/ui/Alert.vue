@@ -1,3 +1,7 @@
+<template>
+    <div role="alert" data-slot="alert" :class="classes"><slot /></div>
+</template>
+
 <script setup>
 import { cn } from '@/lib/utils';
 import { cva } from 'class-variance-authority';
@@ -23,7 +27,3 @@ const props = defineProps({
 
 const classes = computed(() => cn(alertVariants({ variant: props.variant }), props.class));
 </script>
-
-<template>
-    <div role="alert" data-slot="alert" :class="classes"><slot /></div>
-</template>

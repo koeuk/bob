@@ -1,59 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { ChevronDown, Filter, MoreHorizontal, Plus, Search, ShieldBan, UserCheck, UserX } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
-
-const props = defineProps({
-    users: { type: Object, required: true },
-    filters: { type: Object, default: () => ({}) },
-});
-
-const page = usePage();
-const search = ref(props.filters?.filter?.search ?? '');
-const roleFilter = ref(props.filters?.filter?.role ?? '');
-const bannedOnly = ref(!!props.filters?.filter?.banned);
-
-const applyFilters = () => {
-    router.get(
-        '/admin/users',
-        {
-            filter: {
-                ...(search.value ? { search: search.value } : {}),
-                ...(roleFilter.value ? { role: roleFilter.value } : {}),
-                ...(bannedOnly.value ? { banned: 1 } : {}),
-            },
-        },
-        { preserveState: true, preserveScroll: true, replace: true },
-    );
-};
-
-const roleClasses = (role) => {
-    switch (role) {
-        case 'super_admin': return 'bg-rust/15 text-rust';
-        case 'admin': return 'bg-ink/10 text-ink';
-        case 'moderator': return 'bg-moss/15 text-moss';
-        default: return 'bg-secondary text-muted-foreground';
-    }
-};
-
-const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
-
-const dateFmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-const isBanned = (u) => (u.bans ?? []).length > 0;
-
-const openRow = ref(null);
-const toggleRow = (uuid) => (openRow.value = openRow.value === uuid ? null : uuid);
-
-const quickBan = (user) => {
-    const reason = window.prompt(`Ban ${user.name}? Enter reason:`);
-    if (!reason) return;
-    router.post(`/admin/users/${user.uuid}/ban`, { reason }, { preserveScroll: true });
-};
-const quickUnban = (user) => router.post(`/admin/users/${user.uuid}/unban`, {}, { preserveScroll: true });
-</script>
-
 <template>
     <Head title="Users" />
     <AdminLayout title="Users">
@@ -201,3 +145,59 @@ const quickUnban = (user) => router.post(`/admin/users/${user.uuid}/unban`, {}, 
         </div>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { ChevronDown, Filter, MoreHorizontal, Plus, Search, ShieldBan, UserCheck, UserX } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+
+const props = defineProps({
+    users: { type: Object, required: true },
+    filters: { type: Object, default: () => ({}) },
+});
+
+const page = usePage();
+const search = ref(props.filters?.filter?.search ?? '');
+const roleFilter = ref(props.filters?.filter?.role ?? '');
+const bannedOnly = ref(!!props.filters?.filter?.banned);
+
+const applyFilters = () => {
+    router.get(
+        '/admin/users',
+        {
+            filter: {
+                ...(search.value ? { search: search.value } : {}),
+                ...(roleFilter.value ? { role: roleFilter.value } : {}),
+                ...(bannedOnly.value ? { banned: 1 } : {}),
+            },
+        },
+        { preserveState: true, preserveScroll: true, replace: true },
+    );
+};
+
+const roleClasses = (role) => {
+    switch (role) {
+        case 'super_admin': return 'bg-rust/15 text-rust';
+        case 'admin': return 'bg-ink/10 text-ink';
+        case 'moderator': return 'bg-moss/15 text-moss';
+        default: return 'bg-secondary text-muted-foreground';
+    }
+};
+
+const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+
+const dateFmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+const isBanned = (u) => (u.bans ?? []).length > 0;
+
+const openRow = ref(null);
+const toggleRow = (uuid) => (openRow.value = openRow.value === uuid ? null : uuid);
+
+const quickBan = (user) => {
+    const reason = window.prompt(`Ban ${user.name}? Enter reason:`);
+    if (!reason) return;
+    router.post(`/admin/users/${user.uuid}/ban`, { reason }, { preserveScroll: true });
+};
+const quickUnban = (user) => router.post(`/admin/users/${user.uuid}/unban`, {}, { preserveScroll: true });
+</script>

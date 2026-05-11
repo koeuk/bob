@@ -1,126 +1,3 @@
-<script setup>
-import AppLayout from '@/layouts/app-layout.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
-import {
-    BarController,
-    BarElement,
-    CategoryScale,
-    Chart as ChartJS,
-    Legend,
-    LinearScale,
-    Tooltip,
-} from 'chart.js';
-import {
-    ArrowDownRight,
-    ArrowUpRight,
-    Filter,
-    Heart,
-    ImagePlus,
-    MessageCircle,
-    Pencil,
-    Search,
-    Send,
-    UserPlus,
-} from 'lucide-vue-next';
-import { computed } from 'vue';
-import { Bar } from 'vue-chartjs';
-
-ChartJS.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
-
-const props = defineProps({
-    stats: { type: Object, required: true },
-    weeklyGoal: { type: Object, required: true },
-    engagementSeries: { type: Array, default: () => [] },
-    recentActivity: { type: Array, default: () => [] },
-    myPosts: { type: Array, default: () => [] },
-});
-
-const page = usePage();
-const user = computed(() => page.props.auth?.user);
-const firstName = computed(() => user.value?.name?.split(' ')[0] ?? 'friend');
-
-const hour = new Date().getHours();
-const greeting = computed(() => {
-    if (hour < 5) return 'Night owl';
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    if (hour < 21) return 'Good evening';
-    return 'Late shift';
-});
-
-const fmt = (n) => new Intl.NumberFormat('en-US').format(n ?? 0);
-const goalPct = computed(() => {
-    const t = props.weeklyGoal.target || 1;
-    return Math.min(100, Math.round((props.weeklyGoal.progress / t) * 100));
-});
-
-const chartData = computed(() => ({
-    labels: props.engagementSeries.map((d) => d.label),
-    datasets: [
-        {
-            label: 'Posts',
-            data: props.engagementSeries.map((d) => d.posts),
-            backgroundColor: 'oklch(0.22 0.012 60)',
-            borderRadius: 6,
-            barPercentage: 0.7,
-            categoryPercentage: 0.7,
-        },
-        {
-            label: 'Reactions',
-            data: props.engagementSeries.map((d) => d.reactions),
-            backgroundColor: 'oklch(0.57 0.17 35)',
-            borderRadius: 6,
-            barPercentage: 0.7,
-            categoryPercentage: 0.7,
-        },
-    ],
-}));
-
-const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-        legend: {
-            position: 'top',
-            align: 'end',
-            labels: {
-                boxWidth: 8,
-                boxHeight: 8,
-                usePointStyle: true,
-                pointStyle: 'circle',
-                padding: 16,
-                color: 'oklch(0.5 0.018 65)',
-                font: { size: 11 },
-            },
-        },
-        tooltip: { intersect: false, mode: 'index' },
-    },
-    scales: {
-        x: {
-            grid: { display: false, drawBorder: false },
-            ticks: { color: 'oklch(0.5 0.018 65)', font: { size: 10 } },
-        },
-        y: {
-            display: false,
-            grid: { display: false, drawBorder: false },
-        },
-    },
-};
-
-const truncate = (t, n = 60) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '…' : t;
-
-const timeAgo = (iso) => {
-    if (!iso) return '';
-    const diff = (Date.now() - new Date(iso).getTime()) / 1000;
-    if (diff < 60) return `${Math.floor(diff)}s ago`;
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    return `${Math.floor(diff / 86400)}d ago`;
-};
-
-const refLabel = (idx) => `ACT-${String(idx + 1).padStart(4, '0')}`;
-</script>
-
 <template>
     <Head title="Dashboard" />
     <AppLayout>
@@ -358,3 +235,126 @@ const refLabel = (idx) => `ACT-${String(idx + 1).padStart(4, '0')}`;
         </section>
     </AppLayout>
 </template>
+
+<script setup>
+import AppLayout from '@/layouts/app-layout.vue';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import {
+    BarController,
+    BarElement,
+    CategoryScale,
+    Chart as ChartJS,
+    Legend,
+    LinearScale,
+    Tooltip,
+} from 'chart.js';
+import {
+    ArrowDownRight,
+    ArrowUpRight,
+    Filter,
+    Heart,
+    ImagePlus,
+    MessageCircle,
+    Pencil,
+    Search,
+    Send,
+    UserPlus,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
+import { Bar } from 'vue-chartjs';
+
+ChartJS.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+
+const props = defineProps({
+    stats: { type: Object, required: true },
+    weeklyGoal: { type: Object, required: true },
+    engagementSeries: { type: Array, default: () => [] },
+    recentActivity: { type: Array, default: () => [] },
+    myPosts: { type: Array, default: () => [] },
+});
+
+const page = usePage();
+const user = computed(() => page.props.auth?.user);
+const firstName = computed(() => user.value?.name?.split(' ')[0] ?? 'friend');
+
+const hour = new Date().getHours();
+const greeting = computed(() => {
+    if (hour < 5) return 'Night owl';
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    if (hour < 21) return 'Good evening';
+    return 'Late shift';
+});
+
+const fmt = (n) => new Intl.NumberFormat('en-US').format(n ?? 0);
+const goalPct = computed(() => {
+    const t = props.weeklyGoal.target || 1;
+    return Math.min(100, Math.round((props.weeklyGoal.progress / t) * 100));
+});
+
+const chartData = computed(() => ({
+    labels: props.engagementSeries.map((d) => d.label),
+    datasets: [
+        {
+            label: 'Posts',
+            data: props.engagementSeries.map((d) => d.posts),
+            backgroundColor: 'oklch(0.22 0.012 60)',
+            borderRadius: 6,
+            barPercentage: 0.7,
+            categoryPercentage: 0.7,
+        },
+        {
+            label: 'Reactions',
+            data: props.engagementSeries.map((d) => d.reactions),
+            backgroundColor: 'oklch(0.57 0.17 35)',
+            borderRadius: 6,
+            barPercentage: 0.7,
+            categoryPercentage: 0.7,
+        },
+    ],
+}));
+
+const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            position: 'top',
+            align: 'end',
+            labels: {
+                boxWidth: 8,
+                boxHeight: 8,
+                usePointStyle: true,
+                pointStyle: 'circle',
+                padding: 16,
+                color: 'oklch(0.5 0.018 65)',
+                font: { size: 11 },
+            },
+        },
+        tooltip: { intersect: false, mode: 'index' },
+    },
+    scales: {
+        x: {
+            grid: { display: false, drawBorder: false },
+            ticks: { color: 'oklch(0.5 0.018 65)', font: { size: 10 } },
+        },
+        y: {
+            display: false,
+            grid: { display: false, drawBorder: false },
+        },
+    },
+};
+
+const truncate = (t, n = 60) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '…' : t;
+
+const timeAgo = (iso) => {
+    if (!iso) return '';
+    const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (diff < 60) return `${Math.floor(diff)}s ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return `${Math.floor(diff / 86400)}d ago`;
+};
+
+const refLabel = (idx) => `ACT-${String(idx + 1).padStart(4, '0')}`;
+</script>

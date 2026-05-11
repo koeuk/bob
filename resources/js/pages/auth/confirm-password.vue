@@ -1,19 +1,3 @@
-<script setup>
-import InputError from '@/components/input-error.vue';
-import Button from '@/components/ui/Button.vue';
-import Input from '@/components/ui/Input.vue';
-import Label from '@/components/ui/Label.vue';
-import Spinner from '@/components/ui/Spinner.vue';
-import AuthLayout from '@/layouts/auth-layout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
-
-const form = useForm({ password: '' });
-
-function submit() {
-    form.post('/user/confirm-password', { onFinish: () => form.reset() });
-}
-</script>
-
 <template>
     <AuthLayout title="Confirm password" description="Confirm your password to continue">
         <Head title="Confirm password" />
@@ -30,3 +14,19 @@ function submit() {
         </form>
     </AuthLayout>
 </template>
+
+<script setup>
+import InputError from '@/components/input-error.vue';
+import Button from '@/components/ui/Button.vue';
+import Input from '@/components/ui/Input.vue';
+import Label from '@/components/ui/Label.vue';
+import Spinner from '@/components/ui/Spinner.vue';
+import AuthLayout from '@/layouts/auth-layout.vue';
+import { Head, useForm } from '@inertiajs/vue3';
+
+const form = useForm({ password: '' });
+
+function submit() {
+    form.post('/user/confirm-password', { onFinish: () => form.reset() });
+}
+</script>

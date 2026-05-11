@@ -1,71 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { ChevronDown, Plus, Search, ShieldBan, Undo2 } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
-
-const props = defineProps({
-    bans: { type: Object, required: true },
-    filters: { type: Object, default: () => ({}) },
-    counts: { type: Object, required: true },
-    bannableUsers: { type: Array, default: () => [] },
-});
-
-const page = usePage();
-const activeOnly = ref(!!props.filters?.filter?.active);
-
-const toggleActive = () => {
-    activeOnly.value = !activeOnly.value;
-    router.get('/admin/bans', activeOnly.value ? { filter: { active: 1 } } : {}, {
-        preserveState: true, preserveScroll: true, replace: true,
-    });
-};
-
-const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
-const dateFmt = (iso) => iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
-const isActive = (b) => !b.expires_at || new Date(b.expires_at) > new Date();
-
-const lift = (ban) => {
-    if (!window.confirm(`Lift ban for ${ban.user?.name}?`)) return;
-    router.delete(`/admin/bans/${ban.uuid}`, { preserveScroll: true });
-};
-
-const showCreate = ref(false);
-const createForm = useForm({ user_uuid: '', reason: '', expires_at: '' });
-const submitCreate = () => createForm.post('/admin/bans', {
-    preserveScroll: true,
-    onSuccess: () => { showCreate.value = false; createForm.reset(); userSearch.value = ''; pickerOpen.value = false; },
-});
-
-// User picker state (search-as-you-type)
-const userSearch = ref('');
-const pickerOpen = ref(false);
-const selectedUser = computed(() => props.bannableUsers.find((u) => u.uuid === createForm.user_uuid));
-const filteredUsers = computed(() => {
-    const q = userSearch.value.trim().toLowerCase();
-    if (!q) return props.bannableUsers.slice(0, 50);
-    return props.bannableUsers
-        .filter((u) => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q))
-        .slice(0, 50);
-});
-const pickUser = (u) => {
-    createForm.user_uuid = u.uuid;
-    userSearch.value = '';
-    pickerOpen.value = false;
-};
-const clearUser = () => {
-    createForm.user_uuid = '';
-    userSearch.value = '';
-};
-const roleTone = (role) => {
-    switch (role) {
-        case 'admin': return 'bg-ink/10 text-ink';
-        case 'moderator': return 'bg-moss/15 text-moss';
-        default: return 'bg-secondary text-muted-foreground';
-    }
-};
-</script>
-
 <template>
     <Head title="Bans" />
     <AdminLayout title="Bans">
@@ -272,3 +204,71 @@ const roleTone = (role) => {
         </Teleport>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { ChevronDown, Plus, Search, ShieldBan, Undo2 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+
+const props = defineProps({
+    bans: { type: Object, required: true },
+    filters: { type: Object, default: () => ({}) },
+    counts: { type: Object, required: true },
+    bannableUsers: { type: Array, default: () => [] },
+});
+
+const page = usePage();
+const activeOnly = ref(!!props.filters?.filter?.active);
+
+const toggleActive = () => {
+    activeOnly.value = !activeOnly.value;
+    router.get('/admin/bans', activeOnly.value ? { filter: { active: 1 } } : {}, {
+        preserveState: true, preserveScroll: true, replace: true,
+    });
+};
+
+const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+const dateFmt = (iso) => iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+const isActive = (b) => !b.expires_at || new Date(b.expires_at) > new Date();
+
+const lift = (ban) => {
+    if (!window.confirm(`Lift ban for ${ban.user?.name}?`)) return;
+    router.delete(`/admin/bans/${ban.uuid}`, { preserveScroll: true });
+};
+
+const showCreate = ref(false);
+const createForm = useForm({ user_uuid: '', reason: '', expires_at: '' });
+const submitCreate = () => createForm.post('/admin/bans', {
+    preserveScroll: true,
+    onSuccess: () => { showCreate.value = false; createForm.reset(); userSearch.value = ''; pickerOpen.value = false; },
+});
+
+// User picker state (search-as-you-type)
+const userSearch = ref('');
+const pickerOpen = ref(false);
+const selectedUser = computed(() => props.bannableUsers.find((u) => u.uuid === createForm.user_uuid));
+const filteredUsers = computed(() => {
+    const q = userSearch.value.trim().toLowerCase();
+    if (!q) return props.bannableUsers.slice(0, 50);
+    return props.bannableUsers
+        .filter((u) => u.name.toLowerCase().includes(q) || u.email.toLowerCase().includes(q))
+        .slice(0, 50);
+});
+const pickUser = (u) => {
+    createForm.user_uuid = u.uuid;
+    userSearch.value = '';
+    pickerOpen.value = false;
+};
+const clearUser = () => {
+    createForm.user_uuid = '';
+    userSearch.value = '';
+};
+const roleTone = (role) => {
+    switch (role) {
+        case 'admin': return 'bg-ink/10 text-ink';
+        case 'moderator': return 'bg-moss/15 text-moss';
+        default: return 'bg-secondary text-muted-foreground';
+    }
+};
+</script>

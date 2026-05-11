@@ -1,17 +1,3 @@
-<script setup>
-import { cn } from '@/lib/utils';
-import {  useAppearance } from '@/composables/useAppearance';
-import { Monitor, Moon, Sun } from 'lucide-vue-next';
-
-const { appearance, updateAppearance } = useAppearance();
-
-const options = [
-    { value: 'light', icon: Sun, label: 'Light' },
-    { value: 'dark', icon: Moon, label: 'Dark' },
-    { value: 'system', icon: Monitor, label: 'System' },
-];
-</script>
-
 <template>
     <div class="inline-flex gap-1 rounded-lg bg-neutral-100 p-1 dark:bg-neutral-800">
         <button
@@ -30,3 +16,17 @@ const options = [
         </button>
     </div>
 </template>
+
+<script setup>
+import { cn } from '@/lib/utils';
+import {  useAppearance } from '@/composables/useAppearance';
+import { Monitor, Moon, Sun } from 'lucide-vue-next';
+
+const { appearance, updateAppearance } = useAppearance();
+
+const options = [
+    { value: 'light', icon: Sun, label: 'Light' },
+    { value: 'dark', icon: Moon, label: 'Dark' },
+    { value: 'system', icon: Monitor, label: 'System' },
+];
+</script>

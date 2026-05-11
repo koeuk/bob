@@ -1,25 +1,3 @@
-<script setup>
-import HeadingSmall from '@/components/heading-small.vue';
-import InputError from '@/components/input-error.vue';
-import Button from '@/components/ui/Button.vue';
-import Input from '@/components/ui/Input.vue';
-import Label from '@/components/ui/Label.vue';
-import Spinner from '@/components/ui/Spinner.vue';
-import AppLayout from '@/layouts/app-layout.vue';
-import SettingsLayout from '@/layouts/settings-layout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
-
-const form = useForm({ current_password: '', password: '', password_confirmation: '' });
-
-function submit() {
-    form.put('/user/password', {
-        preserveScroll: true,
-        onSuccess: () => form.reset(),
-        onError: () => form.reset('password', 'password_confirmation'),
-    });
-}
-</script>
-
 <template>
     <Head title="Password" />
     <AppLayout>
@@ -55,3 +33,25 @@ function submit() {
         </SettingsLayout>
     </AppLayout>
 </template>
+
+<script setup>
+import HeadingSmall from '@/components/heading-small.vue';
+import InputError from '@/components/input-error.vue';
+import Button from '@/components/ui/Button.vue';
+import Input from '@/components/ui/Input.vue';
+import Label from '@/components/ui/Label.vue';
+import Spinner from '@/components/ui/Spinner.vue';
+import AppLayout from '@/layouts/app-layout.vue';
+import SettingsLayout from '@/layouts/settings-layout.vue';
+import { Head, useForm } from '@inertiajs/vue3';
+
+const form = useForm({ current_password: '', password: '', password_confirmation: '' });
+
+function submit() {
+    form.put('/user/password', {
+        preserveScroll: true,
+        onSuccess: () => form.reset(),
+        onError: () => form.reset('password', 'password_confirmation'),
+    });
+}
+</script>

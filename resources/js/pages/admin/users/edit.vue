@@ -1,34 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Save } from 'lucide-vue-next';
-import { computed } from 'vue';
-
-const props = defineProps({
-    user: { type: Object, default: null },
-});
-
-const page = usePage();
-const isNew = computed(() => !props.user);
-const currentRole = computed(() => page.props.auth?.user?.role);
-const canCreateAdmin = computed(() => currentRole.value === 'super_admin');
-
-const form = useForm({
-    name: props.user?.name ?? '',
-    email: props.user?.email ?? '',
-    password: '',
-    role: props.user?.role ?? 'user',
-});
-
-const submit = () => {
-    if (isNew.value) {
-        form.post('/admin/users', { preserveScroll: true });
-    } else {
-        form.patch(`/admin/users/${props.user.uuid}`, { preserveScroll: true });
-    }
-};
-</script>
-
 <template>
     <Head :title="isNew ? 'New user' : 'Edit user'" />
     <AdminLayout>
@@ -107,3 +76,34 @@ const submit = () => {
         </form>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
+import { ArrowLeft, Save } from 'lucide-vue-next';
+import { computed } from 'vue';
+
+const props = defineProps({
+    user: { type: Object, default: null },
+});
+
+const page = usePage();
+const isNew = computed(() => !props.user);
+const currentRole = computed(() => page.props.auth?.user?.role);
+const canCreateAdmin = computed(() => currentRole.value === 'super_admin');
+
+const form = useForm({
+    name: props.user?.name ?? '',
+    email: props.user?.email ?? '',
+    password: '',
+    role: props.user?.role ?? 'user',
+});
+
+const submit = () => {
+    if (isNew.value) {
+        form.post('/admin/users', { preserveScroll: true });
+    } else {
+        form.patch(`/admin/users/${props.user.uuid}`, { preserveScroll: true });
+    }
+};
+</script>

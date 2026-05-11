@@ -1,134 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, usePage } from '@inertiajs/vue3';
-import {
-    BarController,
-    BarElement,
-    CategoryScale,
-    Chart as ChartJS,
-    Legend,
-    LinearScale,
-    Tooltip,
-} from 'chart.js';
-import {
-    ArrowDownRight,
-    ArrowUpRight,
-    Flag,
-    Hash,
-    MessageSquare,
-    Newspaper,
-    ShieldBan,
-    Users,
-} from 'lucide-vue-next';
-import { computed } from 'vue';
-import { Bar } from 'vue-chartjs';
-
-ChartJS.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
-
-const props = defineProps({
-    stats: { type: Object, required: true },
-    series: { type: Object, required: true },
-    recentReports: { type: Array, default: () => [] },
-    recentActivity: { type: Array, default: () => [] },
-});
-
-const page = usePage();
-const firstName = computed(() => page.props.auth?.user?.name?.split(' ')[0] ?? 'friend');
-
-const hour = new Date().getHours();
-const greeting = computed(() => {
-    if (hour < 5) return 'Still up';
-    if (hour < 12) return 'Good morning';
-    if (hour < 17) return 'Good afternoon';
-    if (hour < 21) return 'Good evening';
-    return 'Late shift';
-});
-
-const chartLabels = computed(() => {
-    const map = new Map(props.series.signups.map((d) => [d.date, d.count]));
-    const posts = new Map(props.series.posts.map((d) => [d.date, d.count]));
-    const keys = Array.from(new Set([...map.keys(), ...posts.keys()])).sort();
-    return {
-        labels: keys.map((k) => new Date(k).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
-        signups: keys.map((k) => map.get(k) ?? 0),
-        posts: keys.map((k) => posts.get(k) ?? 0),
-    };
-});
-
-const chartData = computed(() => ({
-    labels: chartLabels.value.labels,
-    datasets: [
-        {
-            label: 'Signups',
-            data: chartLabels.value.signups,
-            backgroundColor: 'oklch(0.57 0.17 35)',
-            borderRadius: 6,
-            barPercentage: 0.7,
-        },
-        {
-            label: 'Posts',
-            data: chartLabels.value.posts,
-            backgroundColor: 'oklch(0.22 0.012 60)',
-            borderRadius: 6,
-            barPercentage: 0.7,
-        },
-    ],
-}));
-
-const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-        legend: {
-            position: 'top',
-            align: 'end',
-            labels: {
-                boxWidth: 10,
-                boxHeight: 10,
-                usePointStyle: true,
-                pointStyle: 'circle',
-                padding: 16,
-                color: 'oklch(0.5 0.018 65)',
-                font: { size: 11 },
-            },
-        },
-        tooltip: { intersect: false, mode: 'index' },
-    },
-    scales: {
-        x: {
-            grid: { display: false, drawBorder: false },
-            ticks: { color: 'oklch(0.5 0.018 65)', font: { size: 10 } },
-        },
-        y: {
-            grid: { color: 'oklch(0.82 0.02 75 / 0.4)', drawBorder: false },
-            ticks: { color: 'oklch(0.5 0.018 65)', font: { size: 10 } },
-        },
-    },
-};
-
-const figures = computed(() => [
-    { key: 'users_total', label: 'Total Users', value: props.stats.users_total, sub: `${props.stats.users_today} today`, icon: Users, trend: 'up' },
-    { key: 'posts_total', label: 'Posts', value: props.stats.posts_total, sub: `${props.stats.posts_today} today`, icon: Newspaper, trend: 'up' },
-    { key: 'comments_total', label: 'Comments', value: props.stats.comments_total, sub: 'all time', icon: MessageSquare, trend: 'up' },
-    { key: 'bans_active', label: 'Active Bans', value: props.stats.bans_active, sub: 'currently', icon: ShieldBan, trend: 'down' },
-]);
-
-const fmt = (n) => new Intl.NumberFormat('en-US').format(n ?? 0);
-
-const reportableTitle = (r) => {
-    const t = r.reportable_type?.split('\\').pop() ?? 'Item';
-    return `${t} report`;
-};
-
-const timeAgo = (iso) => {
-    const diff = (Date.now() - new Date(iso).getTime()) / 1000;
-    if (diff < 60) return `${Math.floor(diff)}s ago`;
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    return `${Math.floor(diff / 86400)}d ago`;
-};
-</script>
-
 <template>
     <Head title="Admin Dashboard" />
     <AdminLayout>
@@ -303,3 +172,134 @@ const timeAgo = (iso) => {
         </section>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import {
+    BarController,
+    BarElement,
+    CategoryScale,
+    Chart as ChartJS,
+    Legend,
+    LinearScale,
+    Tooltip,
+} from 'chart.js';
+import {
+    ArrowDownRight,
+    ArrowUpRight,
+    Flag,
+    Hash,
+    MessageSquare,
+    Newspaper,
+    ShieldBan,
+    Users,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
+import { Bar } from 'vue-chartjs';
+
+ChartJS.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
+
+const props = defineProps({
+    stats: { type: Object, required: true },
+    series: { type: Object, required: true },
+    recentReports: { type: Array, default: () => [] },
+    recentActivity: { type: Array, default: () => [] },
+});
+
+const page = usePage();
+const firstName = computed(() => page.props.auth?.user?.name?.split(' ')[0] ?? 'friend');
+
+const hour = new Date().getHours();
+const greeting = computed(() => {
+    if (hour < 5) return 'Still up';
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    if (hour < 21) return 'Good evening';
+    return 'Late shift';
+});
+
+const chartLabels = computed(() => {
+    const map = new Map(props.series.signups.map((d) => [d.date, d.count]));
+    const posts = new Map(props.series.posts.map((d) => [d.date, d.count]));
+    const keys = Array.from(new Set([...map.keys(), ...posts.keys()])).sort();
+    return {
+        labels: keys.map((k) => new Date(k).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+        signups: keys.map((k) => map.get(k) ?? 0),
+        posts: keys.map((k) => posts.get(k) ?? 0),
+    };
+});
+
+const chartData = computed(() => ({
+    labels: chartLabels.value.labels,
+    datasets: [
+        {
+            label: 'Signups',
+            data: chartLabels.value.signups,
+            backgroundColor: 'oklch(0.57 0.17 35)',
+            borderRadius: 6,
+            barPercentage: 0.7,
+        },
+        {
+            label: 'Posts',
+            data: chartLabels.value.posts,
+            backgroundColor: 'oklch(0.22 0.012 60)',
+            borderRadius: 6,
+            barPercentage: 0.7,
+        },
+    ],
+}));
+
+const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            position: 'top',
+            align: 'end',
+            labels: {
+                boxWidth: 10,
+                boxHeight: 10,
+                usePointStyle: true,
+                pointStyle: 'circle',
+                padding: 16,
+                color: 'oklch(0.5 0.018 65)',
+                font: { size: 11 },
+            },
+        },
+        tooltip: { intersect: false, mode: 'index' },
+    },
+    scales: {
+        x: {
+            grid: { display: false, drawBorder: false },
+            ticks: { color: 'oklch(0.5 0.018 65)', font: { size: 10 } },
+        },
+        y: {
+            grid: { color: 'oklch(0.82 0.02 75 / 0.4)', drawBorder: false },
+            ticks: { color: 'oklch(0.5 0.018 65)', font: { size: 10 } },
+        },
+    },
+};
+
+const figures = computed(() => [
+    { key: 'users_total', label: 'Total Users', value: props.stats.users_total, sub: `${props.stats.users_today} today`, icon: Users, trend: 'up' },
+    { key: 'posts_total', label: 'Posts', value: props.stats.posts_total, sub: `${props.stats.posts_today} today`, icon: Newspaper, trend: 'up' },
+    { key: 'comments_total', label: 'Comments', value: props.stats.comments_total, sub: 'all time', icon: MessageSquare, trend: 'up' },
+    { key: 'bans_active', label: 'Active Bans', value: props.stats.bans_active, sub: 'currently', icon: ShieldBan, trend: 'down' },
+]);
+
+const fmt = (n) => new Intl.NumberFormat('en-US').format(n ?? 0);
+
+const reportableTitle = (r) => {
+    const t = r.reportable_type?.split('\\').pop() ?? 'Item';
+    return `${t} report`;
+};
+
+const timeAgo = (iso) => {
+    const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (diff < 60) return `${Math.floor(diff)}s ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return `${Math.floor(diff / 86400)}d ago`;
+};
+</script>

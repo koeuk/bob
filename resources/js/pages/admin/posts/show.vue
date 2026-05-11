@@ -1,38 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Eye, EyeOff, Flag, Heart, MessageCircle, Pencil, Trash2 } from 'lucide-vue-next';
-import { computed } from 'vue';
-
-const props = defineProps({
-    post: { type: Object, required: true },
-});
-
-const page = usePage();
-
-const flagForm = useForm({ status: props.post.status });
-const setStatus = (newStatus) => {
-    flagForm.status = newStatus;
-    flagForm.patch(`/admin/posts/${props.post.uuid}/flag`, { preserveScroll: true });
-};
-
-const deletePost = () => {
-    if (!window.confirm('Delete this post? It will be soft-deleted.')) return;
-    router.delete(`/admin/posts/${props.post.uuid}`);
-};
-
-const dateFmt = (iso) => new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
-const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
-
-const statusTone = computed(() => {
-    switch (props.post.status) {
-        case 'flagged': return 'bg-rust/15 text-rust';
-        case 'hidden': return 'bg-ink/10 text-ink';
-        default: return 'bg-moss/15 text-moss';
-    }
-});
-</script>
-
 <template>
     <Head title="Post" />
     <AdminLayout>
@@ -144,3 +109,38 @@ const statusTone = computed(() => {
         </section>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { ArrowLeft, Eye, EyeOff, Flag, Heart, MessageCircle, Pencil, Trash2 } from 'lucide-vue-next';
+import { computed } from 'vue';
+
+const props = defineProps({
+    post: { type: Object, required: true },
+});
+
+const page = usePage();
+
+const flagForm = useForm({ status: props.post.status });
+const setStatus = (newStatus) => {
+    flagForm.status = newStatus;
+    flagForm.patch(`/admin/posts/${props.post.uuid}/flag`, { preserveScroll: true });
+};
+
+const deletePost = () => {
+    if (!window.confirm('Delete this post? It will be soft-deleted.')) return;
+    router.delete(`/admin/posts/${props.post.uuid}`);
+};
+
+const dateFmt = (iso) => new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+
+const statusTone = computed(() => {
+    switch (props.post.status) {
+        case 'flagged': return 'bg-rust/15 text-rust';
+        case 'hidden': return 'bg-ink/10 text-ink';
+        default: return 'bg-moss/15 text-moss';
+    }
+});
+</script>

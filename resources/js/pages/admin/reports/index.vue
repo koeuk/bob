@@ -1,45 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { ChevronRight, Flag, Inbox } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
-
-const props = defineProps({
-    reports: { type: Object, required: true },
-    filters: { type: Object, default: () => ({}) },
-    counts: { type: Object, required: true },
-});
-
-const page = usePage();
-const activeTab = ref(props.filters?.filter?.status ?? 'all');
-
-const tabs = computed(() => [
-    { key: 'all', label: 'All', count: props.reports.total },
-    { key: 'pending', label: 'Pending', count: props.counts.pending, tone: 'rust' },
-    { key: 'reviewed', label: 'Reviewed', count: props.counts.reviewed },
-    { key: 'resolved', label: 'Resolved', count: props.counts.resolved, tone: 'moss' },
-    { key: 'dismissed', label: 'Dismissed', count: props.counts.dismissed },
-]);
-
-const setTab = (key) => {
-    activeTab.value = key;
-    router.get('/admin/reports', key === 'all' ? {} : { filter: { status: key } }, {
-        preserveState: true, preserveScroll: true, replace: true,
-    });
-};
-
-const dateFmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-const reportableLabel = (r) => (r.reportable_type?.split('\\').pop() ?? 'Item');
-const statusTone = (s) => {
-    switch (s) {
-        case 'pending': return 'bg-rust/15 text-rust';
-        case 'resolved': return 'bg-moss/15 text-moss';
-        case 'dismissed': return 'bg-secondary text-muted-foreground';
-        default: return 'bg-ink/10 text-ink';
-    }
-};
-</script>
-
 <template>
     <Head title="Reports" />
     <AdminLayout title="Reports">
@@ -128,3 +86,45 @@ const statusTone = (s) => {
         </div>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { ChevronRight, Flag, Inbox } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+
+const props = defineProps({
+    reports: { type: Object, required: true },
+    filters: { type: Object, default: () => ({}) },
+    counts: { type: Object, required: true },
+});
+
+const page = usePage();
+const activeTab = ref(props.filters?.filter?.status ?? 'all');
+
+const tabs = computed(() => [
+    { key: 'all', label: 'All', count: props.reports.total },
+    { key: 'pending', label: 'Pending', count: props.counts.pending, tone: 'rust' },
+    { key: 'reviewed', label: 'Reviewed', count: props.counts.reviewed },
+    { key: 'resolved', label: 'Resolved', count: props.counts.resolved, tone: 'moss' },
+    { key: 'dismissed', label: 'Dismissed', count: props.counts.dismissed },
+]);
+
+const setTab = (key) => {
+    activeTab.value = key;
+    router.get('/admin/reports', key === 'all' ? {} : { filter: { status: key } }, {
+        preserveState: true, preserveScroll: true, replace: true,
+    });
+};
+
+const dateFmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const reportableLabel = (r) => (r.reportable_type?.split('\\').pop() ?? 'Item');
+const statusTone = (s) => {
+    switch (s) {
+        case 'pending': return 'bg-rust/15 text-rust';
+        case 'resolved': return 'bg-moss/15 text-moss';
+        case 'dismissed': return 'bg-secondary text-muted-foreground';
+        default: return 'bg-ink/10 text-ink';
+    }
+};
+</script>

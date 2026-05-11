@@ -1,63 +1,3 @@
-<script setup>
-import AppLayout from '@/layouts/app-layout.vue';
-import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Flag, Heart, MessageCircle, Send, Trash2 } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
-
-const props = defineProps({
-    post: { type: Object, required: true },
-    comments: { type: Array, default: () => [] },
-    isAuthor: { type: Boolean, default: false },
-});
-
-const page = usePage();
-const me = computed(() => page.props.auth?.user);
-const isModerator = computed(() => ['moderator', 'admin', 'super_admin'].includes(me.value?.role));
-
-const dateFmt = (iso) => {
-    const d = new Date(iso);
-    const diff = (Date.now() - d.getTime()) / 1000;
-    if (diff < 60) return `${Math.floor(diff)}s ago`;
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-};
-const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
-
-const togglePostLike = () => router.post(`/posts/${props.post.uuid}/like`, {}, { preserveScroll: true });
-const toggleCommentLike = (c) => router.post(`/comments/${c.uuid}/like`, {}, { preserveScroll: true });
-
-const deletePost = () => {
-    if (!window.confirm('Delete this post? It will be soft-removed.')) return;
-    router.delete(`/posts/${props.post.uuid}`);
-};
-
-const deleteComment = (c) => {
-    if (!window.confirm('Delete this comment?')) return;
-    router.delete(`/comments/${c.uuid}`, { preserveScroll: true });
-};
-
-const commentForm = useForm({ body: '' });
-const submitComment = () => commentForm.post(`/posts/${props.post.uuid}/comments`, {
-    preserveScroll: true,
-    onSuccess: () => commentForm.reset('body'),
-});
-
-const reportTarget = ref(null);
-const reportForm = useForm({ type: 'post', target_uuid: '', reason: '' });
-const openReport = (type, uuid, label) => {
-    reportForm.type = type;
-    reportForm.target_uuid = uuid;
-    reportForm.reason = '';
-    reportTarget.value = { type, label };
-};
-const submitReport = () => reportForm.post('/reports', {
-    preserveScroll: true,
-    onSuccess: () => { reportTarget.value = null; reportForm.reset(); },
-});
-</script>
-
 <template>
     <Head :title="`${post.user?.name} · post`" />
     <AppLayout>
@@ -244,3 +184,63 @@ const submitReport = () => reportForm.post('/reports', {
         </Teleport>
     </AppLayout>
 </template>
+
+<script setup>
+import AppLayout from '@/layouts/app-layout.vue';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { ArrowLeft, Flag, Heart, MessageCircle, Send, Trash2 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+
+const props = defineProps({
+    post: { type: Object, required: true },
+    comments: { type: Array, default: () => [] },
+    isAuthor: { type: Boolean, default: false },
+});
+
+const page = usePage();
+const me = computed(() => page.props.auth?.user);
+const isModerator = computed(() => ['moderator', 'admin', 'super_admin'].includes(me.value?.role));
+
+const dateFmt = (iso) => {
+    const d = new Date(iso);
+    const diff = (Date.now() - d.getTime()) / 1000;
+    if (diff < 60) return `${Math.floor(diff)}s ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+
+const togglePostLike = () => router.post(`/posts/${props.post.uuid}/like`, {}, { preserveScroll: true });
+const toggleCommentLike = (c) => router.post(`/comments/${c.uuid}/like`, {}, { preserveScroll: true });
+
+const deletePost = () => {
+    if (!window.confirm('Delete this post? It will be soft-removed.')) return;
+    router.delete(`/posts/${props.post.uuid}`);
+};
+
+const deleteComment = (c) => {
+    if (!window.confirm('Delete this comment?')) return;
+    router.delete(`/comments/${c.uuid}`, { preserveScroll: true });
+};
+
+const commentForm = useForm({ body: '' });
+const submitComment = () => commentForm.post(`/posts/${props.post.uuid}/comments`, {
+    preserveScroll: true,
+    onSuccess: () => commentForm.reset('body'),
+});
+
+const reportTarget = ref(null);
+const reportForm = useForm({ type: 'post', target_uuid: '', reason: '' });
+const openReport = (type, uuid, label) => {
+    reportForm.type = type;
+    reportForm.target_uuid = uuid;
+    reportForm.reason = '';
+    reportTarget.value = { type, label };
+};
+const submitReport = () => reportForm.post('/reports', {
+    preserveScroll: true,
+    onSuccess: () => { reportTarget.value = null; reportForm.reset(); },
+});
+</script>

@@ -1,19 +1,3 @@
-<script setup>
-import Heading from '@/components/heading.vue';
-import Separator from '@/components/ui/Separator.vue';
-import { cn } from '@/lib/utils';
-import { Link, usePage } from '@inertiajs/vue3';
-
-const page = usePage();
-
-const sidebarItems = [
-    { href: '/settings/profile', title: 'Profile' },
-    { href: '/settings/password', title: 'Password' },
-    { href: '/settings/two-factor', title: 'Two-Factor Auth' },
-    { href: '/settings/appearance', title: 'Appearance' },
-];
-</script>
-
 <template>
     <div class="px-4 py-6">
         <Heading title="Settings" description="Manage your profile and account settings" />
@@ -42,3 +26,19 @@ const sidebarItems = [
         </div>
     </div>
 </template>
+
+<script setup>
+import Heading from '@/components/heading.vue';
+import Separator from '@/components/ui/Separator.vue';
+import { cn } from '@/lib/utils';
+import { Link, usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+
+const sidebarItems = [
+    { href: '/settings/profile', title: 'Profile' },
+    { href: '/settings/password', title: 'Password' },
+    { href: '/settings/two-factor', title: 'Two-Factor Auth' },
+    { href: '/settings/appearance', title: 'Appearance' },
+];
+</script>

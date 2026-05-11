@@ -1,57 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, useForm, usePage } from '@inertiajs/vue3';
-import { Plus, Save, Trash2 } from 'lucide-vue-next';
-import { computed, reactive } from 'vue';
-
-const props = defineProps({
-    groups: { type: Object, required: true },
-});
-
-const page = usePage();
-
-// Flatten groups into editable rows
-const rowsFromGroups = () => {
-    const rows = [];
-    for (const [group, items] of Object.entries(props.groups)) {
-        for (const s of items) {
-            rows.push({
-                key: s.key,
-                group,
-                value: typeof s.value === 'string' ? s.value : JSON.stringify(s.value ?? ''),
-            });
-        }
-    }
-    return rows;
-};
-
-const state = reactive({ rows: rowsFromGroups() });
-
-const groupedRows = computed(() => {
-    const g = {};
-    for (const r of state.rows) {
-        g[r.group] = g[r.group] ?? [];
-        g[r.group].push(r);
-    }
-    return g;
-});
-
-const addRow = () => {
-    state.rows.push({ key: '', group: 'general', value: '' });
-};
-const removeRow = (row) => {
-    state.rows.splice(state.rows.indexOf(row), 1);
-};
-
-const form = useForm({ settings: [] });
-const submit = () => {
-    form.settings = state.rows
-        .filter((r) => r.key)
-        .map((r) => ({ key: r.key, group: r.group, value: r.value }));
-    form.patch('/admin/settings', { preserveScroll: true });
-};
-</script>
-
 <template>
     <Head title="Settings" />
     <AdminLayout title="Settings">
@@ -119,3 +65,57 @@ const submit = () => {
         </div>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Plus, Save, Trash2 } from 'lucide-vue-next';
+import { computed, reactive } from 'vue';
+
+const props = defineProps({
+    groups: { type: Object, required: true },
+});
+
+const page = usePage();
+
+// Flatten groups into editable rows
+const rowsFromGroups = () => {
+    const rows = [];
+    for (const [group, items] of Object.entries(props.groups)) {
+        for (const s of items) {
+            rows.push({
+                key: s.key,
+                group,
+                value: typeof s.value === 'string' ? s.value : JSON.stringify(s.value ?? ''),
+            });
+        }
+    }
+    return rows;
+};
+
+const state = reactive({ rows: rowsFromGroups() });
+
+const groupedRows = computed(() => {
+    const g = {};
+    for (const r of state.rows) {
+        g[r.group] = g[r.group] ?? [];
+        g[r.group].push(r);
+    }
+    return g;
+});
+
+const addRow = () => {
+    state.rows.push({ key: '', group: 'general', value: '' });
+};
+const removeRow = (row) => {
+    state.rows.splice(state.rows.indexOf(row), 1);
+};
+
+const form = useForm({ settings: [] });
+const submit = () => {
+    form.settings = state.rows
+        .filter((r) => r.key)
+        .map((r) => ({ key: r.key, group: r.group, value: r.value }));
+    form.patch('/admin/settings', { preserveScroll: true });
+};
+</script>

@@ -1,36 +1,3 @@
-<script setup>
-import HeadingSmall from '@/components/heading-small.vue';
-import InputError from '@/components/input-error.vue';
-import Button from '@/components/ui/Button.vue';
-import Dialog from '@/components/ui/Dialog.vue';
-import DialogContent from '@/components/ui/DialogContent.vue';
-import DialogDescription from '@/components/ui/DialogDescription.vue';
-import DialogFooter from '@/components/ui/DialogFooter.vue';
-import DialogHeader from '@/components/ui/DialogHeader.vue';
-import DialogTitle from '@/components/ui/DialogTitle.vue';
-import DialogTrigger from '@/components/ui/DialogTrigger.vue';
-import Input from '@/components/ui/Input.vue';
-import Label from '@/components/ui/Label.vue';
-import { useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
-
-const form = useForm({ password: '' });
-const open = ref(false);
-const passwordInput = ref(null);
-
-function submit() {
-    form.delete('/profile', {
-        preserveScroll: true,
-        onSuccess: () => {
-            open.value = false;
-            form.reset();
-        },
-        onError: () => passwordInput.value?.focus(),
-        onFinish: () => form.reset(),
-    });
-}
-</script>
-
 <template>
     <div class="space-y-6">
         <HeadingSmall title="Delete account" description="Delete your account and all of its resources" />
@@ -71,3 +38,36 @@ function submit() {
         </div>
     </div>
 </template>
+
+<script setup>
+import HeadingSmall from '@/components/heading-small.vue';
+import InputError from '@/components/input-error.vue';
+import Button from '@/components/ui/Button.vue';
+import Dialog from '@/components/ui/Dialog.vue';
+import DialogContent from '@/components/ui/DialogContent.vue';
+import DialogDescription from '@/components/ui/DialogDescription.vue';
+import DialogFooter from '@/components/ui/DialogFooter.vue';
+import DialogHeader from '@/components/ui/DialogHeader.vue';
+import DialogTitle from '@/components/ui/DialogTitle.vue';
+import DialogTrigger from '@/components/ui/DialogTrigger.vue';
+import Input from '@/components/ui/Input.vue';
+import Label from '@/components/ui/Label.vue';
+import { useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
+const form = useForm({ password: '' });
+const open = ref(false);
+const passwordInput = ref(null);
+
+function submit() {
+    form.delete('/profile', {
+        preserveScroll: true,
+        onSuccess: () => {
+            open.value = false;
+            form.reset();
+        },
+        onError: () => passwordInput.value?.focus(),
+        onFinish: () => form.reset(),
+    });
+}
+</script>

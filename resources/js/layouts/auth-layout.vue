@@ -1,10 +1,3 @@
-<script setup>
-import AppearanceDropdown from '@/components/appearance-dropdown.vue';
-import { Link } from '@inertiajs/vue3';
-
-defineProps({ title: String, description: String });
-</script>
-
 <template>
     <div class="relative flex min-h-screen flex-col items-center justify-center bg-background px-4 py-10 text-foreground">
         <!-- ambient glow -->
@@ -52,3 +45,10 @@ defineProps({ title: String, description: String });
         </div>
     </div>
 </template>
+
+<script setup>
+import AppearanceDropdown from '@/components/appearance-dropdown.vue';
+import { Link } from '@inertiajs/vue3';
+
+defineProps({ title: String, description: String });
+</script>

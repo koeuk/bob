@@ -1,42 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { Heart, Trash2 } from 'lucide-vue-next';
-
-const props = defineProps({
-    likes: { type: Object, required: true },
-    filters: { type: Object, default: () => ({}) },
-    counts: { type: Object, required: true },
-});
-
-const page = usePage();
-
-const dateFmt = (iso) => iso ? new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—';
-const targetLabel = (l) => (l.likeable_type?.split('\\').pop() ?? 'Item');
-const targetPreview = (l) => {
-    if (!l.likeable) return '—';
-    return l.likeable.body ?? l.likeable.name ?? l.likeable.title ?? '—';
-};
-const truncate = (t, n = 80) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '…' : t;
-
-const typeTone = (t) => {
-    switch (t) {
-        case 'love': return 'bg-rust/15 text-rust';
-        case 'bookmark': return 'bg-ink/10 text-ink';
-        case 'haha':
-        case 'wow': return 'bg-moss/15 text-moss';
-        case 'sad':
-        case 'angry': return 'bg-rust/10 text-rust';
-        default: return 'bg-secondary text-muted-foreground';
-    }
-};
-
-const removeLike = (like) => {
-    if (!window.confirm('Remove this reaction?')) return;
-    router.delete(`/admin/likes/${like.uuid}`, { preserveScroll: true });
-};
-</script>
-
 <template>
     <Head title="Likes" />
     <AdminLayout title="Likes & Reactions">
@@ -120,3 +81,42 @@ const removeLike = (like) => {
         </div>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { Heart, Trash2 } from 'lucide-vue-next';
+
+const props = defineProps({
+    likes: { type: Object, required: true },
+    filters: { type: Object, default: () => ({}) },
+    counts: { type: Object, required: true },
+});
+
+const page = usePage();
+
+const dateFmt = (iso) => iso ? new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) : '—';
+const targetLabel = (l) => (l.likeable_type?.split('\\').pop() ?? 'Item');
+const targetPreview = (l) => {
+    if (!l.likeable) return '—';
+    return l.likeable.body ?? l.likeable.name ?? l.likeable.title ?? '—';
+};
+const truncate = (t, n = 80) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '…' : t;
+
+const typeTone = (t) => {
+    switch (t) {
+        case 'love': return 'bg-rust/15 text-rust';
+        case 'bookmark': return 'bg-ink/10 text-ink';
+        case 'haha':
+        case 'wow': return 'bg-moss/15 text-moss';
+        case 'sad':
+        case 'angry': return 'bg-rust/10 text-rust';
+        default: return 'bg-secondary text-muted-foreground';
+    }
+};
+
+const removeLike = (like) => {
+    if (!window.confirm('Remove this reaction?')) return;
+    router.delete(`/admin/likes/${like.uuid}`, { preserveScroll: true });
+};
+</script>

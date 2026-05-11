@@ -1,94 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { ChevronDown, Flag, Heart, Pencil, Plus, Search, Trash2 } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
-
-const props = defineProps({
-    comments: { type: Object, required: true },
-    filters: { type: Object, default: () => ({}) },
-    posts: { type: Array, default: () => [] },
-    authors: { type: Array, default: () => [] },
-});
-
-const page = usePage();
-const search = ref(props.filters?.filter?.search ?? '');
-
-const apply = () => router.get('/admin/comments', search.value ? { filter: { search: search.value } } : {}, {
-    preserveState: true, preserveScroll: true, replace: true,
-});
-
-const deleteComment = (c) => {
-    if (!window.confirm('Delete this comment?')) return;
-    router.delete(`/admin/comments/${c.uuid}`, { preserveScroll: true });
-};
-
-const dateFmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
-const truncate = (t, n = 80) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '…' : t;
-
-// Edit modal
-const editTarget = ref(null);
-const editForm = useForm({ body: '', reason: '' });
-const openEdit = (c) => {
-    editForm.body = c.body;
-    editForm.reason = '';
-    editTarget.value = c;
-};
-const submitEdit = () => editForm.patch(`/admin/comments/${editTarget.value.uuid}`, {
-    preserveScroll: true,
-    onSuccess: () => { editTarget.value = null; editForm.reset(); },
-});
-
-// Create modal
-const me = computed(() => page.props.auth?.user);
-const showCreate = ref(false);
-const createForm = useForm({ post_uuid: '', user_uuid: '', body: '' });
-
-const postSearch = ref('');
-const postPickerOpen = ref(false);
-const selectedPost = computed(() => props.posts.find((p) => p.uuid === createForm.post_uuid));
-const filteredPosts = computed(() => {
-    const q = postSearch.value.trim().toLowerCase();
-    if (!q) return props.posts.slice(0, 50);
-    return props.posts.filter((p) => p.preview.toLowerCase().includes(q)).slice(0, 50);
-});
-const pickPost = (p) => { createForm.post_uuid = p.uuid; postSearch.value = ''; postPickerOpen.value = false; };
-const clearPost = () => { createForm.post_uuid = ''; postSearch.value = ''; };
-
-const authorSearch = ref('');
-const authorPickerOpen = ref(false);
-const selectedAuthor = computed(() => props.authors.find((a) => a.uuid === createForm.user_uuid));
-const filteredAuthors = computed(() => {
-    const q = authorSearch.value.trim().toLowerCase();
-    if (!q) return props.authors.slice(0, 50);
-    return props.authors
-        .filter((a) => a.name.toLowerCase().includes(q) || a.email.toLowerCase().includes(q))
-        .slice(0, 50);
-});
-const pickAuthor = (a) => { createForm.user_uuid = a.uuid; authorSearch.value = ''; authorPickerOpen.value = false; };
-const clearAuthor = () => { createForm.user_uuid = ''; authorSearch.value = ''; };
-
-const openCreate = () => {
-    createForm.reset();
-    createForm.user_uuid = me.value?.uuid ?? '';
-    showCreate.value = true;
-};
-const submitCreate = () => createForm.post('/admin/comments', {
-    preserveScroll: true,
-    onSuccess: () => { showCreate.value = false; createForm.reset(); postSearch.value = ''; authorSearch.value = ''; },
-});
-
-const roleTone = (role) => {
-    switch (role) {
-        case 'super_admin': return 'bg-rust/15 text-rust';
-        case 'admin': return 'bg-ink/10 text-ink';
-        case 'moderator': return 'bg-moss/15 text-moss';
-        default: return 'bg-secondary text-muted-foreground';
-    }
-};
-</script>
-
 <template>
     <Head title="Comments" />
     <AdminLayout title="Comments">
@@ -368,3 +277,94 @@ const roleTone = (role) => {
         </Teleport>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { ChevronDown, Flag, Heart, Pencil, Plus, Search, Trash2 } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+
+const props = defineProps({
+    comments: { type: Object, required: true },
+    filters: { type: Object, default: () => ({}) },
+    posts: { type: Array, default: () => [] },
+    authors: { type: Array, default: () => [] },
+});
+
+const page = usePage();
+const search = ref(props.filters?.filter?.search ?? '');
+
+const apply = () => router.get('/admin/comments', search.value ? { filter: { search: search.value } } : {}, {
+    preserveState: true, preserveScroll: true, replace: true,
+});
+
+const deleteComment = (c) => {
+    if (!window.confirm('Delete this comment?')) return;
+    router.delete(`/admin/comments/${c.uuid}`, { preserveScroll: true });
+};
+
+const dateFmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+const truncate = (t, n = 80) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '…' : t;
+
+// Edit modal
+const editTarget = ref(null);
+const editForm = useForm({ body: '', reason: '' });
+const openEdit = (c) => {
+    editForm.body = c.body;
+    editForm.reason = '';
+    editTarget.value = c;
+};
+const submitEdit = () => editForm.patch(`/admin/comments/${editTarget.value.uuid}`, {
+    preserveScroll: true,
+    onSuccess: () => { editTarget.value = null; editForm.reset(); },
+});
+
+// Create modal
+const me = computed(() => page.props.auth?.user);
+const showCreate = ref(false);
+const createForm = useForm({ post_uuid: '', user_uuid: '', body: '' });
+
+const postSearch = ref('');
+const postPickerOpen = ref(false);
+const selectedPost = computed(() => props.posts.find((p) => p.uuid === createForm.post_uuid));
+const filteredPosts = computed(() => {
+    const q = postSearch.value.trim().toLowerCase();
+    if (!q) return props.posts.slice(0, 50);
+    return props.posts.filter((p) => p.preview.toLowerCase().includes(q)).slice(0, 50);
+});
+const pickPost = (p) => { createForm.post_uuid = p.uuid; postSearch.value = ''; postPickerOpen.value = false; };
+const clearPost = () => { createForm.post_uuid = ''; postSearch.value = ''; };
+
+const authorSearch = ref('');
+const authorPickerOpen = ref(false);
+const selectedAuthor = computed(() => props.authors.find((a) => a.uuid === createForm.user_uuid));
+const filteredAuthors = computed(() => {
+    const q = authorSearch.value.trim().toLowerCase();
+    if (!q) return props.authors.slice(0, 50);
+    return props.authors
+        .filter((a) => a.name.toLowerCase().includes(q) || a.email.toLowerCase().includes(q))
+        .slice(0, 50);
+});
+const pickAuthor = (a) => { createForm.user_uuid = a.uuid; authorSearch.value = ''; authorPickerOpen.value = false; };
+const clearAuthor = () => { createForm.user_uuid = ''; authorSearch.value = ''; };
+
+const openCreate = () => {
+    createForm.reset();
+    createForm.user_uuid = me.value?.uuid ?? '';
+    showCreate.value = true;
+};
+const submitCreate = () => createForm.post('/admin/comments', {
+    preserveScroll: true,
+    onSuccess: () => { showCreate.value = false; createForm.reset(); postSearch.value = ''; authorSearch.value = ''; },
+});
+
+const roleTone = (role) => {
+    switch (role) {
+        case 'super_admin': return 'bg-rust/15 text-rust';
+        case 'admin': return 'bg-ink/10 text-ink';
+        case 'moderator': return 'bg-moss/15 text-moss';
+        default: return 'bg-secondary text-muted-foreground';
+    }
+};
+</script>

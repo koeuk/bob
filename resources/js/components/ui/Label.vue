@@ -1,9 +1,3 @@
-<script setup>
-import { cn } from '@/lib/utils';
-import { Label as RLabel } from 'radix-vue';
-
-</script>
-
 <template>
     <RLabel
         data-slot="label"
@@ -13,3 +7,9 @@ import { Label as RLabel } from 'radix-vue';
         <slot />
     </RLabel>
 </template>
+
+<script setup>
+import { cn } from '@/lib/utils';
+import { Label as RLabel } from 'radix-vue';
+
+</script>

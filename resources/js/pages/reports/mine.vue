@@ -1,26 +1,3 @@
-<script setup>
-import AppLayout from '@/layouts/app-layout.vue';
-import { Head, Link } from '@inertiajs/vue3';
-import { Flag, Inbox } from 'lucide-vue-next';
-
-defineProps({
-    reports: { type: Object, required: true },
-});
-
-const dateFmt = (iso) => iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
-
-const statusTone = (s) => {
-    switch (s) {
-        case 'pending': return 'bg-rust/15 text-rust';
-        case 'resolved': return 'bg-moss/15 text-moss';
-        case 'dismissed': return 'bg-secondary text-muted-foreground';
-        default: return 'bg-ink/10 text-ink';
-    }
-};
-
-const reportableLabel = (r) => (r.reportable_type?.split('\\').pop() ?? 'Item');
-</script>
-
 <template>
     <Head title="My Reports" />
     <AppLayout>
@@ -85,3 +62,26 @@ const reportableLabel = (r) => (r.reportable_type?.split('\\').pop() ?? 'Item');
         </div>
     </AppLayout>
 </template>
+
+<script setup>
+import AppLayout from '@/layouts/app-layout.vue';
+import { Head, Link } from '@inertiajs/vue3';
+import { Flag, Inbox } from 'lucide-vue-next';
+
+defineProps({
+    reports: { type: Object, required: true },
+});
+
+const dateFmt = (iso) => iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+
+const statusTone = (s) => {
+    switch (s) {
+        case 'pending': return 'bg-rust/15 text-rust';
+        case 'resolved': return 'bg-moss/15 text-moss';
+        case 'dismissed': return 'bg-secondary text-muted-foreground';
+        default: return 'bg-ink/10 text-ink';
+    }
+};
+
+const reportableLabel = (r) => (r.reportable_type?.split('\\').pop() ?? 'Item');
+</script>

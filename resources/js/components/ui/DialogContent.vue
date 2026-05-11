@@ -1,19 +1,3 @@
-<script setup>
-import { cn } from '@/lib/utils';
-import { XIcon } from 'lucide-vue-next';
-import {
-    DialogClose,
-    DialogContent,
-    DialogOverlay,
-    DialogPortal,
-    useForwardPropsEmits,
-} from 'radix-vue';
-
-const props = defineProps({ class: String, forceMount: Boolean, trapFocus: Boolean });
-const emits = defineEmits(['closeAutoFocus', 'escapeKeyDown', 'pointerDownOutside', 'focusOutside', 'interactOutside']);
-const forwarded = useForwardPropsEmits(props, emits);
-</script>
-
 <template>
     <DialogPortal>
         <DialogOverlay class="fixed inset-0 z-50 bg-black/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
@@ -29,3 +13,19 @@ const forwarded = useForwardPropsEmits(props, emits);
         </DialogContent>
     </DialogPortal>
 </template>
+
+<script setup>
+import { cn } from '@/lib/utils';
+import { XIcon } from 'lucide-vue-next';
+import {
+    DialogClose,
+    DialogContent,
+    DialogOverlay,
+    DialogPortal,
+    useForwardPropsEmits,
+} from 'radix-vue';
+
+const props = defineProps({ class: String, forceMount: Boolean, trapFocus: Boolean });
+const emits = defineEmits(['closeAutoFocus', 'escapeKeyDown', 'pointerDownOutside', 'focusOutside', 'interactOutside']);
+const forwarded = useForwardPropsEmits(props, emits);
+</script>

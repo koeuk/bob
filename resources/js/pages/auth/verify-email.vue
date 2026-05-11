@@ -1,18 +1,3 @@
-<script setup>
-import Button from '@/components/ui/Button.vue';
-import Spinner from '@/components/ui/Spinner.vue';
-import AuthLayout from '@/layouts/auth-layout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
-
-defineProps({ status: String });
-
-const form = useForm({});
-
-function submit() {
-    form.post('/email/verification-notification');
-}
-</script>
-
 <template>
     <AuthLayout title="Verify email" description="Please verify your email address by clicking the link we just sent">
         <Head title="Verify email" />
@@ -28,3 +13,18 @@ function submit() {
         </form>
     </AuthLayout>
 </template>
+
+<script setup>
+import Button from '@/components/ui/Button.vue';
+import Spinner from '@/components/ui/Spinner.vue';
+import AuthLayout from '@/layouts/auth-layout.vue';
+import { Head, useForm } from '@inertiajs/vue3';
+
+defineProps({ status: String });
+
+const form = useForm({});
+
+function submit() {
+    form.post('/email/verification-notification');
+}
+</script>

@@ -1,23 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { FileText, Plus, Trash2 } from 'lucide-vue-next';
-
-const props = defineProps({
-    pages: { type: Object, required: true },
-    filters: { type: Object, default: () => ({}) },
-});
-
-const page = usePage();
-
-const dateFmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-const deletePage = (p) => {
-    if (!window.confirm(`Delete page "${p.title}"?`)) return;
-    router.delete(`/admin/pages/${p.uuid}`, { preserveScroll: true });
-};
-</script>
-
 <template>
     <Head title="Pages" />
     <AdminLayout title="Pages">
@@ -72,3 +52,23 @@ const deletePage = (p) => {
         </div>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { FileText, Plus, Trash2 } from 'lucide-vue-next';
+
+const props = defineProps({
+    pages: { type: Object, required: true },
+    filters: { type: Object, default: () => ({}) },
+});
+
+const page = usePage();
+
+const dateFmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+const deletePage = (p) => {
+    if (!window.confirm(`Delete page "${p.title}"?`)) return;
+    router.delete(`/admin/pages/${p.uuid}`, { preserveScroll: true });
+};
+</script>

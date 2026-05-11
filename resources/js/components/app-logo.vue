@@ -1,7 +1,3 @@
-<script setup>
-import AppLogoIcon from '@/components/app-logo-icon.vue';
-</script>
-
 <template>
     <div class="flex items-center gap-2">
         <div class="flex size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
@@ -10,3 +6,7 @@ import AppLogoIcon from '@/components/app-logo-icon.vue';
         <div class="text-base font-semibold">Laravel Starter</div>
     </div>
 </template>
+
+<script setup>
+import AppLogoIcon from '@/components/app-logo-icon.vue';
+</script>

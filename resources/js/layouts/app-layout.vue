@@ -1,43 +1,3 @@
-<script setup>
-import AppearanceDropdown from '@/components/appearance-dropdown.vue';
-import DropdownMenu from '@/components/ui/DropdownMenu.vue';
-import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vue';
-import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vue';
-import UserMenuContent from '@/components/user-menu-content.vue';
-import { Link, usePage } from '@inertiajs/vue3';
-import {
-    ChevronDown,
-    Compass,
-    Flag,
-    LayoutGrid,
-    LogOut,
-    Newspaper,
-    Settings as SettingsIcon,
-} from 'lucide-vue-next';
-import { computed } from 'vue';
-
-defineProps({ breadcrumbs: { type: Array, default: () => [] } });
-
-const page = usePage();
-
-const user = computed(() => page.props.auth?.user);
-const initials = computed(() => {
-    const name = user.value?.name ?? '';
-    return name.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase() || 'U';
-});
-const isModerator = computed(() => ['moderator', 'admin', 'super_admin'].includes(user.value?.role));
-
-const railNav = computed(() => [
-    { href: '/dashboard', label: 'Overview', icon: Compass },
-    { href: '/feed', label: 'Feed', icon: LayoutGrid },
-    { href: '/posts/mine', label: 'My Posts', icon: Newspaper },
-    { href: '/reports/mine', label: 'Reports', icon: Flag },
-    { href: '/settings/profile', label: 'Settings', icon: SettingsIcon },
-]);
-
-const isActive = (href) => href && (page.url === href || page.url.startsWith(href + '/') || page.url.startsWith(href + '?'));
-</script>
-
 <template>
     <div class="min-h-screen bg-background text-foreground">
         <header class="sticky top-0 z-30 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -123,3 +83,43 @@ const isActive = (href) => href && (page.url === href || page.url.startsWith(hre
         </div>
     </div>
 </template>
+
+<script setup>
+import AppearanceDropdown from '@/components/appearance-dropdown.vue';
+import DropdownMenu from '@/components/ui/DropdownMenu.vue';
+import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vue';
+import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vue';
+import UserMenuContent from '@/components/user-menu-content.vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import {
+    ChevronDown,
+    Compass,
+    Flag,
+    LayoutGrid,
+    LogOut,
+    Newspaper,
+    Settings as SettingsIcon,
+} from 'lucide-vue-next';
+import { computed } from 'vue';
+
+defineProps({ breadcrumbs: { type: Array, default: () => [] } });
+
+const page = usePage();
+
+const user = computed(() => page.props.auth?.user);
+const initials = computed(() => {
+    const name = user.value?.name ?? '';
+    return name.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase() || 'U';
+});
+const isModerator = computed(() => ['moderator', 'admin', 'super_admin'].includes(user.value?.role));
+
+const railNav = computed(() => [
+    { href: '/dashboard', label: 'Overview', icon: Compass },
+    { href: '/feed', label: 'Feed', icon: LayoutGrid },
+    { href: '/posts/mine', label: 'My Posts', icon: Newspaper },
+    { href: '/reports/mine', label: 'Reports', icon: Flag },
+    { href: '/settings/profile', label: 'Settings', icon: SettingsIcon },
+]);
+
+const isActive = (href) => href && (page.url === href || page.url.startsWith(href + '/') || page.url.startsWith(href + '?'));
+</script>

@@ -1,9 +1,3 @@
-<script setup>
-import { Head, Link, usePage } from '@inertiajs/vue3';
-
-const page = usePage();
-</script>
-
 <template>
     <Head title="Welcome" />
     <div class="flex min-h-screen flex-col items-center justify-center bg-background p-6">
@@ -18,3 +12,9 @@ const page = usePage();
         </div>
     </div>
 </template>
+
+<script setup>
+import { Head, Link, usePage } from '@inertiajs/vue3';
+
+const page = usePage();
+</script>

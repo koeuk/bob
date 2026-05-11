@@ -1,20 +1,3 @@
-<script setup>
-import InputError from '@/components/input-error.vue';
-import TextLink from '@/components/text-link.vue';
-import Button from '@/components/ui/Button.vue';
-import Input from '@/components/ui/Input.vue';
-import Label from '@/components/ui/Label.vue';
-import Spinner from '@/components/ui/Spinner.vue';
-import AuthLayout from '@/layouts/auth-layout.vue';
-import { Head, useForm } from '@inertiajs/vue3';
-
-const form = useForm({ name: '', email: '', password: '', password_confirmation: '' });
-
-function submit() {
-    form.post('/register', { onFinish: () => form.reset('password', 'password_confirmation') });
-}
-</script>
-
 <template>
     <AuthLayout title="Create an account" description="Enter your details below to create your account">
         <Head title="Register" />
@@ -53,3 +36,20 @@ function submit() {
         </form>
     </AuthLayout>
 </template>
+
+<script setup>
+import InputError from '@/components/input-error.vue';
+import TextLink from '@/components/text-link.vue';
+import Button from '@/components/ui/Button.vue';
+import Input from '@/components/ui/Input.vue';
+import Label from '@/components/ui/Label.vue';
+import Spinner from '@/components/ui/Spinner.vue';
+import AuthLayout from '@/layouts/auth-layout.vue';
+import { Head, useForm } from '@inertiajs/vue3';
+
+const form = useForm({ name: '', email: '', password: '', password_confirmation: '' });
+
+function submit() {
+    form.post('/register', { onFinish: () => form.reset('password', 'password_confirmation') });
+}
+</script>

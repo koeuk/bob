@@ -1,56 +1,3 @@
-<script setup>
-import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Crown, Hash, Mail, Save, ShieldBan, Trash2, UserCheck } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
-
-const props = defineProps({
-    user: { type: Object, required: true },
-    reportsAgainst: { type: Array, default: () => [] },
-    activity: { type: Array, default: () => [] },
-});
-
-const page = usePage();
-const currentUser = computed(() => page.props.auth?.user);
-const canAssignRole = computed(() => currentUser.value?.role === 'super_admin');
-
-const activeBans = computed(() => (props.user.bans ?? []).filter((b) => !b.expires_at || new Date(b.expires_at) > new Date()));
-const isBanned = computed(() => activeBans.value.length > 0);
-
-const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
-const dateFmt = (iso) => iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
-
-const banForm = useForm({ reason: '', expires_at: '' });
-const showBanModal = ref(false);
-
-const submitBan = () => banForm.post(`/admin/users/${props.user.uuid}/ban`, {
-    preserveScroll: true,
-    onSuccess: () => { showBanModal.value = false; banForm.reset(); },
-});
-
-const unban = () => router.post(`/admin/users/${props.user.uuid}/unban`, {}, { preserveScroll: true });
-
-const roleForm = useForm({ role: props.user.role });
-const submitRole = () => roleForm.post(`/admin/users/${props.user.uuid}/role`, { preserveScroll: true });
-
-const profileForm = useForm({ name: props.user.name, email: props.user.email });
-const submitProfile = () => profileForm.patch(`/admin/users/${props.user.uuid}`, { preserveScroll: true });
-
-const deleteUser = () => {
-    if (!window.confirm(`Delete ${props.user.name}? This cannot be undone.`)) return;
-    router.delete(`/admin/users/${props.user.uuid}`);
-};
-
-const roleClasses = (role) => {
-    switch (role) {
-        case 'super_admin': return 'bg-rust/15 text-rust';
-        case 'admin': return 'bg-ink/10 text-ink';
-        case 'moderator': return 'bg-moss/15 text-moss';
-        default: return 'bg-secondary text-muted-foreground';
-    }
-};
-</script>
-
 <template>
     <Head :title="user.name" />
     <AdminLayout>
@@ -300,3 +247,56 @@ const roleClasses = (role) => {
         </Teleport>
     </AdminLayout>
 </template>
+
+<script setup>
+import AdminLayout from '@/layouts/admin-layout.vue';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { ArrowLeft, Crown, Hash, Mail, Save, ShieldBan, Trash2, UserCheck } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
+
+const props = defineProps({
+    user: { type: Object, required: true },
+    reportsAgainst: { type: Array, default: () => [] },
+    activity: { type: Array, default: () => [] },
+});
+
+const page = usePage();
+const currentUser = computed(() => page.props.auth?.user);
+const canAssignRole = computed(() => currentUser.value?.role === 'super_admin');
+
+const activeBans = computed(() => (props.user.bans ?? []).filter((b) => !b.expires_at || new Date(b.expires_at) > new Date()));
+const isBanned = computed(() => activeBans.value.length > 0);
+
+const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+const dateFmt = (iso) => iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
+
+const banForm = useForm({ reason: '', expires_at: '' });
+const showBanModal = ref(false);
+
+const submitBan = () => banForm.post(`/admin/users/${props.user.uuid}/ban`, {
+    preserveScroll: true,
+    onSuccess: () => { showBanModal.value = false; banForm.reset(); },
+});
+
+const unban = () => router.post(`/admin/users/${props.user.uuid}/unban`, {}, { preserveScroll: true });
+
+const roleForm = useForm({ role: props.user.role });
+const submitRole = () => roleForm.post(`/admin/users/${props.user.uuid}/role`, { preserveScroll: true });
+
+const profileForm = useForm({ name: props.user.name, email: props.user.email });
+const submitProfile = () => profileForm.patch(`/admin/users/${props.user.uuid}`, { preserveScroll: true });
+
+const deleteUser = () => {
+    if (!window.confirm(`Delete ${props.user.name}? This cannot be undone.`)) return;
+    router.delete(`/admin/users/${props.user.uuid}`);
+};
+
+const roleClasses = (role) => {
+    switch (role) {
+        case 'super_admin': return 'bg-rust/15 text-rust';
+        case 'admin': return 'bg-ink/10 text-ink';
+        case 'moderator': return 'bg-moss/15 text-moss';
+        default: return 'bg-secondary text-muted-foreground';
+    }
+};
+</script>

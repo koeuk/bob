@@ -1,8 +1,3 @@
-<script setup>
-import { cn } from '@/lib/utils';
-
-</script>
-
 <template>
     <div
         data-slot="card"
@@ -11,3 +6,8 @@ import { cn } from '@/lib/utils';
         <slot />
     </div>
 </template>
+
+<script setup>
+import { cn } from '@/lib/utils';
+
+</script>
