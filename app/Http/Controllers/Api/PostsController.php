@@ -8,6 +8,7 @@ use App\Models\Like;
 use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @group Feed & Posts
@@ -108,13 +109,22 @@ class PostsController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'body' => ['required', 'string', 'max:10000'],
+            'body'    => ['required', 'string', 'max:10000'],
+            'image'   => ['nullable', 'image', 'max:5120'],
+            'feeling' => ['nullable', 'string', 'max:50'],
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('posts', 'public');
+        }
 
         $post = Post::create([
             'user_id' => $request->user()->id,
-            'body' => $data['body'],
-            'status' => 'active',
+            'body'    => $data['body'],
+            'status'  => 'active',
+            'image'   => $imagePath ? Storage::url($imagePath) : null,
+            'feeling' => $data['feeling'] ?? null,
         ]);
 
         $post->load('user:id,uuid,name');
