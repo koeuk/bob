@@ -32,11 +32,16 @@ class FriendRequestsController extends Controller
         })->first();
 
         if ($existing) {
-            return response()->json([
-                'message'    => 'Friend request already exists.',
-                'id'         => $existing->id,
-                'status'     => $existing->status,
-            ], 422);
+            // Already friends or pending — don't allow a new request
+            if (in_array($existing->status, ['accepted', 'pending'])) {
+                return response()->json([
+                    'message' => 'Friend request already exists.',
+                    'id'      => $existing->id,
+                    'status'  => $existing->status,
+                ], 422);
+            }
+            // Declined — delete so a fresh request can be sent
+            $existing->delete();
         }
 
         $friendRequest = FriendRequest::create([
