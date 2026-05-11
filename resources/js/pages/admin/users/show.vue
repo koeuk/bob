@@ -8,9 +8,30 @@
         <!-- Profile header -->
         <section class="flex flex-col gap-6 rounded-3xl border border-border/60 bg-card p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-5">
-                <span class="flex size-20 items-center justify-center rounded-2xl bg-ink font-sans text-2xl font-semibold text-paper">
-                    {{ initials(user.name) }}
-                </span>
+                <!-- Avatar -->
+                <div class="group relative size-20 shrink-0">
+                    <img
+                        v-if="user.avatar"
+                        :src="`/storage/${user.avatar}`"
+                        :alt="user.name"
+                        class="size-20 rounded-2xl object-cover"
+                    />
+                    <span
+                        v-else
+                        class="flex size-20 items-center justify-center rounded-2xl bg-ink font-sans text-2xl font-semibold text-paper"
+                    >
+                        {{ initials(user.name) }}
+                    </span>
+                    <!-- Upload overlay -->
+                    <label
+                        class="absolute inset-0 flex cursor-pointer items-center justify-center rounded-2xl bg-ink/50 opacity-0 transition-opacity group-hover:opacity-100"
+                        title="Change avatar"
+                    >
+                        <Camera class="size-6 text-paper" />
+                        <input type="file" accept="image/*" class="sr-only" @change="uploadAvatar" />
+                    </label>
+                </div>
+
                 <div>
                     <div class="flex items-center gap-2">
                         <h2 class="font-sans text-3xl font-semibold tracking-tight">{{ user.name }}</h2>
@@ -26,6 +47,13 @@
                         <span class="inline-flex items-center gap-1.5"><Hash class="size-3.5" /> {{ user.uuid.slice(0, 12) }}</span>
                         <span>Joined {{ dateFmt(user.created_at) }}</span>
                     </div>
+                    <button
+                        v-if="user.avatar"
+                        class="mt-2 text-xs text-muted-foreground hover:text-rust"
+                        @click="removeAvatar"
+                    >
+                        Remove photo
+                    </button>
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-2">
@@ -99,6 +127,16 @@
                     />
                     <p v-if="profileForm.errors.email" class="mt-1 text-xs text-destructive">{{ profileForm.errors.email }}</p>
                 </div>
+                <div>
+                    <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">New password</label>
+                    <input
+                        v-model="profileForm.password"
+                        type="password"
+                        placeholder="Leave blank to keep current"
+                        class="h-10 w-full rounded-full bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary"
+                    />
+                    <p v-if="profileForm.errors.password" class="mt-1 text-xs text-destructive">{{ profileForm.errors.password }}</p>
+                </div>
             </div>
         </form>
 
@@ -140,26 +178,17 @@
                                 <div class="font-medium">{{ b.reason }}</div>
                                 <div class="text-xs text-muted-foreground">
                                     by {{ b.banned_by?.name ?? 'system' }} · {{ dateFmt(b.created_at) }}
-                                    <span v-if="b.expires_at">
-                                        · expires {{ dateFmt(b.expires_at) }}
-                                    </span>
+                                    <span v-if="b.expires_at"> · expires {{ dateFmt(b.expires_at) }}</span>
                                     <span v-else> · permanent</span>
                                 </div>
                             </div>
-                            <span
-                                :class="[
-                                    'shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium',
-                                    !b.expires_at || new Date(b.expires_at) > new Date() ? 'bg-rust/15 text-rust' : 'bg-secondary text-muted-foreground',
-                                ]"
-                            >
+                            <span :class="['shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium', !b.expires_at || new Date(b.expires_at) > new Date() ? 'bg-rust/15 text-rust' : 'bg-secondary text-muted-foreground']">
                                 {{ !b.expires_at || new Date(b.expires_at) > new Date() ? 'active' : 'lifted' }}
                             </span>
                         </div>
                     </li>
                 </ul>
-                <div v-else class="rounded-2xl bg-secondary/40 py-8 text-center text-sm text-muted-foreground">
-                    Never banned.
-                </div>
+                <div v-else class="rounded-2xl bg-secondary/40 py-8 text-center text-sm text-muted-foreground">Never banned.</div>
             </div>
         </div>
 
@@ -172,21 +201,12 @@
                         <div class="font-medium">
                             <Link :href="`/admin/reports/${r.uuid}`" class="hover:text-rust">{{ r.reason }}</Link>
                         </div>
-                        <div class="text-xs text-muted-foreground">
-                            filed by {{ r.reporter?.name ?? 'unknown' }} · {{ dateFmt(r.created_at) }}
-                        </div>
+                        <div class="text-xs text-muted-foreground">filed by {{ r.reporter?.name ?? 'unknown' }} · {{ dateFmt(r.created_at) }}</div>
                     </div>
-                    <span
-                        :class="[
-                            'shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium',
-                            r.status === 'pending' ? 'bg-rust/15 text-rust' : 'bg-secondary text-muted-foreground',
-                        ]"
-                    >{{ r.status }}</span>
+                    <span :class="['shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium', r.status === 'pending' ? 'bg-rust/15 text-rust' : 'bg-secondary text-muted-foreground']">{{ r.status }}</span>
                 </li>
             </ul>
-            <div v-else class="rounded-2xl bg-secondary/40 py-8 text-center text-sm text-muted-foreground">
-                No reports.
-            </div>
+            <div v-else class="rounded-2xl bg-secondary/40 py-8 text-center text-sm text-muted-foreground">No reports.</div>
         </section>
 
         <!-- Activity -->
@@ -201,9 +221,7 @@
                     <span class="shrink-0 text-[11px] text-muted-foreground">{{ dateFmt(a.created_at) }}</span>
                 </li>
             </ul>
-            <div v-else class="rounded-2xl bg-secondary/40 py-8 text-center text-sm text-muted-foreground">
-                No activity recorded.
-            </div>
+            <div v-else class="rounded-2xl bg-secondary/40 py-8 text-center text-sm text-muted-foreground">No activity recorded.</div>
         </section>
 
         <!-- Ban modal -->
@@ -234,9 +252,7 @@
                             <p class="mt-1 text-xs text-muted-foreground">Leave empty for a permanent ban.</p>
                         </div>
                         <div class="flex justify-end gap-2 pt-2">
-                            <button type="button" class="rounded-full px-4 py-2 text-sm hover:bg-secondary" @click="showBanModal = false">
-                                Cancel
-                            </button>
+                            <button type="button" class="rounded-full px-4 py-2 text-sm hover:bg-secondary" @click="showBanModal = false">Cancel</button>
                             <button type="submit" class="rounded-full bg-rust px-4 py-2 text-sm font-medium text-paper hover:opacity-90" :disabled="banForm.processing">
                                 Confirm ban
                             </button>
@@ -251,7 +267,7 @@
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Crown, Hash, Mail, Save, ShieldBan, Trash2, UserCheck } from 'lucide-vue-next';
+import { ArrowLeft, Camera, Crown, Hash, Mail, Save, ShieldBan, Trash2, UserCheck } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -270,22 +286,37 @@ const isBanned = computed(() => activeBans.value.length > 0);
 const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
 const dateFmt = (iso) => iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
 
+// Avatar
+const uploadAvatar = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const form = useForm({ avatar: file });
+    form.patch(`/admin/users/${props.user.uuid}`, { forceFormData: true, preserveScroll: true });
+};
+
+const removeAvatar = () => {
+    if (!window.confirm('Remove profile photo?')) return;
+    router.patch(`/admin/users/${props.user.uuid}`, { remove_avatar: true }, { preserveScroll: true });
+};
+
+// Profile
+const profileForm = useForm({ name: props.user.name, email: props.user.email, password: '' });
+const submitProfile = () => profileForm.patch(`/admin/users/${props.user.uuid}`, { preserveScroll: true });
+
+// Role
+const roleForm = useForm({ role: props.user.role });
+const submitRole = () => roleForm.post(`/admin/users/${props.user.uuid}/role`, { preserveScroll: true });
+
+// Ban
 const banForm = useForm({ reason: '', expires_at: '' });
 const showBanModal = ref(false);
-
 const submitBan = () => banForm.post(`/admin/users/${props.user.uuid}/ban`, {
     preserveScroll: true,
     onSuccess: () => { showBanModal.value = false; banForm.reset(); },
 });
-
 const unban = () => router.post(`/admin/users/${props.user.uuid}/unban`, {}, { preserveScroll: true });
 
-const roleForm = useForm({ role: props.user.role });
-const submitRole = () => roleForm.post(`/admin/users/${props.user.uuid}/role`, { preserveScroll: true });
-
-const profileForm = useForm({ name: props.user.name, email: props.user.email });
-const submitProfile = () => profileForm.patch(`/admin/users/${props.user.uuid}`, { preserveScroll: true });
-
+// Delete
 const deleteUser = () => {
     if (!window.confirm(`Delete ${props.user.name}? This cannot be undone.`)) return;
     router.delete(`/admin/users/${props.user.uuid}`);

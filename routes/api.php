@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('posts/mine', [PostsController::class, 'mine']);
     Route::post('posts', [PostsController::class, 'store']);
+    Route::post('posts/{post:uuid}', [PostsController::class, 'update']);
     Route::delete('posts/{post:uuid}', [PostsController::class, 'destroy']);
     Route::post('posts/{post:uuid}/like', [PostsController::class, 'like']);
 

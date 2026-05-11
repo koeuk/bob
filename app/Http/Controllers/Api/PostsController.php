@@ -142,6 +142,46 @@ class PostsController extends Controller
     }
 
     /**
+     * Update post
+     */
+    public function update(Request $request, Post $post): JsonResponse
+    {
+        abort_unless($post->user_id === $request->user()->id, 403);
+
+        $data = $request->validate([
+            'body'            => ['nullable', 'string', 'max:10000'],
+            'new_images'      => ['nullable', 'array', 'max:10'],
+            'new_images.*'    => ['image', 'max:5120'],
+            'keep_images'     => ['nullable', 'array'],
+            'keep_images.*'   => ['string'],
+            'feeling'         => ['nullable', 'string', 'max:50'],
+            'visibility'      => ['nullable', 'in:public,private'],
+        ]);
+
+        $kept = $data['keep_images'] ?? [];
+
+        $imageUrls = $kept;
+        foreach ($request->file('new_images', []) as $file) {
+            $path = $file->store('posts', 'public');
+            $imageUrls[] = url('storage/' . $path);
+        }
+
+        abort_if(empty(trim($data['body'] ?? '')) && empty($imageUrls), 422);
+
+        $post->update([
+            'body'       => $data['body'] ?? null,
+            'images'     => $imageUrls ?: null,
+            'image'      => $imageUrls[0] ?? null,
+            'feeling'    => $data['feeling'] ?? null,
+            'visibility' => $data['visibility'] ?? $post->visibility,
+        ]);
+
+        $post->load('user:id,uuid,name');
+
+        return response()->json($post);
+    }
+
+    /**
      * Delete post
      *
      * Soft-delete your own post.
