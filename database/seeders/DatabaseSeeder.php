@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $superAdmin = User::firstOrCreate(
-            ['email' => 'admin@example.com'],
+            ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Super Admin',
                 'password' => 'password',
@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
         );
 
         $admin = User::firstOrCreate(
-            ['email' => 'mod@example.com'],
+            ['email' => 'mod@gmail.com'],
             [
                 'name' => 'Mod User',
                 'password' => 'password',
@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
         );
 
         User::firstOrCreate(
-            ['email' => 'test@example.com'],
+            ['email' => 'test@gmail.com'],
             [
                 'name' => 'Test User',
                 'password' => 'password',
