@@ -19,7 +19,7 @@ class UsersController extends Controller
     public function index(Request $request): Response
     {
         $users = QueryBuilder::for(User::class)
-            ->select(['id', 'uuid', 'name', 'email', 'role', 'created_at', 'email_verified_at'])
+            ->select(['id', 'uuid', 'name', 'email', 'avatar', 'role', 'created_at', 'email_verified_at'])
             ->withCount(['posts', 'comments'])
             ->with(['bans' => fn ($q) => $q->active()])
             ->allowedFilters(...[
@@ -61,18 +61,25 @@ class UsersController extends Controller
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
             'role' => ['required', 'in:user,moderator,admin,super_admin'],
+            'avatar' => ['sometimes', 'nullable', 'image', 'max:2048'],
         ]);
 
         if (in_array($data['role'], ['admin', 'super_admin'], true) && ! $request->user()->isSuperAdmin()) {
             abort(403, 'Only super admins can create admin-level users.');
         }
 
-        $user = User::create([
+        $attrs = [
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => $data['password'],
             'role' => $data['role'],
-        ]);
+        ];
+
+        if ($request->hasFile('avatar')) {
+            $attrs['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        $user = User::create($attrs);
 
         ActivityLog::record('user.create', $user, null, $user->only(['name', 'email', 'role']));
 

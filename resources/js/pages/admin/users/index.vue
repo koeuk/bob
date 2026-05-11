@@ -68,8 +68,9 @@
                     class="grid grid-cols-[1.8fr_1fr_0.8fr_0.6fr_0.8fr_2.5rem] items-center gap-4 px-6 py-3 text-sm"
                 >
                     <div class="flex min-w-0 items-center gap-3">
-                        <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-ink text-xs font-semibold text-paper">
-                            {{ initials(u.name) }}
+                        <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-ink text-xs font-semibold text-paper overflow-hidden">
+                            <img v-if="u.avatar" :src="`/storage/${u.avatar}`" :alt="u.name" class="size-9 object-cover" />
+                            <template v-else>{{ initials(u.name) }}</template>
                         </span>
                         <div class="min-w-0">
                             <div class="flex items-center gap-2">
