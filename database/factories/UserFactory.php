@@ -20,11 +20,28 @@ class UserFactory extends Factory
      *
      * @return array<string, mixed>
      */
+    private static array $khmerFirstNames = [
+        'ដារា', 'សុភា', 'រតនា', 'សុខា', 'វិរៈ', 'ចំរើន', 'កុសល', 'បុណ្ណា', 'រិទ្ធី', 'សំណាង',
+        'វុទ្ធី', 'ចន្ទា', 'មករា', 'បូរី', 'វិច្ឆា', 'សុវណ្ណ', 'សេរី', 'ភារុណ', 'ឧត្តម', 'ពិសិទ្ធ',
+        'ស្រីមុំ', 'ចន្ធី', 'គន្ធា', 'សុផា', 'សុជាតា', 'សុធា', 'ចន្នារី', 'ស្រីលក្ខ', 'បុប្ផា',
+        'ចេន្តា', 'ស្រីនិច', 'គីមហាក់', 'ស្រីពេជ្រ', 'ស្រីមនី', 'ដាវ៉ាន់', 'លីដា', 'នីម៉ុល', 'ប័ញ្ញា',
+        'ស្រីផុវ', 'នីតា', 'រស្មី', 'ស្រីណែត', 'ចាន់ថា', 'ពេជ្រ', 'ហេង', 'ម៉ានិត', 'ភក្ត្រា', 'លក្ខិណា',
+    ];
+
+    private static array $khmerLastNames = [
+        'ចំ', 'ហេង', 'សុក', 'ចាន់', 'លីម', 'ពេជ្រ', 'មាំ', 'យឹម', 'កែវ', 'រស់',
+        'ន្គេត', 'អ៊ូយ', 'អ៊ិត', 'អ៊ូក', 'ផុវ', 'ភន', 'តេព', 'ឈុន', 'កុង', 'មាស',
+        'នេម', 'ប្រាក់', 'សេង', 'ទូច', 'វ៉ាន់', 'វង់', 'ខៀវ', 'ស៊ុន', 'ណន', 'ស្រេង',
+    ];
+
     public function definition(): array
     {
+        $firstName = fake()->randomElement(self::$khmerFirstNames);
+        $lastName  = fake()->randomElement(self::$khmerLastNames);
+
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => $lastName . ' ' . $firstName,
+            'email' => fake()->unique()->userName() . '@gmail.com',
             'email_verified_at' => now(),
             'password' => static::$password ??= 'password',
             'role' => 'user',
