@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Http\Controllers\Api\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
+use App\Models\Ban;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
+
+class BansController extends Controller
+{
+    public function index(Request $request): JsonResponse
+    {
+        $bans = QueryBuilder::for(Ban::class)
+            ->with(['user:id,uuid,name,email', 'bannedBy:id,uuid,name'])
+            ->allowedFilters(...[
+                AllowedFilter::callback('search', function ($q, $value) {
+                    $q->whereHas('user', function ($u) use ($value) {
+                        $u->where('name', 'like', "%{$value}%")
+                            ->orWhere('email', 'like', "%{$value}%");
+                    });
+                }),
+                AllowedFilter::callback('active', function ($q, $value) {
+                    if ($value) {
+                        $q->active();
+                    }
+                }),
+            ])
+            ->allowedSorts(...['created_at', 'expires_at'])
+            ->defaultSort('-created_at')
+            ->paginate($request->integer('per_page', 25))
+            ->withQueryString();
+
+        return response()->json([
+            'data' => $bans,
+            'counts' => [
+                'all' => Ban::count(),
+                'active' => Ban::active()->count(),
+            ],
+        ]);
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'user_uuid' => ['required', 'uuid', 'exists:users,uuid'],
+            'reason' => ['required', 'string', 'max:2000'],
+            'expires_at' => ['nullable', 'date', 'after:now'],
+        ]);
+
+        $user = User::where('uuid', $data['user_uuid'])->firstOrFail();
+
+        $ban = Ban::create([
+            'user_id' => $user->id,
+            'banned_by' => $request->user()->id,
+            'reason' => $data['reason'],
+            'expires_at' => $data['expires_at'] ?? null,
+        ]);
+
+        $user->tokens()?->delete();
+
+        ActivityLog::record('ban.create', $user, null, $ban->only(['reason', 'expires_at']));
+
+        return response()->json($ban->load(['user:id,uuid,name,email', 'bannedBy:id,uuid,name']), 201);
+    }
+
+    public function destroy(Ban $ban): JsonResponse
+    {
+        $ban->update(['expires_at' => now()->subSecond()]);
+
+        ActivityLog::record('ban.remove', $ban->user);
+
+        return response()->json(['message' => 'Ban lifted.']);
+    }
+}
