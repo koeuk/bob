@@ -123,7 +123,7 @@ class PostsController extends Controller
             'user_id' => $request->user()->id,
             'body'    => $data['body'],
             'status'  => 'active',
-            'image'   => $imagePath ? Storage::url($imagePath) : null,
+            'image'   => $imagePath ? url('storage/' . $imagePath) : null,
             'feeling' => $data['feeling'] ?? null,
         ]);
 
