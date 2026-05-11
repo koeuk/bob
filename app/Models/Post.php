@@ -29,7 +29,13 @@ class Post extends Model
         'body',
         'status',
         'image',
+        'images',
         'feeling',
+        'visibility',
+    ];
+
+    protected $casts = [
+        'images' => 'array',
     ];
 
     public function user(): BelongsTo

@@ -38,22 +38,30 @@ class FeedController extends Controller
 
         $posts = Post::with('user:id,uuid,name')
             ->where('status', 'active')
+            ->where(function ($q) use ($userId) {
+                $q->where('visibility', 'public');
+                if ($userId) {
+                    $q->orWhere('user_id', $userId);
+                }
+            })
             ->withCount(['comments', 'likes'])
             ->latest()
             ->paginate(15)
             ->withQueryString();
 
         $ids = collect($posts->items())->pluck('id')->all();
-        $likedIds = $userId
+        $myLikes = $userId
             ? Like::where('user_id', $userId)
                 ->where('likeable_type', Post::class)
                 ->whereIn('likeable_id', $ids)
-                ->pluck('likeable_id')
-                ->all()
-            : [];
+                ->get(['likeable_id', 'type'])
+                ->keyBy('likeable_id')
+            : collect();
 
-        $posts->getCollection()->transform(function (Post $p) use ($likedIds) {
-            $p->liked_by_me = in_array($p->id, $likedIds, true);
+        $posts->getCollection()->transform(function (Post $p) use ($myLikes) {
+            $like = $myLikes->get($p->id);
+            $p->liked_by_me = (bool) $like;
+            $p->my_reaction = $like?->type;
             return $p;
         });
 

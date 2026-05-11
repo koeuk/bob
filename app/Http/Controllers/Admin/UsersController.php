@@ -115,12 +115,33 @@ class UsersController extends Controller
         $data = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
             'email' => ['sometimes', 'email', 'max:255', 'unique:users,email,'.$user->id],
+            'password' => ['sometimes', 'nullable', 'string', 'min:8'],
+            'avatar' => ['sometimes', 'nullable', 'image', 'max:2048'],
         ]);
 
-        $before = $user->only(array_keys($data));
-        $user->update($data);
+        $before = $user->only(['name', 'email']);
 
-        ActivityLog::record('user.update', $user, $before, $user->only(array_keys($data)));
+        $attrs = array_filter([
+            'name' => $data['name'] ?? null,
+            'email' => $data['email'] ?? null,
+            'password' => !empty($data['password']) ? $data['password'] : null,
+        ], fn ($v) => $v !== null);
+
+        if ($request->hasFile('avatar')) {
+            if ($user->avatar) {
+                \Storage::disk('public')->delete($user->avatar);
+            }
+            $attrs['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        }
+
+        if ($request->input('remove_avatar') && $user->avatar) {
+            \Storage::disk('public')->delete($user->avatar);
+            $attrs['avatar'] = null;
+        }
+
+        $user->update($attrs);
+
+        ActivityLog::record('user.update', $user, $before, $user->only(['name', 'email']));
 
         return back()->with('status', 'User updated.');
     }

@@ -59,6 +59,7 @@ class PostsController extends Controller
         $userId = $request->user('sanctum')?->id;
 
         abort_if($post->status === 'hidden' && $post->user_id !== ($userId ?? -1), 404);
+        abort_if($post->visibility === 'private' && $post->user_id !== ($userId ?? -1), 404);
 
         $post->load(['user:id,uuid,name']);
         $post->loadCount(['likes']);
@@ -70,10 +71,10 @@ class PostsController extends Controller
             ->get();
 
         if ($userId) {
-            $likedPost = Like::where('user_id', $userId)
+            $postLike = Like::where('user_id', $userId)
                 ->where('likeable_type', Post::class)
                 ->where('likeable_id', $post->id)
-                ->exists();
+                ->first();
 
             $likedCommentIds = Like::where('user_id', $userId)
                 ->where('likeable_type', Comment::class)
@@ -81,7 +82,7 @@ class PostsController extends Controller
                 ->pluck('likeable_id')
                 ->all();
         } else {
-            $likedPost = false;
+            $postLike = null;
             $likedCommentIds = [];
         }
 
@@ -90,7 +91,8 @@ class PostsController extends Controller
             return $c;
         });
 
-        $post->liked_by_me = $likedPost;
+        $post->liked_by_me = (bool) $postLike;
+        $post->my_reaction = $postLike?->type;
 
         return response()->json([
             'post' => $post,
@@ -109,22 +111,29 @@ class PostsController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'body'    => ['required', 'string', 'max:10000'],
-            'image'   => ['nullable', 'image', 'max:5120'],
-            'feeling' => ['nullable', 'string', 'max:50'],
+            'body'       => ['nullable', 'string', 'max:10000'],
+            'images'     => ['nullable', 'array', 'max:10'],
+            'images.*'   => ['image', 'max:5120'],
+            'feeling'    => ['nullable', 'string', 'max:50'],
+            'visibility' => ['nullable', 'in:public,private'],
         ]);
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('posts', 'public');
+        abort_if(empty(trim($data['body'] ?? '')) && empty($request->file('images')), 422);
+
+        $imageUrls = [];
+        foreach ($request->file('images', []) as $file) {
+            $path = $file->store('posts', 'public');
+            $imageUrls[] = url('storage/' . $path);
         }
 
         $post = Post::create([
-            'user_id' => $request->user()->id,
-            'body'    => $data['body'],
-            'status'  => 'active',
-            'image'   => $imagePath ? url('storage/' . $imagePath) : null,
-            'feeling' => $data['feeling'] ?? null,
+            'user_id'    => $request->user()->id,
+            'body'       => $data['body'] ?? null,
+            'status'     => 'active',
+            'images'     => $imageUrls ?: null,
+            'image'      => $imageUrls[0] ?? null,
+            'feeling'    => $data['feeling'] ?? null,
+            'visibility' => $data['visibility'] ?? 'public',
         ]);
 
         $post->load('user:id,uuid,name');
@@ -164,28 +173,42 @@ class PostsController extends Controller
     {
         abort_if($post->status === 'hidden', 404);
 
+        $request->validate([
+            'type' => ['nullable', 'string', 'in:like,love,haha,wow,sad,angry'],
+        ]);
+
+        $type = $request->input('type');
         $user = $request->user();
+
         $existing = Like::where('user_id', $user->id)
             ->where('likeable_type', Post::class)
             ->where('likeable_id', $post->id)
-            ->where('type', 'like')
             ->first();
 
         if ($existing) {
-            $existing->delete();
-            $liked = false;
+            if ($type === null || $existing->type === $type) {
+                $existing->delete();
+                $myReaction = null;
+            } else {
+                $existing->update(['type' => $type]);
+                $myReaction = $type;
+            }
         } else {
-            Like::create([
-                'user_id' => $user->id,
-                'likeable_type' => Post::class,
-                'likeable_id' => $post->id,
-                'type' => 'like',
-            ]);
-            $liked = true;
+            if ($type !== null) {
+                Like::create([
+                    'user_id'       => $user->id,
+                    'likeable_type' => Post::class,
+                    'likeable_id'   => $post->id,
+                    'type'          => $type,
+                ]);
+                $myReaction = $type;
+            } else {
+                $myReaction = null;
+            }
         }
 
         return response()->json([
-            'liked' => $liked,
+            'my_reaction' => $myReaction,
             'likes_count' => $post->likes()->count(),
         ]);
     }
