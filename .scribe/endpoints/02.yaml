@@ -1,0 +1,390 @@
+name: 'Feed & Posts'
+description: ''
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/feed
+    metadata:
+      custom: []
+      groupName: 'Feed & Posts'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: Feed
+      description: 'Paginated list of all active posts, newest first. Each post includes a `liked_by_me` flag.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      page:
+        custom: []
+        name: page
+        description: 'Page number.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      page: 1
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "current_page": 1,
+            "data": [
+              {
+                "id": 1, "uuid": "...", "body": "Hello world", "status": "active",
+                "comments_count": 3, "likes_count": 5, "liked_by_me": false,
+                "user": { "id": 1, "uuid": "...", "name": "Jane Doe" }
+              }
+            ],
+            "last_page": 6, "per_page": 15, "total": 83
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/posts/mine
+    metadata:
+      custom: []
+      groupName: 'Feed & Posts'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'My posts'
+      description: "Paginated list of the authenticated user's own posts, newest first."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      page:
+        custom: []
+        name: page
+        description: 'Page number.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      page: 1
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "current_page": 1,
+            "data": [{ "id": 1, "uuid": "...", "body": "...", "status": "active", "comments_count": 2, "likes_count": 1 }],
+            "last_page": 1, "per_page": 20, "total": 14
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/posts
+    metadata:
+      custom: []
+      groupName: 'Feed & Posts'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Create post'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      body:
+        custom: []
+        name: body
+        description: 'Post content (max 10,000 characters).'
+        required: true
+        example: 'Hello everyone!'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      body: 'Hello everyone!'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 201
+        content: '{ "id": 84, "uuid": "...", "body": "Hello everyone!", "status": "active" }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/posts/{post_uuid}'
+    metadata:
+      custom: []
+      groupName: 'Feed & Posts'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get post'
+      description: 'Return a single post with all its comments. Hidden posts are only visible to their author.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      post_uuid:
+        custom: []
+        name: post_uuid
+        description: ''
+        required: true
+        example: 019dc087-837e-70ef-9cb1-9162ca61d7bb
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      post:
+        custom: []
+        name: post
+        description: 'The post UUID.'
+        required: true
+        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      post_uuid: 019dc087-837e-70ef-9cb1-9162ca61d7bb
+      post: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "post": { "id": 1, "uuid": "...", "body": "...", "status": "active", "likes_count": 3, "liked_by_me": false },
+            "comments": [{ "id": 1, "body": "Nice post!", "liked_by_me": false, "user": { "name": "Bob" } }],
+            "is_author": false
+          }
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 404
+        content: '{ "message": "Not Found." }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/posts/{post_uuid}'
+    metadata:
+      custom: []
+      groupName: 'Feed & Posts'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete post'
+      description: 'Soft-delete your own post.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      post_uuid:
+        custom: []
+        name: post_uuid
+        description: ''
+        required: true
+        example: 019dc087-837e-70ef-9cb1-9162ca61d7bb
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      post:
+        custom: []
+        name: post
+        description: 'The post UUID.'
+        required: true
+        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      post_uuid: 019dc087-837e-70ef-9cb1-9162ca61d7bb
+      post: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{ "message": "Post deleted." }'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 403
+        content: '{ "message": "This action is unauthorized." }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/posts/{post_uuid}/like'
+    metadata:
+      custom: []
+      groupName: 'Feed & Posts'
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Toggle like on post'
+      description: 'Like or unlike a post. Returns the new liked state and updated count.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      post_uuid:
+        custom: []
+        name: post_uuid
+        description: ''
+        required: true
+        example: 019dc087-837e-70ef-9cb1-9162ca61d7bb
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      post:
+        custom: []
+        name: post
+        description: 'The post UUID.'
+        required: true
+        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      post_uuid: 019dc087-837e-70ef-9cb1-9162ca61d7bb
+      post: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{ "liked": true, "likes_count": 6 }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null

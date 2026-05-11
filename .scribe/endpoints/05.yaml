@@ -1,0 +1,58 @@
+name: 'Admin: Dashboard'
+description: |-
+
+  Requires `moderator`, `admin`, or `super_admin` role.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/admin/dashboard
+    metadata:
+      custom: []
+      groupName: 'Admin: Dashboard'
+      groupDescription: |-
+
+        Requires `moderator`, `admin`, or `super_admin` role.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Admin dashboard stats'
+      description: 'System-wide stats for the last 30 days, daily signup/post series, recent reports and activity logs.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "stats": {
+              "users_total": 44, "users_today": 0, "users_active_5m": 1,
+              "posts_total": 83, "posts_today": 1, "comments_total": 210,
+              "reports_pending": 11, "bans_active": 7
+            },
+            "series": { "signups": [], "posts": [] },
+            "recent_reports": [],
+            "recent_activity": []
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null

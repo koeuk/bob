@@ -12,8 +12,29 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @group Admin: Dashboard
+ *
+ * Requires `moderator`, `admin`, or `super_admin` role.
+ */
 class DashboardController extends Controller
 {
+    /**
+     * Admin dashboard stats
+     *
+     * System-wide stats for the last 30 days, daily signup/post series, recent reports and activity logs.
+     *
+     * @response 200 {
+     *   "stats": {
+     *     "users_total": 44, "users_today": 0, "users_active_5m": 1,
+     *     "posts_total": 83, "posts_today": 1, "comments_total": 210,
+     *     "reports_pending": 11, "bans_active": 7
+     *   },
+     *   "series": { "signups": [], "posts": [] },
+     *   "recent_reports": [],
+     *   "recent_activity": []
+     * }
+     */
     public function index(): JsonResponse
     {
         $today = now()->startOfDay();

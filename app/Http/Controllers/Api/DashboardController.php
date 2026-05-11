@@ -10,8 +10,29 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @group Dashboard
+ */
 class DashboardController extends Controller
 {
+    /**
+     * User dashboard stats
+     *
+     * Returns post/comment/reaction statistics, weekly goal progress, an 8-month engagement series,
+     * recent activity on the user's posts, and their 3 latest posts.
+     *
+     * @response 200 {
+     *   "stats": {
+     *     "posts_total": 14, "posts_this_week": 2, "posts_last_week": 1, "posts_trend": 100,
+     *     "comments_received": 28, "comments_this_month": 10,
+     *     "reactions_total": 45, "reactions_this_month": 8
+     *   },
+     *   "weekly_goal": { "target": 20, "progress": 2 },
+     *   "engagement_series": [{ "label": "Oct", "posts": 3, "reactions": 12 }],
+     *   "recent_activity": [],
+     *   "my_posts": []
+     * }
+     */
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();

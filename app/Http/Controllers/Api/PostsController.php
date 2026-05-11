@@ -9,8 +9,24 @@ use App\Models\Post;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * @group Feed & Posts
+ */
 class PostsController extends Controller
 {
+    /**
+     * My posts
+     *
+     * Paginated list of the authenticated user's own posts, newest first.
+     *
+     * @queryParam page int Page number. Example: 1
+     *
+     * @response 200 {
+     *   "current_page": 1,
+     *   "data": [{ "id": 1, "uuid": "...", "body": "...", "status": "active", "comments_count": 2, "likes_count": 1 }],
+     *   "last_page": 1, "per_page": 20, "total": 14
+     * }
+     */
     public function mine(Request $request): JsonResponse
     {
         $posts = Post::with('user:id,uuid,name')
@@ -23,6 +39,20 @@ class PostsController extends Controller
         return response()->json($posts);
     }
 
+    /**
+     * Get post
+     *
+     * Return a single post with all its comments. Hidden posts are only visible to their author.
+     *
+     * @urlParam post string required The post UUID. Example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+     *
+     * @response 200 {
+     *   "post": { "id": 1, "uuid": "...", "body": "...", "status": "active", "likes_count": 3, "liked_by_me": false },
+     *   "comments": [{ "id": 1, "body": "Nice post!", "liked_by_me": false, "user": { "name": "Bob" } }],
+     *   "is_author": false
+     * }
+     * @response 404 { "message": "Not Found." }
+     */
     public function show(Request $request, Post $post): JsonResponse
     {
         abort_if($post->status === 'hidden' && $post->user_id !== $request->user()->id, 404);
@@ -63,6 +93,13 @@ class PostsController extends Controller
         ]);
     }
 
+    /**
+     * Create post
+     *
+     * @bodyParam body string required Post content (max 10,000 characters). Example: Hello everyone!
+     *
+     * @response 201 { "id": 84, "uuid": "...", "body": "Hello everyone!", "status": "active" }
+     */
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
@@ -80,6 +117,16 @@ class PostsController extends Controller
         return response()->json($post, 201);
     }
 
+    /**
+     * Delete post
+     *
+     * Soft-delete your own post.
+     *
+     * @urlParam post string required The post UUID. Example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+     *
+     * @response 200 { "message": "Post deleted." }
+     * @response 403 { "message": "This action is unauthorized." }
+     */
     public function destroy(Request $request, Post $post): JsonResponse
     {
         abort_unless($post->user_id === $request->user()->id, 403);
@@ -89,6 +136,15 @@ class PostsController extends Controller
         return response()->json(['message' => 'Post deleted.']);
     }
 
+    /**
+     * Toggle like on post
+     *
+     * Like or unlike a post. Returns the new liked state and updated count.
+     *
+     * @urlParam post string required The post UUID. Example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+     *
+     * @response 200 { "liked": true, "likes_count": 6 }
+     */
     public function like(Request $request, Post $post): JsonResponse
     {
         abort_if($post->status === 'hidden', 404);

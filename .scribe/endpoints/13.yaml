@@ -1,0 +1,147 @@
+name: 'Admin: Settings'
+description: |-
+
+  Requires `admin` or `super_admin` role.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/admin/settings
+    metadata:
+      custom: []
+      groupName: 'Admin: Settings'
+      groupDescription: |-
+
+        Requires `admin` or `super_admin` role.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List settings'
+      description: 'Returns all settings grouped by their `group` key.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "general": [{ "id": 1, "key": "site_name", "value": "Bob", "group": "general" }]
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PATCH
+    uri: api/admin/settings
+    metadata:
+      custom: []
+      groupName: 'Admin: Settings'
+      groupDescription: |-
+
+        Requires `admin` or `super_admin` role.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Update settings'
+      description: 'Upserts one or more settings. Requires `admin+`.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      settings:
+        custom: []
+        name: settings
+        description: 'Array of setting objects.'
+        required: true
+        example:
+          - architecto
+        type: 'string[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      'settings[].key':
+        custom: []
+        name: 'settings[].key'
+        description: 'Setting key.'
+        required: true
+        example: site_name
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      'settings[].value':
+        custom: []
+        name: 'settings[].value'
+        description: 'New value.'
+        required: false
+        example: Bob
+        type: mixed
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+      'settings[].group':
+        custom: []
+        name: 'settings[].group'
+        description: 'Group name (default: `general`).'
+        required: false
+        example: general
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      settings:
+        - architecto
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '[{ "key": "site_name", "value": "Bob", "group": "general" }]'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 403
+        content: '{ "message": "Only admins can update settings." }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
