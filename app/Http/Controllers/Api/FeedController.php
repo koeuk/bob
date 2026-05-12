@@ -37,7 +37,8 @@ class FeedController extends Controller
     {
         $userId = $request->user('sanctum')?->id;
 
-        $seed = (int) $request->query('seed', rand(1, 999999));
+        $seed   = (int) $request->query('seed', rand(1, 999999));
+        $search = trim($request->query('q', ''));
 
         $posts = Post::with('user:id,uuid,name,avatar')
             ->where('status', 'active')
@@ -46,6 +47,13 @@ class FeedController extends Controller
                 if ($userId) {
                     $q->orWhere('user_id', $userId);
                 }
+            })
+            ->when($search !== '', function ($q) use ($search) {
+                $like = '%' . $search . '%';
+                $q->where(function ($inner) use ($like) {
+                    $inner->where('body', 'like', $like)
+                          ->orWhereHas('user', fn ($u) => $u->where('name', 'like', $like));
+                });
             })
             ->withCount(['comments', 'likes'])
             ->orderByRaw('RAND(' . $seed . ')')
