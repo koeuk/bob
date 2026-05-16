@@ -132,6 +132,7 @@ class AuthController extends Controller
             'name'   => ['sometimes', 'string', 'max:255'],
             'email'  => ['sometimes', 'email', 'max:255', 'unique:users,email,'.$user->id],
             'avatar' => ['sometimes', 'image', 'max:4096'],
+            'cover'  => ['sometimes', 'image', 'max:8192'],
         ]);
 
         if (isset($data['email']) && $data['email'] !== $user->email) {
@@ -141,6 +142,11 @@ class AuthController extends Controller
         if ($request->hasFile('avatar')) {
             $path = $request->file('avatar')->store('avatars', 'public');
             $data['avatar'] = $path;
+        }
+
+        if ($request->hasFile('cover')) {
+            $path = $request->file('cover')->store('covers', 'public');
+            $data['cover'] = $path;
         }
 
         $user->update($data);

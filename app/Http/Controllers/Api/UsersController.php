@@ -60,6 +60,7 @@ class UsersController extends Controller
                 'uuid'       => $user->uuid,
                 'name'       => $user->name,
                 'avatar'     => $user->avatar,
+                'cover'      => $user->cover,
                 'role'       => $user->role,
                 'joined_at'  => $user->created_at,
             ],

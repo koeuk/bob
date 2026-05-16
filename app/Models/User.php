@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'avatar',
+        'cover',
         'password',
         'role',
     ];
@@ -52,6 +53,16 @@ class User extends Authenticatable
     }
 
     public function getAvatarAttribute(?string $value): ?string
+    {
+        if (! $value) return null;
+        if (str_starts_with($value, 'http')) {
+            $path = preg_replace('#^https?://[^/]+/storage/#', '', $value);
+            return Storage::url($path);
+        }
+        return Storage::url($value);
+    }
+
+    public function getCoverAttribute(?string $value): ?string
     {
         if (! $value) return null;
         if (str_starts_with($value, 'http')) {
