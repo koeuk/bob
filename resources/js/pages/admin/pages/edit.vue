@@ -18,55 +18,58 @@
                         <option value="draft">Draft</option>
                         <option value="published">Published</option>
                     </select>
-                    <button
+                    <Button
                         type="submit"
-                        class="inline-flex h-10 items-center gap-2 rounded-full bg-ink px-5 text-sm font-medium text-paper hover:opacity-90"
+                        class="rounded-full bg-ink text-paper hover:bg-ink/90"
                         :disabled="form.processing"
                     >
                         <Save class="size-4" /> {{ isNew ? 'Create' : 'Save' }}
-                    </button>
+                    </Button>
                 </div>
             </div>
 
-            <div class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
-                <div class="space-y-4">
-                    <div>
-                        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Title</label>
-                        <input
-                            v-model="form.title"
-                            type="text"
-                            class="h-11 w-full rounded-full bg-secondary/60 px-4 text-base outline-none focus:bg-secondary"
-                            placeholder="About us"
-                            required
-                        />
-                        <p v-if="form.errors.title" class="mt-1 text-xs text-destructive">{{ form.errors.title }}</p>
-                    </div>
+            <Card class="rounded-3xl border-border/60 gap-0">
+                <CardHeader class="px-6 pt-6 pb-0"><CardTitle>Page details</CardTitle></CardHeader>
+                <CardContent class="px-6 pb-6 pt-4">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Title</label>
+                            <Input
+                                v-model="form.title"
+                                type="text"
+                                class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full text-base"
+                                placeholder="About us"
+                                required
+                            />
+                            <p v-if="form.errors.title" class="mt-1 text-xs text-destructive">{{ form.errors.title }}</p>
+                        </div>
 
-                    <div>
-                        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Slug</label>
-                        <input
-                            v-model="form.slug"
-                            type="text"
-                            class="h-11 w-full rounded-full bg-secondary/60 px-4 font-mono text-sm outline-none focus:bg-secondary"
-                            placeholder="about-us"
-                            required
-                        />
-                        <p v-if="form.errors.slug" class="mt-1 text-xs text-destructive">{{ form.errors.slug }}</p>
-                    </div>
+                        <div>
+                            <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Slug</label>
+                            <Input
+                                v-model="form.slug"
+                                type="text"
+                                class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full font-mono text-sm"
+                                placeholder="about-us"
+                                required
+                            />
+                            <p v-if="form.errors.slug" class="mt-1 text-xs text-destructive">{{ form.errors.slug }}</p>
+                        </div>
 
-                    <div>
-                        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Body (markdown)</label>
-                        <textarea
-                            v-model="form.body"
-                            rows="18"
-                            class="w-full rounded-2xl bg-secondary/60 p-4 font-mono text-sm leading-relaxed outline-none focus:bg-secondary"
-                            placeholder="# About us..."
-                            required
-                        />
-                        <p v-if="form.errors.body" class="mt-1 text-xs text-destructive">{{ form.errors.body }}</p>
+                        <div>
+                            <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Body (markdown)</label>
+                            <Textarea
+                                v-model="form.body"
+                                rows="18"
+                                class="rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full p-4 font-mono text-sm leading-relaxed"
+                                placeholder="# About us..."
+                                required
+                            />
+                            <p v-if="form.errors.body" class="mt-1 text-xs text-destructive">{{ form.errors.body }}</p>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </CardContent>
+            </Card>
 
             <div v-if="!isNew && page?.updated_by" class="text-xs text-muted-foreground">
                 Last updated by {{ page.updated_by.name }} on {{ new Date(page.updated_at).toLocaleDateString() }}.
@@ -80,6 +83,13 @@ import AdminLayout from '@/layouts/admin-layout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, Save } from 'lucide-vue-next';
 import { computed } from 'vue';
+import Card from '@/components/ui/Card.vue';
+import CardHeader from '@/components/ui/CardHeader.vue';
+import CardTitle from '@/components/ui/CardTitle.vue';
+import CardContent from '@/components/ui/CardContent.vue';
+import { Button } from '@/components/ui/button';
+import Input from '@/components/ui/Input.vue';
+import Textarea from '@/components/ui/Textarea.vue';
 
 const props = defineProps({
     page: { type: Object, default: null },

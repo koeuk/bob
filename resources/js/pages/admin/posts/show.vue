@@ -10,18 +10,15 @@
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter class="flex-row justify-end gap-2 pt-2">
-                <button
-                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
-                    @click="showDeleteDialog = false"
-                >
+                <Button variant="outline" class="rounded-full" @click="showDeleteDialog = false">
                     Cancel
-                </button>
-                <button
-                    class="inline-flex h-9 items-center gap-2 rounded-full bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:opacity-90"
+                </Button>
+                <Button
+                    class="rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     @click="confirmDelete"
                 >
                     <Trash2 class="size-4" /> Delete
-                </button>
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>
@@ -31,15 +28,14 @@
             <Link href="/admin/posts" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
                 <ArrowLeft class="size-4" /> Back to posts
             </Link>
-            <Link
-                :href="`/admin/posts/${post.uuid}/edit`"
-                class="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-secondary"
-            >
-                <Pencil class="size-4" /> Edit
-            </Link>
+            <Button as-child variant="outline" class="rounded-full">
+                <Link :href="`/admin/posts/${post.uuid}/edit`">
+                    <Pencil class="size-4" /> Edit
+                </Link>
+            </Button>
         </div>
 
-        <article class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
+        <Card class="rounded-3xl border-border/60 gap-0 p-6">
             <header class="mb-4 flex flex-wrap items-start justify-between gap-4">
                 <div class="flex items-center gap-3">
                     <span class="flex size-12 items-center justify-center rounded-full bg-ink text-sm font-semibold text-paper">
@@ -52,7 +48,7 @@
                         <div class="text-xs text-muted-foreground">{{ dateFmt(post.created_at) }}</div>
                     </div>
                 </div>
-                <span :class="['inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium', statusTone]">{{ post.status }}</span>
+                <Badge :class="['rounded-full border-0', statusTone]">{{ post.status }}</Badge>
             </header>
 
             <div class="whitespace-pre-wrap text-base leading-relaxed">{{ post.body }}</div>
@@ -62,82 +58,95 @@
                 <span class="inline-flex items-center gap-1.5"><MessageCircle class="size-4" /> {{ post.comments?.length ?? 0 }}</span>
                 <span v-if="post.reports?.length" class="inline-flex items-center gap-1.5 text-rust"><Flag class="size-4" /> {{ post.reports.length }}</span>
             </div>
-        </article>
+        </Card>
 
         <!-- Moderation actions -->
-        <section class="flex flex-wrap items-center gap-2 rounded-3xl border border-border/60 bg-card p-4 shadow-sm">
-            <span class="mr-2 text-xs uppercase tracking-wide text-muted-foreground">Moderate</span>
-            <button
-                :disabled="post.status === 'active'"
-                class="inline-flex items-center gap-2 rounded-full bg-moss px-4 py-2 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40"
-                @click="setStatus('active')"
-            >
-                <Eye class="size-4" /> Active
-            </button>
-            <button
-                :disabled="post.status === 'flagged'"
-                class="inline-flex items-center gap-2 rounded-full bg-rust px-4 py-2 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40"
-                @click="setStatus('flagged')"
-            >
-                <Flag class="size-4" /> Flag
-            </button>
-            <button
-                :disabled="post.status === 'hidden'"
-                class="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40"
-                @click="setStatus('hidden')"
-            >
-                <EyeOff class="size-4" /> Hide
-            </button>
-            <div class="mx-2 h-6 w-px bg-border"></div>
-            <button
-                class="inline-flex items-center gap-2 rounded-full border border-destructive/40 px-4 py-2 text-sm font-medium text-destructive hover:bg-destructive/5"
-                @click="deletePost"
-            >
-                <Trash2 class="size-4" /> Delete
-            </button>
-        </section>
+        <Card class="rounded-3xl border-border/60 gap-0 p-4">
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="mr-2 text-xs uppercase tracking-wide text-muted-foreground">Moderate</span>
+                <Button
+                    :disabled="post.status === 'active'"
+                    class="rounded-full bg-moss text-paper hover:bg-moss/90"
+                    @click="setStatus('active')"
+                >
+                    <Eye class="size-4" /> Active
+                </Button>
+                <Button
+                    :disabled="post.status === 'flagged'"
+                    class="rounded-full bg-rust text-paper hover:bg-rust/90"
+                    @click="setStatus('flagged')"
+                >
+                    <Flag class="size-4" /> Flag
+                </Button>
+                <Button
+                    :disabled="post.status === 'hidden'"
+                    class="rounded-full bg-ink text-paper hover:bg-ink/90"
+                    @click="setStatus('hidden')"
+                >
+                    <EyeOff class="size-4" /> Hide
+                </Button>
+                <div class="mx-2 h-6 w-px bg-border"></div>
+                <Button
+                    variant="outline"
+                    class="rounded-full border-destructive/40 text-destructive hover:bg-destructive/5"
+                    @click="deletePost"
+                >
+                    <Trash2 class="size-4" /> Delete
+                </Button>
+            </div>
+        </Card>
 
         <!-- Reports for this post -->
-        <section v-if="post.reports?.length" class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
-            <h3 class="mb-4 text-lg font-semibold">Reports on this post</h3>
-            <ul class="divide-y divide-border/60">
-                <li v-for="r in post.reports" :key="r.uuid" class="flex items-start justify-between gap-3 py-3 text-sm">
-                    <div>
-                        <div class="font-medium">
-                            <Link :href="`/admin/reports/${r.uuid}`" class="hover:text-rust">{{ r.reason }}</Link>
+        <Card v-if="post.reports?.length" class="rounded-3xl border-border/60 gap-0">
+            <CardHeader class="px-6 pt-6 pb-0"><CardTitle>Reports on this post</CardTitle></CardHeader>
+            <CardContent class="px-6 pb-6 pt-4">
+                <ul class="divide-y divide-border/60">
+                    <li v-for="r in post.reports" :key="r.uuid" class="flex items-start justify-between gap-3 py-3 text-sm">
+                        <div>
+                            <div class="font-medium">
+                                <Link :href="`/admin/reports/${r.uuid}`" class="hover:text-rust">{{ r.reason }}</Link>
+                            </div>
+                            <div class="text-xs text-muted-foreground">
+                                by {{ r.reporter?.name ?? 'unknown' }} · {{ dateFmt(r.created_at) }}
+                            </div>
                         </div>
-                        <div class="text-xs text-muted-foreground">
-                            by {{ r.reporter?.name ?? 'unknown' }} · {{ dateFmt(r.created_at) }}
-                        </div>
-                    </div>
-                    <span class="inline-flex rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground">{{ r.status }}</span>
-                </li>
-            </ul>
-        </section>
+                        <Badge class="rounded-full border-0 bg-secondary text-muted-foreground">{{ r.status }}</Badge>
+                    </li>
+                </ul>
+            </CardContent>
+        </Card>
 
         <!-- Comments -->
-        <section v-if="post.comments?.length" class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
-            <h3 class="mb-4 text-lg font-semibold">Comments ({{ post.comments.length }})</h3>
-            <ul class="divide-y divide-border/60">
-                <li v-for="c in post.comments" :key="c.uuid" class="flex items-start gap-3 py-3 text-sm">
-                    <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-[11px] font-semibold">
-                        {{ initials(c.user?.name) }}
-                    </span>
-                    <div class="min-w-0 flex-1">
-                        <div class="flex items-center gap-2">
-                            <span class="font-medium">{{ c.user?.name ?? 'unknown' }}</span>
-                            <span class="text-[11px] text-muted-foreground">{{ dateFmt(c.created_at) }}</span>
+        <Card v-if="post.comments?.length" class="rounded-3xl border-border/60 gap-0">
+            <CardHeader class="px-6 pt-6 pb-0"><CardTitle>Comments ({{ post.comments.length }})</CardTitle></CardHeader>
+            <CardContent class="px-6 pb-6 pt-4">
+                <ul class="divide-y divide-border/60">
+                    <li v-for="c in post.comments" :key="c.uuid" class="flex items-start gap-3 py-3 text-sm">
+                        <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-secondary text-[11px] font-semibold">
+                            {{ initials(c.user?.name) }}
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-medium">{{ c.user?.name ?? 'unknown' }}</span>
+                                <span class="text-[11px] text-muted-foreground">{{ dateFmt(c.created_at) }}</span>
+                            </div>
+                            <p class="mt-0.5">{{ c.body }}</p>
                         </div>
-                        <p class="mt-0.5">{{ c.body }}</p>
-                    </div>
-                </li>
-            </ul>
-        </section>
+                    </li>
+                </ul>
+            </CardContent>
+        </Card>
     </AdminLayout>
 </template>
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
+import Card from '@/components/ui/Card.vue';
+import CardHeader from '@/components/ui/CardHeader.vue';
+import CardTitle from '@/components/ui/CardTitle.vue';
+import CardContent from '@/components/ui/CardContent.vue';
+import { Button } from '@/components/ui/button';
+import Badge from '@/components/ui/Badge.vue';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, Eye, EyeOff, Flag, Heart, MessageCircle, Pencil, Trash2 } from 'lucide-vue-next';

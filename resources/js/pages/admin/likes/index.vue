@@ -10,32 +10,26 @@
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter class="flex-row justify-end gap-2 pt-2">
-                <button
-                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
-                    @click="removeTarget = null"
-                >
+                <Button variant="outline" class="rounded-full" @click="removeTarget = null">
                     Cancel
-                </button>
-                <button
-                    class="inline-flex h-9 items-center gap-2 rounded-full bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:opacity-90"
-                    @click="confirmRemove"
-                >
+                </Button>
+                <Button class="rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90" @click="confirmRemove">
                     <Trash2 class="size-4" /> Remove
-                </button>
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>
 
     <AdminLayout title="Likes & Reactions">
         <div class="flex gap-3">
-            <div class="rounded-3xl border border-border/60 bg-card px-5 py-3 shadow-sm">
+            <Card class="rounded-3xl border-border/60 gap-0 px-5 py-3">
                 <div class="text-[11px] uppercase tracking-wide text-muted-foreground">Total</div>
                 <div class="font-sans text-2xl font-semibold">{{ counts.all }}</div>
-            </div>
-            <div class="rounded-3xl border border-border/60 bg-rust/5 px-5 py-3 shadow-sm">
+            </Card>
+            <Card class="rounded-3xl border-border/60 gap-0 bg-rust/5 px-5 py-3">
                 <div class="text-[11px] uppercase tracking-wide text-rust">Today</div>
                 <div class="font-sans text-2xl font-semibold text-rust">{{ counts.today }}</div>
-            </div>
+            </Card>
         </div>
 
         <div class="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
@@ -65,13 +59,13 @@
                     >{{ l.user.name }}</Link>
                     <span v-else class="truncate text-muted-foreground">deleted user</span>
                     <span>
-                        <span :class="['inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium', typeTone(l.type)]">
+                        <Badge class="rounded-full border-0 text-[10px] font-medium" :class="typeTone(l.type)">
                             {{ l.type }}
-                        </span>
+                        </Badge>
                     </span>
-                    <span class="inline-flex rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground w-fit">
+                    <Badge class="rounded-full border-0 bg-secondary text-[10px] text-muted-foreground w-fit">
                         {{ targetLabel(l) }}
-                    </span>
+                    </Badge>
                     <span class="truncate text-muted-foreground">{{ truncate(targetPreview(l)) }}</span>
                     <span class="text-[11px] text-muted-foreground">{{ dateFmt(l.created_at) }}</span>
                     <button
@@ -114,6 +108,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { Heart, Trash2 } from 'lucide-vue-next';
 import { ref } from 'vue';
+import Card from '@/components/ui/Card.vue';
+import { Button } from '@/components/ui/button';
+import Badge from '@/components/ui/Badge.vue';
 
 const props = defineProps({
     likes: { type: Object, required: true },

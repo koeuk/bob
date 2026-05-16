@@ -13,21 +13,21 @@
                 @click="setTab(t.key)"
             >
                 {{ t.label }}
-                <span
+                <Badge
                     :class="[
-                        'inline-flex rounded-full px-2 py-0.5 text-[10px]',
+                        'rounded-full border-0',
                         activeTab === t.key
                             ? 'bg-paper/20 text-paper'
                             : t.tone === 'rust' ? 'bg-rust/15 text-rust'
                             : t.tone === 'moss' ? 'bg-moss/15 text-moss'
                             : 'bg-secondary',
                     ]"
-                >{{ t.count }}</span>
+                >{{ t.count }}</Badge>
             </button>
         </div>
 
         <!-- Queue -->
-        <div class="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
+        <Card class="rounded-3xl border-border/60 gap-0 overflow-hidden">
             <ul v-if="reports.data.length" class="divide-y divide-border/60">
                 <li
                     v-for="r in reports.data"
@@ -42,12 +42,8 @@
                             <Link :href="`/admin/reports/${r.uuid}`" class="truncate font-medium hover:text-rust">
                                 {{ r.reason }}
                             </Link>
-                            <span :class="['inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium', statusTone(r.status)]">
-                                {{ r.status }}
-                            </span>
-                            <span class="inline-flex rounded-full bg-secondary px-2 py-0.5 text-[10px] text-muted-foreground">
-                                {{ reportableLabel(r) }}
-                            </span>
+                            <Badge :class="['rounded-full border-0', statusTone(r.status)]">{{ r.status }}</Badge>
+                            <Badge class="rounded-full border-0 bg-secondary text-muted-foreground">{{ reportableLabel(r) }}</Badge>
                         </div>
                         <div class="mt-1 text-xs text-muted-foreground">
                             filed by {{ r.reporter?.name ?? 'unknown' }}
@@ -83,12 +79,14 @@
                     />
                 </div>
             </div>
-        </div>
+        </Card>
     </AdminLayout>
 </template>
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
+import Card from '@/components/ui/Card.vue';
+import Badge from '@/components/ui/Badge.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { ChevronRight, Flag, Inbox } from 'lucide-vue-next';
 import { computed, ref } from 'vue';

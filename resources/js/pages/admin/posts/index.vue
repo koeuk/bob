@@ -2,32 +2,33 @@
     <Head title="Posts" />
     <AdminLayout title="Posts">
         <div class="flex justify-end">
-            <Link
-                href="/admin/posts/create"
-                class="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
-            >
-                <Plus class="size-4" /> New post
-            </Link>
+            <Button as-child class="rounded-full bg-ink text-paper hover:bg-ink/90">
+                <Link href="/admin/posts/create">
+                    <Plus class="size-4" /> New post
+                </Link>
+            </Button>
         </div>
 
-        <div class="flex flex-wrap items-center gap-3 rounded-3xl border border-border/60 bg-card p-4 shadow-sm">
-            <div class="relative min-w-0 flex-1">
-                <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                    v-model="search"
-                    type="search"
-                    placeholder="Search body..."
-                    class="h-10 w-full rounded-full bg-secondary/60 pl-10 pr-4 text-sm outline-none focus:bg-secondary"
-                    @keydown.enter="apply"
-                />
+        <Card class="rounded-3xl border-border/60 gap-0 p-4">
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="relative min-w-0 flex-1">
+                    <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                        v-model="search"
+                        type="search"
+                        placeholder="Search body..."
+                        class="h-10 w-full rounded-full bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary pl-10"
+                        @keydown.enter="apply"
+                    />
+                </div>
+                <select v-model="status" class="h-10 rounded-full bg-secondary/60 px-4 text-sm outline-none" @change="apply">
+                    <option value="">All statuses</option>
+                    <option value="active">Active</option>
+                    <option value="flagged">Flagged</option>
+                    <option value="hidden">Hidden</option>
+                </select>
             </div>
-            <select v-model="status" class="h-10 rounded-full bg-secondary/60 px-4 text-sm outline-none" @change="apply">
-                <option value="">All statuses</option>
-                <option value="active">Active</option>
-                <option value="flagged">Flagged</option>
-                <option value="hidden">Hidden</option>
-            </select>
-        </div>
+        </Card>
 
         <div class="grid gap-4 md:grid-cols-2">
             <Link
@@ -46,9 +47,7 @@
                             <div class="text-[11px] text-muted-foreground">{{ dateFmt(p.created_at) }}</div>
                         </div>
                     </div>
-                    <span :class="['inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium', statusTone(p.status)]">
-                        {{ p.status }}
-                    </span>
+                    <Badge :class="['rounded-full border-0', statusTone(p.status)]">{{ p.status }}</Badge>
                 </div>
                 <p class="text-sm leading-relaxed text-muted-foreground group-hover:text-ink">
                     {{ truncate(p.body) }}
@@ -63,9 +62,9 @@
             </Link>
         </div>
 
-        <div v-if="!posts.data.length" class="rounded-3xl border border-border/60 bg-card py-16 text-center text-sm text-muted-foreground shadow-sm">
-            No posts match.
-        </div>
+        <Card v-if="!posts.data.length" class="rounded-3xl border-border/60 gap-0 p-6">
+            <div class="py-10 text-center text-sm text-muted-foreground">No posts match.</div>
+        </Card>
 
         <div v-if="posts.data.length" class="flex items-center justify-between text-xs text-muted-foreground">
             <span>Showing {{ posts.from }}–{{ posts.to }} of {{ posts.total }}</span>
@@ -89,6 +88,10 @@
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
+import Card from '@/components/ui/Card.vue';
+import { Button } from '@/components/ui/button';
+import Input from '@/components/ui/Input.vue';
+import Badge from '@/components/ui/Badge.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { Flag, Heart, MessageCircle, Plus, Search } from 'lucide-vue-next';
 import { ref } from 'vue';

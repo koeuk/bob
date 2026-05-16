@@ -1,18 +1,20 @@
 <template>
     <Head title="Activity" />
     <AdminLayout title="Activity log">
-        <div class="flex flex-wrap items-center gap-3 rounded-3xl border border-border/60 bg-card p-4 shadow-sm">
-            <div class="relative flex-1">
-                <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                    v-model="actionFilter"
-                    type="search"
-                    placeholder="Filter by action (e.g. user.ban, post.delete)..."
-                    class="h-10 w-full rounded-full bg-secondary/60 pl-10 pr-4 text-sm outline-none focus:bg-secondary"
-                    @keydown.enter="apply"
-                />
+        <Card class="rounded-3xl border-border/60 gap-0 p-4">
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="relative flex-1">
+                    <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                        v-model="actionFilter"
+                        type="search"
+                        placeholder="Filter by action (e.g. user.ban, post.delete)..."
+                        class="h-10 w-full rounded-full bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary pl-10 pr-4"
+                        @keydown.enter="apply"
+                    />
+                </div>
             </div>
-        </div>
+        </Card>
 
         <div class="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
             <ul v-if="logs.data.length" class="divide-y divide-border/60">
@@ -23,9 +25,9 @@
                     <div class="min-w-0 flex-1">
                         <div class="flex items-center gap-2 text-sm">
                             <span class="font-medium">{{ log.admin?.name ?? 'system' }}</span>
-                            <span :class="['inline-flex rounded-full px-2 py-0.5 font-mono text-[10px]', actionTone(log.action)]">
+                            <Badge class="rounded-full border-0 font-mono text-[10px]" :class="actionTone(log.action)">
                                 {{ log.action }}
-                            </span>
+                            </Badge>
                         </div>
                         <div class="mt-0.5 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
                             <span class="inline-flex items-center gap-1">
@@ -68,6 +70,9 @@ import AdminLayout from '@/layouts/admin-layout.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { ActivitySquare, Hash, Search } from 'lucide-vue-next';
 import { ref } from 'vue';
+import Card from '@/components/ui/Card.vue';
+import Input from '@/components/ui/Input.vue';
+import Badge from '@/components/ui/Badge.vue';
 
 const props = defineProps({
     logs: { type: Object, required: true },

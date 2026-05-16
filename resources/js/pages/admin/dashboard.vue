@@ -34,49 +34,53 @@
 
             <!-- Figures grid -->
             <div class="grid grid-cols-2 gap-4 lg:col-span-2 lg:grid-cols-2">
-                <div
+                <Card
                     v-for="f in figures"
                     :key="f.key"
-                    class="flex flex-col justify-between rounded-3xl border border-border/60 bg-card p-5 shadow-sm"
+                    class="rounded-3xl border-border/60 gap-0 p-5 flex flex-col justify-between"
                 >
                     <div class="flex items-center justify-between">
                         <span class="inline-flex size-9 items-center justify-center rounded-2xl bg-secondary text-ink">
                             <component :is="f.icon" class="size-[18px]" />
                         </span>
-                        <span
+                        <Badge
                             :class="[
-                                'inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[10px] font-medium',
+                                'rounded-full border-0 inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-medium',
                                 f.trend === 'up' ? 'bg-moss/15 text-moss' : 'bg-rust/15 text-rust',
                             ]"
                         >
                             <component :is="f.trend === 'up' ? ArrowUpRight : ArrowDownRight" class="size-3" />
                             {{ f.sub }}
-                        </span>
+                        </Badge>
                     </div>
                     <div class="mt-6">
                         <div class="text-xs uppercase tracking-wide text-muted-foreground">{{ f.label }}</div>
                         <div class="mt-1 font-sans text-3xl font-semibold tracking-tight">{{ fmt(f.value) }}</div>
                     </div>
-                </div>
+                </Card>
             </div>
         </section>
 
         <!-- Chart + active snapshot -->
         <section class="grid gap-4 lg:grid-cols-3">
-            <div class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm lg:col-span-2">
-                <div class="mb-4 flex items-start justify-between gap-4">
-                    <div>
-                        <h3 class="text-lg font-semibold tracking-tight">Signups vs Posts</h3>
-                        <p class="text-xs text-muted-foreground">last 30 days</p>
+            <Card class="rounded-3xl border-border/60 gap-0 lg:col-span-2">
+                <CardHeader class="px-6 pt-6 pb-0">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <CardTitle>Signups vs Posts</CardTitle>
+                            <p class="text-xs text-muted-foreground">last 30 days</p>
+                        </div>
                     </div>
-                </div>
-                <div class="h-72">
-                    <Bar :data="chartData" :options="chartOptions" />
-                </div>
-            </div>
+                </CardHeader>
+                <CardContent class="px-6 pb-6 pt-4">
+                    <div class="h-72">
+                        <Bar :data="chartData" :options="chartOptions" />
+                    </div>
+                </CardContent>
+            </Card>
 
             <div class="flex flex-col gap-4">
-                <div class="rounded-3xl border border-border/60 bg-card p-5 shadow-sm">
+                <Card class="rounded-3xl border-border/60 gap-0 p-5">
                     <div class="text-xs uppercase tracking-wide text-muted-foreground">Active now</div>
                     <div class="mt-2 flex items-baseline gap-2">
                         <span class="font-sans text-4xl font-semibold tracking-tight">{{ fmt(stats.users_active_5m) }}</span>
@@ -85,8 +89,8 @@
                             live (5m)
                         </span>
                     </div>
-                </div>
-                <div class="rounded-3xl border border-border/60 bg-card p-5 shadow-sm">
+                </Card>
+                <Card class="rounded-3xl border-border/60 gap-0 p-5">
                     <div class="text-xs uppercase tracking-wide text-muted-foreground">New today</div>
                     <div class="mt-3 grid grid-cols-2 gap-3">
                         <div>
@@ -98,83 +102,96 @@
                             <div class="font-sans text-2xl font-semibold">{{ fmt(stats.posts_today) }}</div>
                         </div>
                     </div>
-                </div>
+                </Card>
             </div>
         </section>
 
         <!-- Recent reports + activity -->
         <section class="grid gap-4 lg:grid-cols-2">
-            <div class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
-                <div class="mb-4 flex items-center justify-between">
-                    <div>
-                        <h3 class="text-lg font-semibold tracking-tight">Recent reports</h3>
-                        <p class="text-xs text-muted-foreground">last 8</p>
-                    </div>
-                    <Link href="/admin/reports" class="text-xs font-medium text-rust hover:underline">View all &rarr;</Link>
-                </div>
-                <ul v-if="recentReports.length" class="divide-y divide-border/60">
-                    <li v-for="r in recentReports" :key="r.uuid" class="flex items-start gap-3 py-3">
-                        <span class="mt-0.5 inline-flex size-8 items-center justify-center rounded-xl bg-rust/10 text-rust">
-                            <Flag class="size-4" />
-                        </span>
-                        <div class="min-w-0 flex-1">
-                            <div class="flex items-center gap-2">
-                                <Link :href="`/admin/reports/${r.uuid}`" class="truncate font-medium hover:text-rust">
-                                    {{ reportableTitle(r) }}
-                                </Link>
-                                <span
-                                    :class="[
-                                        'inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium',
-                                        r.status === 'pending' ? 'bg-rust/15 text-rust' : 'bg-secondary text-muted-foreground',
-                                    ]"
-                                >
-                                    {{ r.status }}
-                                </span>
-                            </div>
-                            <div class="truncate text-xs text-muted-foreground">
-                                by {{ r.reporter?.name ?? 'unknown' }} &middot; {{ r.reason }}
-                            </div>
+            <Card class="rounded-3xl border-border/60 gap-0">
+                <CardHeader class="px-6 pt-6 pb-0">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <CardTitle>Recent reports</CardTitle>
+                            <p class="text-xs text-muted-foreground">last 8</p>
                         </div>
-                        <span class="shrink-0 text-[11px] text-muted-foreground">{{ timeAgo(r.created_at) }}</span>
-                    </li>
-                </ul>
-                <div v-else class="rounded-2xl bg-secondary/50 py-10 text-center text-sm text-muted-foreground">
-                    No reports yet.
-                </div>
-            </div>
+                        <Link href="/admin/reports" class="text-xs font-medium text-rust hover:underline">View all &rarr;</Link>
+                    </div>
+                </CardHeader>
+                <CardContent class="px-6 pb-6 pt-4">
+                    <ul v-if="recentReports.length" class="divide-y divide-border/60">
+                        <li v-for="r in recentReports" :key="r.uuid" class="flex items-start gap-3 py-3">
+                            <span class="mt-0.5 inline-flex size-8 items-center justify-center rounded-xl bg-rust/10 text-rust">
+                                <Flag class="size-4" />
+                            </span>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-2">
+                                    <Link :href="`/admin/reports/${r.uuid}`" class="truncate font-medium hover:text-rust">
+                                        {{ reportableTitle(r) }}
+                                    </Link>
+                                    <Badge
+                                        :class="[
+                                            'rounded-full border-0 px-2 py-0.5 text-[10px] font-medium',
+                                            r.status === 'pending' ? 'bg-rust/15 text-rust' : 'bg-secondary text-muted-foreground',
+                                        ]"
+                                    >
+                                        {{ r.status }}
+                                    </Badge>
+                                </div>
+                                <div class="truncate text-xs text-muted-foreground">
+                                    by {{ r.reporter?.name ?? 'unknown' }} &middot; {{ r.reason }}
+                                </div>
+                            </div>
+                            <span class="shrink-0 text-[11px] text-muted-foreground">{{ timeAgo(r.created_at) }}</span>
+                        </li>
+                    </ul>
+                    <div v-else class="rounded-2xl bg-secondary/50 py-10 text-center text-sm text-muted-foreground">
+                        No reports yet.
+                    </div>
+                </CardContent>
+            </Card>
 
-            <div class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
-                <div class="mb-4 flex items-center justify-between">
-                    <div>
-                        <h3 class="text-lg font-semibold tracking-tight">Recent activity</h3>
-                        <p class="text-xs text-muted-foreground">admin actions</p>
-                    </div>
-                    <Link href="/admin/activity-logs" class="text-xs font-medium text-rust hover:underline">View all &rarr;</Link>
-                </div>
-                <ul v-if="recentActivity.length" class="divide-y divide-border/60">
-                    <li v-for="a in recentActivity" :key="a.uuid" class="flex items-start gap-3 py-3">
-                        <span class="mt-0.5 inline-flex size-8 items-center justify-center rounded-xl bg-secondary text-ink">
-                            <Hash class="size-4" />
-                        </span>
-                        <div class="min-w-0 flex-1">
-                            <div class="font-medium">{{ a.action }}</div>
-                            <div class="truncate text-xs text-muted-foreground">
-                                {{ a.admin?.name ?? 'system' }}
-                            </div>
+            <Card class="rounded-3xl border-border/60 gap-0">
+                <CardHeader class="px-6 pt-6 pb-0">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <CardTitle>Recent activity</CardTitle>
+                            <p class="text-xs text-muted-foreground">admin actions</p>
                         </div>
-                        <span class="shrink-0 text-[11px] text-muted-foreground">{{ timeAgo(a.created_at) }}</span>
-                    </li>
-                </ul>
-                <div v-else class="rounded-2xl bg-secondary/50 py-10 text-center text-sm text-muted-foreground">
-                    No activity yet.
-                </div>
-            </div>
+                        <Link href="/admin/activity-logs" class="text-xs font-medium text-rust hover:underline">View all &rarr;</Link>
+                    </div>
+                </CardHeader>
+                <CardContent class="px-6 pb-6 pt-4">
+                    <ul v-if="recentActivity.length" class="divide-y divide-border/60">
+                        <li v-for="a in recentActivity" :key="a.uuid" class="flex items-start gap-3 py-3">
+                            <span class="mt-0.5 inline-flex size-8 items-center justify-center rounded-xl bg-secondary text-ink">
+                                <Hash class="size-4" />
+                            </span>
+                            <div class="min-w-0 flex-1">
+                                <div class="font-medium">{{ a.action }}</div>
+                                <div class="truncate text-xs text-muted-foreground">
+                                    {{ a.admin?.name ?? 'system' }}
+                                </div>
+                            </div>
+                            <span class="shrink-0 text-[11px] text-muted-foreground">{{ timeAgo(a.created_at) }}</span>
+                        </li>
+                    </ul>
+                    <div v-else class="rounded-2xl bg-secondary/50 py-10 text-center text-sm text-muted-foreground">
+                        No activity yet.
+                    </div>
+                </CardContent>
+            </Card>
         </section>
     </AdminLayout>
 </template>
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
+import Card from '@/components/ui/Card.vue';
+import CardHeader from '@/components/ui/CardHeader.vue';
+import CardTitle from '@/components/ui/CardTitle.vue';
+import CardContent from '@/components/ui/CardContent.vue';
+import Badge from '@/components/ui/Badge.vue';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
     BarController,

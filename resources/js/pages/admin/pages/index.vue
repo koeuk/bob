@@ -10,37 +10,30 @@
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter class="flex-row justify-end gap-2 pt-2">
-                <button
-                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
-                    @click="deleteTarget = null"
-                >
+                <Button variant="outline" class="rounded-full" @click="deleteTarget = null">
                     Cancel
-                </button>
-                <button
-                    class="inline-flex h-9 items-center gap-2 rounded-full bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:opacity-90"
-                    @click="confirmDelete"
-                >
+                </Button>
+                <Button class="rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90" @click="confirmDelete">
                     <Trash2 class="size-4" /> Delete
-                </button>
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>
 
     <AdminLayout title="Pages">
         <div class="flex justify-end">
-            <Link
-                href="/admin/pages/create"
-                class="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
-            >
-                <Plus class="size-4" /> New page
-            </Link>
+            <Button as-child class="rounded-full bg-ink text-paper hover:bg-ink/90">
+                <Link href="/admin/pages/create">
+                    <Plus class="size-4" /> New page
+                </Link>
+            </Button>
         </div>
 
         <div class="grid gap-4 md:grid-cols-2">
-            <div
+            <Card
                 v-for="p in pages.data"
                 :key="p.uuid"
-                class="group flex flex-col gap-3 rounded-3xl border border-border/60 bg-card p-5 shadow-sm transition-shadow hover:shadow-md"
+                class="rounded-3xl border-border/60 gap-0 group flex flex-col gap-3 p-5 transition-shadow hover:shadow-md"
             >
                 <div class="flex items-start justify-between gap-3">
                     <div class="flex items-center gap-3">
@@ -54,12 +47,10 @@
                             <div class="truncate text-xs text-muted-foreground">/{{ p.slug }}</div>
                         </div>
                     </div>
-                    <span
-                        :class="[
-                            'shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium',
-                            p.status === 'published' ? 'bg-moss/15 text-moss' : 'bg-secondary text-muted-foreground',
-                        ]"
-                    >{{ p.status }}</span>
+                    <Badge
+                        class="rounded-full border-0 shrink-0 text-[10px] font-medium"
+                        :class="p.status === 'published' ? 'bg-moss/15 text-moss' : 'bg-secondary text-muted-foreground'"
+                    >{{ p.status }}</Badge>
                 </div>
                 <div class="flex items-center justify-between text-xs text-muted-foreground">
                     <span>Updated {{ dateFmt(p.updated_at) }} by {{ p.updated_by?.name ?? 'system' }}</span>
@@ -70,7 +61,7 @@
                         <Trash2 class="size-3.5" />
                     </button>
                 </div>
-            </div>
+            </Card>
         </div>
 
         <div v-if="!pages.data.length" class="rounded-3xl border border-border/60 bg-card py-16 text-center text-sm text-muted-foreground shadow-sm">
@@ -85,6 +76,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { FileText, Plus, Trash2 } from 'lucide-vue-next';
 import { ref } from 'vue';
+import Card from '@/components/ui/Card.vue';
+import { Button } from '@/components/ui/button';
+import Badge from '@/components/ui/Badge.vue';
 
 const props = defineProps({
     pages: { type: Object, required: true },

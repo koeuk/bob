@@ -13,66 +13,68 @@
 
         <!-- ── CREATE: single flat form ── -->
         <template v-if="isNew">
-            <form class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm space-y-6" @submit.prevent="submitCreate">
-                <!-- Avatar -->
-                <div class="flex items-center gap-5">
-                    <div class="relative size-16 shrink-0">
-                        <div class="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-ink text-base font-semibold text-paper">
-                            <img v-if="avatarPreview" :src="avatarPreview" class="size-16 object-cover" alt="" />
-                            <template v-else>{{ initials(createForm.name) }}</template>
+            <Card class="rounded-3xl border-border/60 gap-0 p-6">
+                <form class="space-y-6" @submit.prevent="submitCreate">
+                    <!-- Avatar -->
+                    <div class="flex items-center gap-5">
+                        <div class="relative size-16 shrink-0">
+                            <div class="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-ink text-base font-semibold text-paper">
+                                <img v-if="avatarPreview" :src="avatarPreview" class="size-16 object-cover" alt="" />
+                                <template v-else>{{ initials(createForm.name) }}</template>
+                            </div>
+                            <button type="button" class="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-card border border-border/60 shadow-sm hover:bg-secondary transition-colors" @click="$refs.avatarInput.click()">
+                                <Camera class="size-3 text-muted-foreground" />
+                            </button>
+                            <input ref="avatarInput" type="file" accept="image/*" class="hidden" @change="onAvatarChange" />
                         </div>
-                        <button type="button" class="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-card border border-border/60 shadow-sm hover:bg-secondary transition-colors" @click="$refs.avatarInput.click()">
-                            <Camera class="size-3 text-muted-foreground" />
-                        </button>
-                        <input ref="avatarInput" type="file" accept="image/*" class="hidden" @change="onAvatarChange" />
+                        <div>
+                            <p class="text-sm font-medium">Profile photo</p>
+                            <p class="text-xs text-muted-foreground mt-0.5">JPG, PNG or GIF · max 2 MB</p>
+                            <button v-if="avatarPreview" type="button" class="mt-1 text-xs text-rust hover:underline" @click="clearAvatar">Remove</button>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-sm font-medium">Profile photo</p>
-                        <p class="text-xs text-muted-foreground mt-0.5">JPG, PNG or GIF · max 2 MB</p>
-                        <button v-if="avatarPreview" type="button" class="mt-1 text-xs text-rust hover:underline" @click="clearAvatar">Remove</button>
-                    </div>
-                </div>
 
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <div>
-                        <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Name</label>
-                        <input v-model="createForm.name" type="text" required class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors" />
-                        <p v-if="createForm.errors.name" class="mt-1 text-xs text-destructive">{{ createForm.errors.name }}</p>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Name</label>
+                            <Input v-model="createForm.name" type="text" required class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
+                            <p v-if="createForm.errors.name" class="mt-1 text-xs text-destructive">{{ createForm.errors.name }}</p>
+                        </div>
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</label>
+                            <Input v-model="createForm.email" type="email" required class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
+                            <p v-if="createForm.errors.email" class="mt-1 text-xs text-destructive">{{ createForm.errors.email }}</p>
+                        </div>
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Password</label>
+                            <Input v-model="createForm.password" type="password" required minlength="8" placeholder="Minimum 8 characters" class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
+                            <p v-if="createForm.errors.password" class="mt-1 text-xs text-destructive">{{ createForm.errors.password }}</p>
+                        </div>
+                        <div>
+                            <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Role</label>
+                            <select v-model="createForm.role" class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors">
+                                <option value="user">User</option>
+                                <option value="moderator">Moderator</option>
+                                <option v-if="canCreateAdmin" value="admin">Admin</option>
+                                <option v-if="canCreateAdmin" value="super_admin">Super Admin</option>
+                            </select>
+                            <p v-if="!canCreateAdmin" class="mt-1 text-[11px] text-muted-foreground">Only super admins can create admin-level accounts.</p>
+                            <p v-if="createForm.errors.role" class="mt-1 text-xs text-destructive">{{ createForm.errors.role }}</p>
+                        </div>
                     </div>
-                    <div>
-                        <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</label>
-                        <input v-model="createForm.email" type="email" required class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors" />
-                        <p v-if="createForm.errors.email" class="mt-1 text-xs text-destructive">{{ createForm.errors.email }}</p>
-                    </div>
-                    <div>
-                        <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Password</label>
-                        <input v-model="createForm.password" type="password" required minlength="8" placeholder="Minimum 8 characters" class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors" />
-                        <p v-if="createForm.errors.password" class="mt-1 text-xs text-destructive">{{ createForm.errors.password }}</p>
-                    </div>
-                    <div>
-                        <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Role</label>
-                        <select v-model="createForm.role" class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors">
-                            <option value="user">User</option>
-                            <option value="moderator">Moderator</option>
-                            <option v-if="canCreateAdmin" value="admin">Admin</option>
-                            <option v-if="canCreateAdmin" value="super_admin">Super Admin</option>
-                        </select>
-                        <p v-if="!canCreateAdmin" class="mt-1 text-[11px] text-muted-foreground">Only super admins can create admin-level accounts.</p>
-                        <p v-if="createForm.errors.role" class="mt-1 text-xs text-destructive">{{ createForm.errors.role }}</p>
-                    </div>
-                </div>
 
-                <div class="flex justify-end pt-2">
-                    <button type="submit" :disabled="createForm.processing" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-ink px-5 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40 transition-opacity">
-                        <Save class="size-4" /> Create user
-                    </button>
-                </div>
-            </form>
+                    <div class="flex justify-end pt-2">
+                        <Button type="submit" :disabled="createForm.processing" class="rounded-full bg-ink text-paper hover:bg-ink/90">
+                            <Save class="size-4" /> Create user
+                        </Button>
+                    </div>
+                </form>
+            </Card>
         </template>
 
         <!-- ── EDIT: stepped form ── -->
         <template v-else>
-            <section class="rounded-3xl border border-border/60 bg-card shadow-sm overflow-hidden">
+            <Card class="rounded-3xl border-border/60 gap-0 overflow-hidden">
                 <!-- Step tabs -->
                 <div class="border-b border-border/60 px-6 py-5">
                     <div class="flex items-center gap-0">
@@ -124,12 +126,12 @@
                         <div class="grid gap-4 sm:grid-cols-2">
                             <div>
                                 <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Name</label>
-                                <input v-model="profileForm.name" type="text" class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors" />
+                                <Input v-model="profileForm.name" type="text" class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
                                 <p v-if="profileForm.errors.name" class="mt-1 text-xs text-destructive">{{ profileForm.errors.name }}</p>
                             </div>
                             <div>
                                 <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</label>
-                                <input v-model="profileForm.email" type="email" class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors" />
+                                <Input v-model="profileForm.email" type="email" class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
                                 <p v-if="profileForm.errors.email" class="mt-1 text-xs text-destructive">{{ profileForm.errors.email }}</p>
                             </div>
                         </div>
@@ -140,12 +142,12 @@
                             </p>
                             <span v-else />
                             <div class="flex items-center gap-2">
-                                <button type="submit" :disabled="profileForm.processing || !profileForm.isDirty" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-ink px-5 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40 transition-opacity">
+                                <Button type="submit" :disabled="profileForm.processing || !profileForm.isDirty" class="rounded-full bg-ink text-paper hover:bg-ink/90">
                                     <Save class="size-4" /> Save profile
-                                </button>
-                                <button type="button" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-secondary px-4 text-sm font-medium text-ink hover:bg-secondary/80 transition-colors" @click="goNext">
+                                </Button>
+                                <Button type="button" variant="outline" class="rounded-full" @click="goNext">
                                     Next <ChevronRight class="size-4" />
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </form>
@@ -156,7 +158,7 @@
                             <p class="text-sm text-muted-foreground mb-4">Set a new password for this user. Leave blank to keep the current password.</p>
                             <div class="max-w-sm">
                                 <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">New password</label>
-                                <input v-model="securityForm.password" type="password" placeholder="Minimum 8 characters" minlength="8" class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors" />
+                                <Input v-model="securityForm.password" type="password" placeholder="Minimum 8 characters" minlength="8" class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
                                 <p v-if="securityForm.errors.password" class="mt-1 text-xs text-destructive">{{ securityForm.errors.password }}</p>
                             </div>
                         </div>
@@ -167,15 +169,15 @@
                             </p>
                             <span v-else />
                             <div class="flex items-center gap-2">
-                                <button type="button" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-secondary px-4 text-sm font-medium text-ink hover:bg-secondary/80 transition-colors" @click="goPrev">
+                                <Button type="button" variant="outline" class="rounded-full" @click="goPrev">
                                     <ChevronLeft class="size-4" /> Back
-                                </button>
-                                <button type="submit" :disabled="securityForm.processing || !securityForm.password" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-ink px-5 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40 transition-opacity">
+                                </Button>
+                                <Button type="submit" :disabled="securityForm.processing || !securityForm.password" class="rounded-full bg-ink text-paper hover:bg-ink/90">
                                     <Save class="size-4" /> Update password
-                                </button>
-                                <button v-if="canAssignRole" type="button" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-secondary px-4 text-sm font-medium text-ink hover:bg-secondary/80 transition-colors" @click="goNext">
+                                </Button>
+                                <Button v-if="canAssignRole" type="button" variant="outline" class="rounded-full" @click="goNext">
                                     Next <ChevronRight class="size-4" />
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </form>
@@ -213,24 +215,27 @@
                             </p>
                             <span v-else />
                             <div class="flex items-center gap-2">
-                                <button type="button" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-secondary px-4 text-sm font-medium text-ink hover:bg-secondary/80 transition-colors" @click="goPrev">
+                                <Button type="button" variant="outline" class="rounded-full" @click="goPrev">
                                     <ChevronLeft class="size-4" /> Back
-                                </button>
-                                <button type="submit" :disabled="roleForm.processing || roleForm.role === user.role" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-ink px-5 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40 transition-opacity">
+                                </Button>
+                                <Button type="submit" :disabled="roleForm.processing || roleForm.role === user.role" class="rounded-full bg-ink text-paper hover:bg-ink/90">
                                     <Save class="size-4" /> Save role
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </form>
 
                 </div>
-            </section>
+            </Card>
         </template>
     </AdminLayout>
 </template>
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
+import Card from '@/components/ui/Card.vue';
+import { Button } from '@/components/ui/button';
+import Input from '@/components/ui/Input.vue';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, Camera, Check as CheckIcon, ChevronLeft, ChevronRight, Crown, Save, Shield, User, UserCog } from 'lucide-vue-next';
 import { computed, ref } from 'vue';

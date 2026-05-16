@@ -10,44 +10,37 @@
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter class="flex-row justify-end gap-2 pt-2">
-                <button
-                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
-                    @click="deleteTarget = null"
-                >
+                <Button variant="outline" class="rounded-full" @click="deleteTarget = null">
                     Cancel
-                </button>
-                <button
-                    class="inline-flex h-9 items-center gap-2 rounded-full bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:opacity-90"
-                    @click="confirmDelete"
-                >
+                </Button>
+                <Button class="rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90" @click="confirmDelete">
                     <Trash2 class="size-4" /> Delete
-                </button>
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>
 
     <AdminLayout title="Comments">
         <div class="flex justify-end">
-            <button
-                class="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
-                @click="openCreate"
-            >
+            <Button class="rounded-full bg-ink text-paper hover:bg-ink/90" @click="openCreate">
                 <Plus class="size-4" /> New comment
-            </button>
+            </Button>
         </div>
 
-        <div class="flex flex-wrap items-center gap-3 rounded-3xl border border-border/60 bg-card p-4 shadow-sm">
-            <div class="relative flex-1">
-                <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                    v-model="search"
-                    type="search"
-                    placeholder="Search comment body..."
-                    class="h-10 w-full rounded-full bg-secondary/60 pl-10 pr-4 text-sm outline-none focus:bg-secondary"
-                    @keydown.enter="apply"
-                />
+        <Card class="rounded-3xl border-border/60 gap-0 p-4">
+            <div class="flex flex-wrap items-center gap-3">
+                <div class="relative flex-1">
+                    <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                        v-model="search"
+                        type="search"
+                        placeholder="Search comment body..."
+                        class="h-10 w-full rounded-full bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary pl-10 pr-4"
+                        @keydown.enter="apply"
+                    />
+                </div>
             </div>
-        </div>
+        </Card>
 
         <div class="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
             <ul v-if="comments.data.length" class="divide-y divide-border/60">
@@ -178,9 +171,9 @@
                                     <div class="min-w-0">
                                         <div class="flex items-center gap-2 text-sm font-medium">
                                             {{ selectedAuthor.name }}
-                                            <span :class="['rounded-full px-2 py-0.5 text-[10px] font-medium', roleTone(selectedAuthor.role)]">
+                                            <Badge class="rounded-full border-0" :class="roleTone(selectedAuthor.role)">
                                                 {{ selectedAuthor.role }}
-                                            </span>
+                                            </Badge>
                                         </div>
                                         <div class="truncate text-[11px] text-muted-foreground">{{ selectedAuthor.email }}</div>
                                     </div>
@@ -234,10 +227,10 @@
                         <!-- Body -->
                         <div>
                             <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Body</label>
-                            <textarea
+                            <Textarea
                                 v-model="createForm.body"
                                 rows="5"
-                                class="w-full rounded-2xl bg-secondary/60 p-3 text-sm outline-none focus:bg-secondary"
+                                class="rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full p-3 text-sm"
                                 placeholder="Write the comment..."
                                 required
                                 maxlength="2000"
@@ -247,14 +240,14 @@
                         </div>
 
                         <div class="flex justify-end gap-2 pt-2">
-                            <button type="button" class="rounded-full px-4 py-2 text-sm hover:bg-secondary" @click="showCreate = false">Cancel</button>
-                            <button
+                            <Button variant="outline" class="rounded-full" type="button" @click="showCreate = false">Cancel</Button>
+                            <Button
                                 type="submit"
-                                class="rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40"
+                                class="rounded-full bg-ink text-paper hover:bg-ink/90"
                                 :disabled="createForm.processing || !createForm.post_uuid || !createForm.body.trim()"
                             >
                                 Post comment
-                            </button>
+                            </Button>
                         </div>
                     </form>
                 </div>
@@ -272,30 +265,30 @@
                     <form class="mt-5 space-y-4" @submit.prevent="submitEdit">
                         <div>
                             <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Body</label>
-                            <textarea
+                            <Textarea
                                 v-model="editForm.body"
                                 rows="5"
-                                class="w-full rounded-2xl bg-secondary/60 p-3 text-sm outline-none focus:bg-secondary"
+                                class="rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full p-3 text-sm"
                                 required
                             />
                             <p v-if="editForm.errors.body" class="mt-1 text-xs text-destructive">{{ editForm.errors.body }}</p>
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Moderation reason (optional)</label>
-                            <input
+                            <Input
                                 v-model="editForm.reason"
                                 type="text"
-                                class="h-10 w-full rounded-full bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary"
+                                class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                                 placeholder="Logged in activity log"
                             />
                         </div>
                         <div class="flex justify-end gap-2 pt-2">
-                            <button type="button" class="rounded-full px-4 py-2 text-sm hover:bg-secondary" @click="editTarget = null">
+                            <Button variant="outline" class="rounded-full" type="button" @click="editTarget = null">
                                 Cancel
-                            </button>
-                            <button type="submit" class="rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90" :disabled="editForm.processing">
+                            </Button>
+                            <Button type="submit" class="rounded-full bg-ink text-paper hover:bg-ink/90" :disabled="editForm.processing">
                                 Save
-                            </button>
+                            </Button>
                         </div>
                     </form>
                 </div>
@@ -310,6 +303,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ChevronDown, Flag, Heart, Pencil, Plus, Search, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
+import Card from '@/components/ui/Card.vue';
+import { Button } from '@/components/ui/button';
+import Input from '@/components/ui/Input.vue';
+import Textarea from '@/components/ui/Textarea.vue';
+import Badge from '@/components/ui/Badge.vue';
 
 const props = defineProps({
     comments: { type: Object, required: true },
