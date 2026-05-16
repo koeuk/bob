@@ -1,5 +1,7 @@
 <template>
-    <DialogRoot v-bind="$attrs"><slot /></DialogRoot>
+    <DialogRoot :open="open" :default-open="defaultOpen" :modal="modal" @update:open="$emit('update:open', $event)">
+        <slot />
+    </DialogRoot>
 </template>
 
 <script setup>

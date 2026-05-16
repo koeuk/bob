@@ -1,5 +1,67 @@
 <template>
     <Head title="Users" />
+
+    <!-- Ban confirmation dialog -->
+    <Dialog :open="!!banTarget" @update:open="(v) => { if (!v) banTarget = null; banReason = '' }">
+        <DialogContent class="max-w-sm rounded-3xl">
+            <DialogHeader>
+                <DialogTitle>Ban {{ banTarget?.name }}?</DialogTitle>
+                <DialogDescription>
+                    This will revoke their access immediately. You must provide a reason.
+                </DialogDescription>
+            </DialogHeader>
+            <div class="pt-1">
+                <textarea
+                    v-model="banReason"
+                    placeholder="Reason for ban…"
+                    rows="3"
+                    class="w-full rounded-2xl border border-border bg-secondary/60 px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus:bg-secondary resize-none"
+                />
+            </div>
+            <DialogFooter class="flex-row justify-end gap-2 pt-2">
+                <button
+                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
+                    @click="banTarget = null; banReason = ''"
+                >
+                    Cancel
+                </button>
+                <button
+                    :disabled="!banReason.trim()"
+                    class="inline-flex h-9 items-center gap-2 rounded-full bg-rust px-4 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-50"
+                    @click="confirmBan"
+                >
+                    <ShieldBan class="size-4" /> Ban user
+                </button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+
+    <!-- Delete confirmation dialog -->
+    <Dialog :open="!!deleteTarget" @update:open="(v) => { if (!v) deleteTarget = null }">
+        <DialogContent class="max-w-sm rounded-3xl">
+            <DialogHeader>
+                <DialogTitle>Delete user?</DialogTitle>
+                <DialogDescription>
+                    This will permanently delete <strong>{{ deleteTarget?.name }}</strong> and all their data. This action cannot be undone.
+                </DialogDescription>
+            </DialogHeader>
+            <DialogFooter class="flex-row justify-end gap-2 pt-2">
+                <button
+                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
+                    @click="deleteTarget = null"
+                >
+                    Cancel
+                </button>
+                <button
+                    class="inline-flex h-9 items-center gap-2 rounded-full bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:opacity-90"
+                    @click="confirmDelete"
+                >
+                    <Trash2 class="size-4" /> Delete
+                </button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+
     <AdminLayout title="Users">
         <div class="flex justify-end">
             <Link
@@ -106,7 +168,7 @@
                             <button
                                 v-if="!isBanned(u)"
                                 class="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-rust hover:bg-secondary"
-                                @click="quickBan(u); openRow = null"
+                                @click="banTarget = u; openRow = null"
                             >
                                 <ShieldBan class="size-4" /> Ban user
                             </button>
@@ -116,6 +178,13 @@
                                 @click="quickUnban(u); openRow = null"
                             >
                                 <UserCheck class="size-4" /> Unban
+                            </button>
+                            <div class="border-t border-border/60 my-1" />
+                            <button
+                                class="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-destructive hover:bg-secondary"
+                                @click="deleteTarget = u; openRow = null"
+                            >
+                                <Trash2 class="size-4" /> Delete user
                             </button>
                         </div>
                     </div>
@@ -150,8 +219,14 @@
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
+import Dialog from '@/components/ui/Dialog.vue';
+import DialogContent from '@/components/ui/DialogContent.vue';
+import DialogDescription from '@/components/ui/DialogDescription.vue';
+import DialogFooter from '@/components/ui/DialogFooter.vue';
+import DialogHeader from '@/components/ui/DialogHeader.vue';
+import DialogTitle from '@/components/ui/DialogTitle.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { ChevronDown, Filter, MoreHorizontal, Plus, Search, ShieldBan, UserCheck, UserX } from 'lucide-vue-next';
+import { ChevronDown, Filter, MoreHorizontal, Plus, Search, ShieldBan, Trash2, UserCheck, UserX } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -196,10 +271,21 @@ const isBanned = (u) => (u.bans ?? []).length > 0;
 const openRow = ref(null);
 const toggleRow = (uuid) => (openRow.value = openRow.value === uuid ? null : uuid);
 
-const quickBan = (user) => {
-    const reason = window.prompt(`Ban ${user.name}? Enter reason:`);
-    if (!reason) return;
-    router.post(`/admin/users/${user.uuid}/ban`, { reason }, { preserveScroll: true });
+const deleteTarget = ref(null);
+const confirmDelete = () => {
+    if (!deleteTarget.value) return;
+    router.delete(`/admin/users/${deleteTarget.value.uuid}`, { preserveScroll: true });
+    deleteTarget.value = null;
 };
+
+const banTarget = ref(null);
+const banReason = ref('');
+const confirmBan = () => {
+    if (!banTarget.value || !banReason.value.trim()) return;
+    router.post(`/admin/users/${banTarget.value.uuid}/ban`, { reason: banReason.value.trim() }, { preserveScroll: true });
+    banTarget.value = null;
+    banReason.value = '';
+};
+
 const quickUnban = (user) => router.post(`/admin/users/${user.uuid}/unban`, {}, { preserveScroll: true });
 </script>

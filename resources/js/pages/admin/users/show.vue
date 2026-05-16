@@ -1,43 +1,23 @@
 <template>
     <Head :title="user.name" />
     <AdminLayout>
-        <Link href="/admin/users" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
+        <Link href="/admin/users" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink transition-colors">
             <ArrowLeft class="size-4" /> Back to users
         </Link>
 
         <!-- Profile header -->
         <section class="flex flex-col gap-6 rounded-3xl border border-border/60 bg-card p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between">
             <div class="flex items-center gap-5">
-                <!-- Avatar -->
-                <div class="group relative size-20 shrink-0">
-                    <img
-                        v-if="user.avatar"
-                        :src="`/storage/${user.avatar}`"
-                        :alt="user.name"
-                        class="size-20 rounded-2xl object-cover"
-                    />
-                    <span
-                        v-else
-                        class="flex size-20 items-center justify-center rounded-2xl bg-ink font-sans text-2xl font-semibold text-paper"
-                    >
+                <div class="relative size-20 shrink-0">
+                    <img v-if="user.avatar" :src="`/storage/${user.avatar}`" :alt="user.name" class="size-20 rounded-2xl object-cover" />
+                    <span v-else class="flex size-20 items-center justify-center rounded-2xl bg-ink font-sans text-2xl font-semibold text-paper">
                         {{ initials(user.name) }}
                     </span>
-                    <!-- Upload overlay -->
-                    <label
-                        class="absolute inset-0 flex cursor-pointer items-center justify-center rounded-2xl bg-ink/50 opacity-0 transition-opacity group-hover:opacity-100"
-                        title="Change avatar"
-                    >
-                        <Camera class="size-6 text-paper" />
-                        <input type="file" accept="image/*" class="sr-only" @change="uploadAvatar" />
-                    </label>
                 </div>
-
                 <div>
                     <div class="flex items-center gap-2">
                         <h2 class="font-sans text-3xl font-semibold tracking-tight">{{ user.name }}</h2>
-                        <span :class="['inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium', roleClasses(user.role)]">
-                            {{ user.role }}
-                        </span>
+                        <span :class="['inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium', roleClasses(user.role)]">{{ user.role }}</span>
                         <span v-if="isBanned" class="inline-flex items-center gap-1 rounded-full bg-rust/15 px-2.5 py-0.5 text-xs font-medium text-rust">
                             <ShieldBan class="size-3" /> banned
                         </span>
@@ -47,38 +27,31 @@
                         <span class="inline-flex items-center gap-1.5"><Hash class="size-3.5" /> {{ user.uuid.slice(0, 12) }}</span>
                         <span>Joined {{ dateFmt(user.created_at) }}</span>
                     </div>
-                    <button
-                        v-if="user.avatar"
-                        class="mt-2 text-xs text-muted-foreground hover:text-rust"
-                        @click="removeAvatar"
-                    >
-                        Remove photo
-                    </button>
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-2">
                 <Link
                     :href="`/admin/users/${user.uuid}/edit`"
-                    class="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
+                    class="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90 transition-opacity"
                 >
                     <Pencil class="size-4" /> Edit
                 </Link>
                 <button
                     v-if="!isBanned"
-                    class="inline-flex items-center gap-2 rounded-full bg-rust px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
+                    class="inline-flex items-center gap-2 rounded-full bg-rust px-4 py-2 text-sm font-medium text-paper hover:opacity-90 transition-opacity"
                     @click="showBanModal = true"
                 >
                     <ShieldBan class="size-4" /> Ban user
                 </button>
                 <button
                     v-else
-                    class="inline-flex items-center gap-2 rounded-full bg-moss px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
+                    class="inline-flex items-center gap-2 rounded-full bg-moss px-4 py-2 text-sm font-medium text-paper hover:opacity-90 transition-opacity"
                     @click="unban"
                 >
                     <UserCheck class="size-4" /> Unban
                 </button>
                 <button
-                    class="inline-flex items-center gap-2 rounded-full border border-destructive/40 px-4 py-2 text-sm font-medium text-destructive hover:bg-destructive/5"
+                    class="inline-flex items-center gap-2 rounded-full border border-destructive/40 px-4 py-2 text-sm font-medium text-destructive hover:bg-destructive/5 transition-colors"
                     @click="deleteUser"
                 >
                     <Trash2 class="size-4" /> Delete
@@ -102,79 +75,8 @@
             </div>
         </section>
 
-        <!-- Profile edit -->
-        <form class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm" @submit.prevent="submitProfile">
-            <div class="mb-4 flex items-center justify-between gap-2">
-                <h3 class="text-lg font-semibold">Profile</h3>
-                <button
-                    type="submit"
-                    class="inline-flex h-9 items-center gap-2 rounded-full bg-ink px-4 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40"
-                    :disabled="profileForm.processing || !profileForm.isDirty"
-                >
-                    <Save class="size-4" /> Save
-                </button>
-            </div>
-            <div class="grid gap-4 sm:grid-cols-2">
-                <div>
-                    <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Name</label>
-                    <input
-                        v-model="profileForm.name"
-                        type="text"
-                        class="h-10 w-full rounded-full bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary"
-                    />
-                    <p v-if="profileForm.errors.name" class="mt-1 text-xs text-destructive">{{ profileForm.errors.name }}</p>
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</label>
-                    <input
-                        v-model="profileForm.email"
-                        type="email"
-                        class="h-10 w-full rounded-full bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary"
-                    />
-                    <p v-if="profileForm.errors.email" class="mt-1 text-xs text-destructive">{{ profileForm.errors.email }}</p>
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">New password</label>
-                    <input
-                        v-model="profileForm.password"
-                        type="password"
-                        placeholder="Leave blank to keep current"
-                        class="h-10 w-full rounded-full bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary"
-                    />
-                    <p v-if="profileForm.errors.password" class="mt-1 text-xs text-destructive">{{ profileForm.errors.password }}</p>
-                </div>
-            </div>
-        </form>
-
         <div class="grid gap-4 lg:grid-cols-2">
-            <!-- Role assignment -->
-            <div v-if="canAssignRole" class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
-                <div class="mb-3 flex items-center gap-2">
-                    <Crown class="size-4 text-rust" />
-                    <h3 class="text-lg font-semibold">Role</h3>
-                </div>
-                <form class="flex items-center gap-3" @submit.prevent="submitRole">
-                    <select
-                        v-model="roleForm.role"
-                        class="h-10 flex-1 rounded-full bg-secondary/60 px-4 text-sm outline-none hover:bg-secondary"
-                    >
-                        <option value="user">User</option>
-                        <option value="moderator">Moderator</option>
-                        <option value="admin">Admin</option>
-                        <option value="super_admin">Super Admin</option>
-                    </select>
-                    <button
-                        type="submit"
-                        class="inline-flex h-10 items-center rounded-full bg-ink px-4 text-sm font-medium text-paper hover:opacity-90"
-                        :disabled="roleForm.processing"
-                    >
-                        Save
-                    </button>
-                </form>
-                <p v-if="roleForm.errors.role" class="mt-2 text-xs text-destructive">{{ roleForm.errors.role }}</p>
-            </div>
-
-            <!-- Bans history -->
+            <!-- Ban history -->
             <div class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
                 <h3 class="mb-4 text-lg font-semibold">Ban history</h3>
                 <ul v-if="user.bans?.length" class="divide-y divide-border/60">
@@ -196,24 +98,24 @@
                 </ul>
                 <div v-else class="rounded-2xl bg-secondary/40 py-8 text-center text-sm text-muted-foreground">Never banned.</div>
             </div>
-        </div>
 
-        <!-- Reports against -->
-        <section class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
-            <h3 class="mb-4 text-lg font-semibold">Reports against this user</h3>
-            <ul v-if="reportsAgainst.length" class="divide-y divide-border/60">
-                <li v-for="r in reportsAgainst" :key="r.uuid" class="flex items-start gap-3 py-3 text-sm">
-                    <div class="flex-1">
-                        <div class="font-medium">
-                            <Link :href="`/admin/reports/${r.uuid}`" class="hover:text-rust">{{ r.reason }}</Link>
+            <!-- Reports against -->
+            <div class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
+                <h3 class="mb-4 text-lg font-semibold">Reports against this user</h3>
+                <ul v-if="reportsAgainst.length" class="divide-y divide-border/60">
+                    <li v-for="r in reportsAgainst" :key="r.uuid" class="flex items-start gap-3 py-3 text-sm">
+                        <div class="flex-1">
+                            <div class="font-medium">
+                                <Link :href="`/admin/reports/${r.uuid}`" class="hover:text-rust transition-colors">{{ r.reason }}</Link>
+                            </div>
+                            <div class="text-xs text-muted-foreground">filed by {{ r.reporter?.name ?? 'unknown' }} · {{ dateFmt(r.created_at) }}</div>
                         </div>
-                        <div class="text-xs text-muted-foreground">filed by {{ r.reporter?.name ?? 'unknown' }} · {{ dateFmt(r.created_at) }}</div>
-                    </div>
-                    <span :class="['shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium', r.status === 'pending' ? 'bg-rust/15 text-rust' : 'bg-secondary text-muted-foreground']">{{ r.status }}</span>
-                </li>
-            </ul>
-            <div v-else class="rounded-2xl bg-secondary/40 py-8 text-center text-sm text-muted-foreground">No reports.</div>
-        </section>
+                        <span :class="['shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium', r.status === 'pending' ? 'bg-rust/15 text-rust' : 'bg-secondary text-muted-foreground']">{{ r.status }}</span>
+                    </li>
+                </ul>
+                <div v-else class="rounded-2xl bg-secondary/40 py-8 text-center text-sm text-muted-foreground">No reports.</div>
+            </div>
+        </div>
 
         <!-- Activity -->
         <section class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
@@ -239,29 +141,17 @@
                     <form class="mt-5 space-y-4" @submit.prevent="submitBan">
                         <div>
                             <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Reason</label>
-                            <textarea
-                                v-model="banForm.reason"
-                                rows="3"
-                                class="w-full rounded-2xl bg-secondary/60 p-3 text-sm outline-none focus:bg-secondary"
-                                placeholder="Repeated harassment..."
-                                required
-                            />
+                            <textarea v-model="banForm.reason" rows="3" class="w-full rounded-2xl bg-secondary/60 p-3 text-sm outline-none focus:bg-secondary" placeholder="Repeated harassment..." required />
                             <p v-if="banForm.errors.reason" class="mt-1 text-xs text-destructive">{{ banForm.errors.reason }}</p>
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Expires at (optional)</label>
-                            <input
-                                v-model="banForm.expires_at"
-                                type="datetime-local"
-                                class="w-full rounded-full bg-secondary/60 px-4 py-2 text-sm outline-none focus:bg-secondary"
-                            />
+                            <input v-model="banForm.expires_at" type="datetime-local" class="w-full rounded-full bg-secondary/60 px-4 py-2 text-sm outline-none focus:bg-secondary" />
                             <p class="mt-1 text-xs text-muted-foreground">Leave empty for a permanent ban.</p>
                         </div>
                         <div class="flex justify-end gap-2 pt-2">
-                            <button type="button" class="rounded-full px-4 py-2 text-sm hover:bg-secondary" @click="showBanModal = false">Cancel</button>
-                            <button type="submit" class="rounded-full bg-rust px-4 py-2 text-sm font-medium text-paper hover:opacity-90" :disabled="banForm.processing">
-                                Confirm ban
-                            </button>
+                            <button type="button" class="rounded-full px-4 py-2 text-sm hover:bg-secondary transition-colors" @click="showBanModal = false">Cancel</button>
+                            <button type="submit" class="rounded-full bg-rust px-4 py-2 text-sm font-medium text-paper hover:opacity-90 transition-opacity" :disabled="banForm.processing">Confirm ban</button>
                         </div>
                     </form>
                 </div>
@@ -272,8 +162,8 @@
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
-import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Camera, Crown, Hash, Mail, Pencil, Save, ShieldBan, Trash2, UserCheck } from 'lucide-vue-next';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { ArrowLeft, Hash, Mail, Pencil, ShieldBan, Trash2, UserCheck } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -282,40 +172,24 @@ const props = defineProps({
     activity: { type: Array, default: () => [] },
 });
 
-const page = usePage();
-const currentUser = computed(() => page.props.auth?.user);
-const canAssignRole = computed(() => currentUser.value?.role === 'super_admin');
-
 const activeBans = computed(() => (props.user.bans ?? []).filter((b) => !b.expires_at || new Date(b.expires_at) > new Date()));
 const isBanned = computed(() => activeBans.value.length > 0);
 
 const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
 const dateFmt = (iso) => iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
 
-// Avatar
-const uploadAvatar = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const form = useForm({ avatar: file });
-    form.patch(`/admin/users/${props.user.uuid}`, { forceFormData: true, preserveScroll: true });
+const roleClasses = (role) => {
+    switch (role) {
+        case 'super_admin': return 'bg-rust/15 text-rust';
+        case 'admin':       return 'bg-ink/10 text-ink';
+        case 'moderator':   return 'bg-moss/15 text-moss';
+        default:            return 'bg-secondary text-muted-foreground';
+    }
 };
-
-const removeAvatar = () => {
-    if (!window.confirm('Remove profile photo?')) return;
-    router.patch(`/admin/users/${props.user.uuid}`, { remove_avatar: true }, { preserveScroll: true });
-};
-
-// Profile
-const profileForm = useForm({ name: props.user.name, email: props.user.email, password: '' });
-const submitProfile = () => profileForm.patch(`/admin/users/${props.user.uuid}`, { preserveScroll: true });
-
-// Role
-const roleForm = useForm({ role: props.user.role });
-const submitRole = () => roleForm.post(`/admin/users/${props.user.uuid}/role`, { preserveScroll: true });
 
 // Ban
-const banForm = useForm({ reason: '', expires_at: '' });
 const showBanModal = ref(false);
+const banForm = useForm({ reason: '', expires_at: '' });
 const submitBan = () => banForm.post(`/admin/users/${props.user.uuid}/ban`, {
     preserveScroll: true,
     onSuccess: () => { showBanModal.value = false; banForm.reset(); },
@@ -326,14 +200,5 @@ const unban = () => router.post(`/admin/users/${props.user.uuid}/unban`, {}, { p
 const deleteUser = () => {
     if (!window.confirm(`Delete ${props.user.name}? This cannot be undone.`)) return;
     router.delete(`/admin/users/${props.user.uuid}`);
-};
-
-const roleClasses = (role) => {
-    switch (role) {
-        case 'super_admin': return 'bg-rust/15 text-rust';
-        case 'admin': return 'bg-ink/10 text-ink';
-        case 'moderator': return 'bg-moss/15 text-moss';
-        default: return 'bg-secondary text-muted-foreground';
-    }
 };
 </script>

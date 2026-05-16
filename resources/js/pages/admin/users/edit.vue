@@ -1,116 +1,238 @@
 <template>
-    <Head :title="isNew ? 'New user' : 'Edit user'" />
+    <Head :title="isNew ? 'New user' : `Edit · ${user.name}`" />
     <AdminLayout>
-        <Link href="/admin/users" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
-            <ArrowLeft class="size-4" /> Back to users
+        <Link :href="isNew ? '/admin/users' : `/admin/users/${user.uuid}`" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink transition-colors">
+            <ArrowLeft class="size-4" /> {{ isNew ? 'Back to users' : `Back to ${user.name}` }}
         </Link>
 
-        <form class="space-y-4" @submit.prevent="submit">
-            <div class="flex items-end justify-between gap-4">
-                <h1 class="font-sans text-3xl font-semibold tracking-tight">
-                    {{ isNew ? 'New user' : 'Edit user' }}
-                </h1>
-                <button
-                    type="submit"
-                    class="inline-flex h-10 items-center gap-2 rounded-full bg-ink px-5 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40"
-                    :disabled="form.processing"
-                >
-                    <Save class="size-4" /> {{ isNew ? 'Create user' : 'Save' }}
-                </button>
-            </div>
+        <div class="flex items-center justify-between gap-4">
+            <h1 class="font-sans text-3xl font-semibold tracking-tight">
+                {{ isNew ? 'New user' : `Edit · ${user.name}` }}
+            </h1>
+        </div>
 
-            <div class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
-                <!-- Avatar picker -->
-                <div class="mb-6 flex items-center gap-5">
-                    <div class="relative size-20 shrink-0">
-                        <div class="flex size-20 items-center justify-center overflow-hidden rounded-full bg-ink text-xl font-semibold text-paper">
-                            <img v-if="avatarPreview" :src="avatarPreview" class="size-20 object-cover" alt="Avatar preview" />
-                            <template v-else>{{ initials(form.name) }}</template>
+        <!-- ── CREATE: single flat form ── -->
+        <template v-if="isNew">
+            <form class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm space-y-6" @submit.prevent="submitCreate">
+                <!-- Avatar -->
+                <div class="flex items-center gap-5">
+                    <div class="relative size-16 shrink-0">
+                        <div class="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-ink text-base font-semibold text-paper">
+                            <img v-if="avatarPreview" :src="avatarPreview" class="size-16 object-cover" alt="" />
+                            <template v-else>{{ initials(createForm.name) }}</template>
                         </div>
-                        <button
-                            type="button"
-                            class="absolute bottom-0 right-0 flex size-7 items-center justify-center rounded-full bg-card border border-border/60 shadow-sm hover:bg-secondary"
-                            @click="$refs.avatarInput.click()"
-                        >
-                            <Camera class="size-3.5 text-muted-foreground" />
+                        <button type="button" class="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-card border border-border/60 shadow-sm hover:bg-secondary transition-colors" @click="$refs.avatarInput.click()">
+                            <Camera class="size-3 text-muted-foreground" />
                         </button>
                         <input ref="avatarInput" type="file" accept="image/*" class="hidden" @change="onAvatarChange" />
                     </div>
                     <div>
                         <p class="text-sm font-medium">Profile photo</p>
-                        <p class="text-xs text-muted-foreground">JPG, PNG or GIF · max 2 MB</p>
-                        <button
-                            v-if="avatarPreview"
-                            type="button"
-                            class="mt-1 text-xs text-rust hover:underline"
-                            @click="clearAvatar"
-                        >Remove</button>
+                        <p class="text-xs text-muted-foreground mt-0.5">JPG, PNG or GIF · max 2 MB</p>
+                        <button v-if="avatarPreview" type="button" class="mt-1 text-xs text-rust hover:underline" @click="clearAvatar">Remove</button>
                     </div>
                 </div>
 
                 <div class="grid gap-4 sm:grid-cols-2">
                     <div>
-                        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Name</label>
-                        <input
-                            v-model="form.name"
-                            type="text"
-                            class="h-11 w-full rounded-full bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary"
-                            required
-                        />
-                        <p v-if="form.errors.name" class="mt-1 text-xs text-destructive">{{ form.errors.name }}</p>
+                        <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Name</label>
+                        <input v-model="createForm.name" type="text" required class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors" />
+                        <p v-if="createForm.errors.name" class="mt-1 text-xs text-destructive">{{ createForm.errors.name }}</p>
                     </div>
                     <div>
-                        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</label>
-                        <input
-                            v-model="form.email"
-                            type="email"
-                            class="h-11 w-full rounded-full bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary"
-                            required
-                        />
-                        <p v-if="form.errors.email" class="mt-1 text-xs text-destructive">{{ form.errors.email }}</p>
+                        <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</label>
+                        <input v-model="createForm.email" type="email" required class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors" />
+                        <p v-if="createForm.errors.email" class="mt-1 text-xs text-destructive">{{ createForm.errors.email }}</p>
                     </div>
-
                     <div>
-                        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                            Password{{ isNew ? '' : ' (leave blank to keep)' }}
-                        </label>
-                        <input
-                            v-model="form.password"
-                            type="password"
-                            class="h-11 w-full rounded-full bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary"
-                            placeholder="Minimum 8 characters"
-                            :required="isNew"
-                            minlength="8"
-                        />
-                        <p v-if="form.errors.password" class="mt-1 text-xs text-destructive">{{ form.errors.password }}</p>
+                        <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Password</label>
+                        <input v-model="createForm.password" type="password" required minlength="8" placeholder="Minimum 8 characters" class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors" />
+                        <p v-if="createForm.errors.password" class="mt-1 text-xs text-destructive">{{ createForm.errors.password }}</p>
                     </div>
-
-                    <div v-if="isNew">
-                        <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Role</label>
-                        <select
-                            v-model="form.role"
-                            class="h-11 w-full rounded-full bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary"
-                        >
+                    <div>
+                        <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Role</label>
+                        <select v-model="createForm.role" class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors">
                             <option value="user">User</option>
                             <option value="moderator">Moderator</option>
                             <option v-if="canCreateAdmin" value="admin">Admin</option>
                             <option v-if="canCreateAdmin" value="super_admin">Super Admin</option>
                         </select>
-                        <p v-if="!canCreateAdmin" class="mt-1 text-[11px] text-muted-foreground">
-                            Only super admins can create admin-level accounts.
-                        </p>
-                        <p v-if="form.errors.role" class="mt-1 text-xs text-destructive">{{ form.errors.role }}</p>
+                        <p v-if="!canCreateAdmin" class="mt-1 text-[11px] text-muted-foreground">Only super admins can create admin-level accounts.</p>
+                        <p v-if="createForm.errors.role" class="mt-1 text-xs text-destructive">{{ createForm.errors.role }}</p>
                     </div>
                 </div>
-            </div>
-        </form>
+
+                <div class="flex justify-end pt-2">
+                    <button type="submit" :disabled="createForm.processing" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-ink px-5 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40 transition-opacity">
+                        <Save class="size-4" /> Create user
+                    </button>
+                </div>
+            </form>
+        </template>
+
+        <!-- ── EDIT: stepped form ── -->
+        <template v-else>
+            <section class="rounded-3xl border border-border/60 bg-card shadow-sm overflow-hidden">
+                <!-- Step tabs -->
+                <div class="border-b border-border/60 px-6 py-5">
+                    <div class="flex items-center gap-0">
+                        <template v-for="(s, i) in visibleSteps" :key="s.key">
+                            <button
+                                class="flex items-center gap-2.5 rounded-2xl px-3 py-2 transition-all duration-200"
+                                :class="currentStep === s.key
+                                    ? 'bg-ink text-paper shadow-sm'
+                                    : 'text-muted-foreground hover:text-ink hover:bg-secondary/60'"
+                                @click="currentStep = s.key"
+                            >
+                                <span
+                                    class="flex size-6 shrink-0 items-center justify-center rounded-full text-[11px] font-bold transition-colors"
+                                    :class="currentStep === s.key ? 'bg-paper/20 text-paper' : 'bg-secondary text-muted-foreground'"
+                                >
+                                    <CheckIcon v-if="completedSteps.includes(s.key)" class="size-3.5" />
+                                    <span v-else>{{ i + 1 }}</span>
+                                </span>
+                                <span class="text-sm font-medium">{{ s.label }}</span>
+                            </button>
+                            <div v-if="i < visibleSteps.length - 1" class="h-px w-4 shrink-0 bg-border/60" />
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Step content -->
+                <div class="p-6">
+
+                    <!-- Step 1: Profile -->
+                    <form v-if="currentStep === 'profile'" class="space-y-5" @submit.prevent="submitProfile">
+                        <div class="flex items-start gap-5">
+                            <div class="relative size-16 shrink-0">
+                                <div class="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-ink text-base font-semibold text-paper">
+                                    <img v-if="avatarPreview" :src="avatarPreview" class="size-16 object-cover" alt="" />
+                                    <template v-else>{{ initials(profileForm.name || user.name) }}</template>
+                                </div>
+                                <button type="button" class="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-card border border-border/60 shadow-sm hover:bg-secondary transition-colors" @click="$refs.avatarInput.click()">
+                                    <Camera class="size-3 text-muted-foreground" />
+                                </button>
+                                <input ref="avatarInput" type="file" accept="image/*" class="hidden" @change="onAvatarChange" />
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium">Profile photo</p>
+                                <p class="text-xs text-muted-foreground mt-0.5">JPG, PNG or GIF · max 2 MB</p>
+                                <button v-if="avatarPreview" type="button" class="mt-1 text-xs text-rust hover:underline" @click="clearAvatar">Remove</button>
+                            </div>
+                        </div>
+
+                        <div class="grid gap-4 sm:grid-cols-2">
+                            <div>
+                                <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Name</label>
+                                <input v-model="profileForm.name" type="text" class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors" />
+                                <p v-if="profileForm.errors.name" class="mt-1 text-xs text-destructive">{{ profileForm.errors.name }}</p>
+                            </div>
+                            <div>
+                                <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</label>
+                                <input v-model="profileForm.email" type="email" class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors" />
+                                <p v-if="profileForm.errors.email" class="mt-1 text-xs text-destructive">{{ profileForm.errors.email }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <p v-if="profileSaved" class="flex items-center gap-1.5 text-sm text-moss font-medium">
+                                <CheckIcon class="size-4" /> Profile saved
+                            </p>
+                            <span v-else />
+                            <div class="flex items-center gap-2">
+                                <button type="submit" :disabled="profileForm.processing || !profileForm.isDirty" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-ink px-5 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40 transition-opacity">
+                                    <Save class="size-4" /> Save profile
+                                </button>
+                                <button type="button" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-secondary px-4 text-sm font-medium text-ink hover:bg-secondary/80 transition-colors" @click="goNext">
+                                    Next <ChevronRight class="size-4" />
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Step 2: Security -->
+                    <form v-if="currentStep === 'security'" class="space-y-5" @submit.prevent="submitSecurity">
+                        <div>
+                            <p class="text-sm text-muted-foreground mb-4">Set a new password for this user. Leave blank to keep the current password.</p>
+                            <div class="max-w-sm">
+                                <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">New password</label>
+                                <input v-model="securityForm.password" type="password" placeholder="Minimum 8 characters" minlength="8" class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors" />
+                                <p v-if="securityForm.errors.password" class="mt-1 text-xs text-destructive">{{ securityForm.errors.password }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <p v-if="securitySaved" class="flex items-center gap-1.5 text-sm text-moss font-medium">
+                                <CheckIcon class="size-4" /> Password updated
+                            </p>
+                            <span v-else />
+                            <div class="flex items-center gap-2">
+                                <button type="button" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-secondary px-4 text-sm font-medium text-ink hover:bg-secondary/80 transition-colors" @click="goPrev">
+                                    <ChevronLeft class="size-4" /> Back
+                                </button>
+                                <button type="submit" :disabled="securityForm.processing || !securityForm.password" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-ink px-5 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40 transition-opacity">
+                                    <Save class="size-4" /> Update password
+                                </button>
+                                <button v-if="canAssignRole" type="button" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-secondary px-4 text-sm font-medium text-ink hover:bg-secondary/80 transition-colors" @click="goNext">
+                                    Next <ChevronRight class="size-4" />
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Step 3: Role -->
+                    <form v-if="currentStep === 'role'" class="space-y-5" @submit.prevent="submitRole">
+                        <div>
+                            <p class="text-sm text-muted-foreground mb-4">Change this user's role. This affects what they can access across the platform.</p>
+                            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                                <label
+                                    v-for="r in availableRoles"
+                                    :key="r.value"
+                                    :class="[
+                                        'relative flex cursor-pointer flex-col gap-1.5 rounded-2xl border-2 p-4 transition-all duration-150',
+                                        roleForm.role === r.value
+                                            ? 'border-ink bg-ink/5'
+                                            : 'border-border/60 bg-secondary/30 hover:border-border hover:bg-secondary/60',
+                                    ]"
+                                >
+                                    <input type="radio" :value="r.value" v-model="roleForm.role" class="sr-only" />
+                                    <component :is="r.icon" class="size-5" :class="roleForm.role === r.value ? 'text-ink' : 'text-muted-foreground'" />
+                                    <span class="text-sm font-semibold" :class="roleForm.role === r.value ? 'text-ink' : 'text-ink/70'">{{ r.label }}</span>
+                                    <span class="text-[11px] text-muted-foreground leading-snug">{{ r.desc }}</span>
+                                    <span v-if="roleForm.role === r.value" class="absolute right-3 top-3 flex size-4 items-center justify-center rounded-full bg-ink">
+                                        <CheckIcon class="size-2.5 text-paper" />
+                                    </span>
+                                </label>
+                            </div>
+                            <p v-if="roleForm.errors.role" class="mt-2 text-xs text-destructive">{{ roleForm.errors.role }}</p>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-1">
+                            <p v-if="roleSaved" class="flex items-center gap-1.5 text-sm text-moss font-medium">
+                                <CheckIcon class="size-4" /> Role updated
+                            </p>
+                            <span v-else />
+                            <div class="flex items-center gap-2">
+                                <button type="button" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-secondary px-4 text-sm font-medium text-ink hover:bg-secondary/80 transition-colors" @click="goPrev">
+                                    <ChevronLeft class="size-4" /> Back
+                                </button>
+                                <button type="submit" :disabled="roleForm.processing || roleForm.role === user.role" class="inline-flex h-10 items-center gap-2 rounded-2xl bg-ink px-5 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40 transition-opacity">
+                                    <Save class="size-4" /> Save role
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </section>
+        </template>
     </AdminLayout>
 </template>
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Camera, Save } from 'lucide-vue-next';
+import { ArrowLeft, Camera, Check as CheckIcon, ChevronLeft, ChevronRight, Crown, Save, Shield, User, UserCog } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -121,41 +243,94 @@ const page = usePage();
 const isNew = computed(() => !props.user);
 const currentRole = computed(() => page.props.auth?.user?.role);
 const canCreateAdmin = computed(() => currentRole.value === 'super_admin');
+const canAssignRole = computed(() => currentRole.value === 'super_admin');
 
 const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
 
+// Shared avatar state
 const avatarInput = ref(null);
 const avatarPreview = ref(null);
-
-const form = useForm({
-    name: props.user?.name ?? '',
-    email: props.user?.email ?? '',
-    password: '',
-    role: props.user?.role ?? 'user',
-    avatar: null,
-});
-
 const onAvatarChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    form.avatar = file;
+    createForm.avatar = file;
+    profileForm.avatar = file;
     avatarPreview.value = URL.createObjectURL(file);
 };
-
 const clearAvatar = () => {
-    form.avatar = null;
+    createForm.avatar = null;
+    profileForm.avatar = null;
     avatarPreview.value = null;
     if (avatarInput.value) avatarInput.value.value = '';
 };
 
-const submit = () => {
-    if (isNew.value) {
-        form.post('/admin/users', { forceFormData: true });
-    } else {
-        form.patch(`/admin/users/${props.user.uuid}`, {
-            forceFormData: true,
-            onSuccess: () => router.visit(`/admin/users/${props.user.uuid}`),
-        });
-    }
+// ── CREATE ──
+const createForm = useForm({ name: '', email: '', password: '', role: 'user', avatar: null });
+const submitCreate = () => createForm.post('/admin/users', { forceFormData: true });
+
+// ── EDIT steps ──
+const allSteps = [
+    { key: 'profile',  label: 'Profile' },
+    { key: 'security', label: 'Security' },
+    { key: 'role',     label: 'Role' },
+];
+const visibleSteps = computed(() => allSteps.filter(s => s.key !== 'role' || canAssignRole.value));
+const currentStep = ref('profile');
+const completedSteps = ref([]);
+
+const stepKeys = computed(() => visibleSteps.value.map(s => s.key));
+const currentIndex = computed(() => stepKeys.value.indexOf(currentStep.value));
+const goNext = () => { if (currentIndex.value < stepKeys.value.length - 1) currentStep.value = stepKeys.value[currentIndex.value + 1] };
+const goPrev = () => { if (currentIndex.value > 0) currentStep.value = stepKeys.value[currentIndex.value - 1] };
+
+// Step 1 — Profile
+const profileSaved = ref(false);
+const profileForm = useForm({ name: props.user?.name ?? '', email: props.user?.email ?? '', avatar: null });
+const submitProfile = () => {
+    profileForm.patch(`/admin/users/${props.user.uuid}`, {
+        forceFormData: true,
+        preserveScroll: true,
+        onSuccess: () => {
+            profileSaved.value = true;
+            if (!completedSteps.value.includes('profile')) completedSteps.value.push('profile');
+            setTimeout(() => { profileSaved.value = false }, 3000);
+        },
+    });
 };
+
+// Step 2 — Security
+const securitySaved = ref(false);
+const securityForm = useForm({ password: '' });
+const submitSecurity = () => {
+    securityForm.patch(`/admin/users/${props.user.uuid}`, {
+        preserveScroll: true,
+        onSuccess: () => {
+            securitySaved.value = true;
+            securityForm.reset();
+            if (!completedSteps.value.includes('security')) completedSteps.value.push('security');
+            setTimeout(() => { securitySaved.value = false }, 3000);
+        },
+    });
+};
+
+// Step 3 — Role
+const roleSaved = ref(false);
+const roleForm = useForm({ role: props.user?.role ?? 'user' });
+const submitRole = () => {
+    roleForm.post(`/admin/users/${props.user.uuid}/role`, {
+        preserveScroll: true,
+        onSuccess: () => {
+            roleSaved.value = true;
+            if (!completedSteps.value.includes('role')) completedSteps.value.push('role');
+            setTimeout(() => { roleSaved.value = false }, 3000);
+        },
+    });
+};
+
+const availableRoles = [
+    { value: 'user',        label: 'User',        icon: User,    desc: 'Standard access, can post and comment.' },
+    { value: 'moderator',   label: 'Moderator',   icon: Shield,  desc: 'Can review reports and hide content.' },
+    { value: 'admin',       label: 'Admin',       icon: UserCog, desc: 'Full access except super admin actions.' },
+    { value: 'super_admin', label: 'Super Admin', icon: Crown,   desc: 'Unrestricted access to all features.' },
+];
 </script>
