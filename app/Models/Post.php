@@ -33,6 +33,7 @@ class Post extends Model
         'images',
         'feeling',
         'visibility',
+        'shared_post_id',
     ];
 
     protected $casts = [
@@ -64,6 +65,16 @@ class Post extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function sharedPost(): BelongsTo
+    {
+        return $this->belongsTo(Post::class, 'shared_post_id');
+    }
+
+    public function shares(): HasMany
+    {
+        return $this->hasMany(Post::class, 'shared_post_id');
     }
 
     public function comments(): HasMany

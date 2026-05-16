@@ -33,9 +33,9 @@ class PostsController extends Controller
     {
         $user = $request->user();
 
-        $posts = Post::with('user:id,uuid,name,avatar')
+        $posts = Post::with(['user:id,uuid,name,avatar', 'sharedPost.user:id,uuid,name,avatar'])
             ->where('user_id', $user->id)
-            ->withCount(['comments', 'likes'])
+            ->withCount(['comments', 'likes', 'shares'])
             ->latest()
             ->get();
 
@@ -85,8 +85,8 @@ class PostsController extends Controller
         abort_if($post->status === 'hidden' && $post->user_id !== ($userId ?? -1), 404);
         abort_if($post->visibility === 'private' && $post->user_id !== ($userId ?? -1), 404);
 
-        $post->load(['user:id,uuid,name,avatar']);
-        $post->loadCount(['likes']);
+        $post->load(['user:id,uuid,name,avatar', 'sharedPost.user:id,uuid,name,avatar']);
+        $post->loadCount(['likes', 'comments', 'shares']);
 
         $comments = Comment::with('user:id,uuid,name,avatar')
             ->where('post_id', $post->id)
@@ -141,14 +141,19 @@ class PostsController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'body'       => ['nullable', 'string', 'max:10000'],
-            'images'     => ['nullable', 'array', 'max:10'],
-            'images.*'   => ['image', 'max:5120'],
-            'feeling'    => ['nullable', 'string', 'max:50'],
-            'visibility' => ['nullable', 'in:public,private'],
+            'body'           => ['nullable', 'string', 'max:10000'],
+            'images'         => ['nullable', 'array', 'max:10'],
+            'images.*'       => ['image', 'max:5120'],
+            'feeling'        => ['nullable', 'string', 'max:50'],
+            'visibility'     => ['nullable', 'in:public,private'],
+            'shared_post_id' => ['nullable', 'integer', 'exists:posts,id'],
         ]);
 
-        abort_if(empty(trim($data['body'] ?? '')) && empty($request->file('images')), 422);
+        $sharedPostId = $data['shared_post_id'] ?? null;
+        abort_if(
+            empty(trim($data['body'] ?? '')) && empty($request->file('images')) && !$sharedPostId,
+            422
+        );
 
         $imageUrls = [];
         foreach ($request->file('images', []) as $file) {
@@ -157,16 +162,17 @@ class PostsController extends Controller
         }
 
         $post = Post::create([
-            'user_id'    => $request->user()->id,
-            'body'       => $data['body'] ?? null,
-            'status'     => 'active',
-            'images'     => $imageUrls ?: null,
-            'image'      => $imageUrls[0] ?? null,
-            'feeling'    => $data['feeling'] ?? null,
-            'visibility' => $data['visibility'] ?? 'public',
+            'user_id'        => $request->user()->id,
+            'body'           => $data['body'] ?? null,
+            'status'         => 'active',
+            'images'         => $imageUrls ?: null,
+            'image'          => $imageUrls[0] ?? null,
+            'feeling'        => $data['feeling'] ?? null,
+            'visibility'     => $data['visibility'] ?? 'public',
+            'shared_post_id' => $sharedPostId,
         ]);
 
-        $post->load('user:id,uuid,name,avatar');
+        $post->load(['user:id,uuid,name,avatar', 'sharedPost.user:id,uuid,name,avatar']);
 
         return response()->json($post, 201);
     }

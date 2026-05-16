@@ -40,7 +40,7 @@ class FeedController extends Controller
         $seed   = (int) $request->query('seed', rand(1, 999999));
         $search = trim($request->query('q', ''));
 
-        $posts = Post::with('user:id,uuid,name,avatar')
+        $posts = Post::with(['user:id,uuid,name,avatar', 'sharedPost.user:id,uuid,name,avatar'])
             ->where('status', 'active')
             ->where(function ($q) use ($userId) {
                 $q->where('visibility', 'public');
@@ -55,7 +55,7 @@ class FeedController extends Controller
                           ->orWhereHas('user', fn ($u) => $u->where('name', 'like', $like));
                 });
             })
-            ->withCount(['comments', 'likes'])
+            ->withCount(['comments', 'likes', 'shares'])
             ->orderByRaw('RAND(' . $seed . ')')
             ->paginate(15)
             ->withQueryString();
