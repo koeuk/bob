@@ -1,5 +1,31 @@
 <template>
     <Head title="Likes" />
+
+    <Dialog :open="!!removeTarget" @update:open="(v) => { if (!v) removeTarget = null }">
+        <DialogContent class="max-w-sm rounded-3xl">
+            <DialogHeader>
+                <DialogTitle>Remove reaction?</DialogTitle>
+                <DialogDescription>
+                    This will permanently remove this reaction. This action cannot be undone.
+                </DialogDescription>
+            </DialogHeader>
+            <DialogFooter class="flex-row justify-end gap-2 pt-2">
+                <button
+                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
+                    @click="removeTarget = null"
+                >
+                    Cancel
+                </button>
+                <button
+                    class="inline-flex h-9 items-center gap-2 rounded-full bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:opacity-90"
+                    @click="confirmRemove"
+                >
+                    <Trash2 class="size-4" /> Remove
+                </button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+
     <AdminLayout title="Likes & Reactions">
         <div class="flex gap-3">
             <div class="rounded-3xl border border-border/60 bg-card px-5 py-3 shadow-sm">
@@ -84,8 +110,10 @@
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { Heart, Trash2 } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 const props = defineProps({
     likes: { type: Object, required: true },

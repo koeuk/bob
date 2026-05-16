@@ -219,12 +219,7 @@
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
-import Dialog from '@/components/ui/Dialog.vue';
-import DialogContent from '@/components/ui/DialogContent.vue';
-import DialogDescription from '@/components/ui/DialogDescription.vue';
-import DialogFooter from '@/components/ui/DialogFooter.vue';
-import DialogHeader from '@/components/ui/DialogHeader.vue';
-import DialogTitle from '@/components/ui/DialogTitle.vue';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { ChevronDown, Filter, MoreHorizontal, Plus, Search, ShieldBan, Trash2, UserCheck, UserX } from 'lucide-vue-next';
 import { computed, ref } from 'vue';

@@ -1,5 +1,31 @@
 <template>
     <Head title="Bans" />
+
+    <Dialog :open="!!liftTarget" @update:open="(v) => { if (!v) liftTarget = null }">
+        <DialogContent class="max-w-sm rounded-3xl">
+            <DialogHeader>
+                <DialogTitle>Lift ban?</DialogTitle>
+                <DialogDescription>
+                    This will restore access for <strong>{{ liftTarget?.user?.name }}</strong> immediately.
+                </DialogDescription>
+            </DialogHeader>
+            <DialogFooter class="flex-row justify-end gap-2 pt-2">
+                <button
+                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
+                    @click="liftTarget = null"
+                >
+                    Cancel
+                </button>
+                <button
+                    class="inline-flex h-9 items-center gap-2 rounded-full bg-moss px-4 text-sm font-medium text-paper hover:opacity-90"
+                    @click="confirmLift"
+                >
+                    <Undo2 class="size-4" /> Lift ban
+                </button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+
     <AdminLayout title="Bans">
         <!-- Stats + filter -->
         <div class="flex flex-wrap items-center justify-between gap-4">
@@ -207,6 +233,7 @@
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ChevronDown, Plus, Search, ShieldBan, Undo2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
@@ -232,10 +259,13 @@ const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).m
 const dateFmt = (iso) => iso ? new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '—';
 const isActive = (b) => !b.expires_at || new Date(b.expires_at) > new Date();
 
-const lift = (ban) => {
-    if (!window.confirm(`Lift ban for ${ban.user?.name}?`)) return;
-    router.delete(`/admin/bans/${ban.uuid}`, { preserveScroll: true });
+const liftTarget = ref(null);
+const confirmLift = () => {
+    if (!liftTarget.value) return;
+    router.delete(`/admin/bans/${liftTarget.value.uuid}`, { preserveScroll: true });
+    liftTarget.value = null;
 };
+const lift = (ban) => { liftTarget.value = ban; };
 
 const showCreate = ref(false);
 const createForm = useForm({ user_uuid: '', reason: '', expires_at: '' });

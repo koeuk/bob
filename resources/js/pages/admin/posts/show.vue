@@ -1,5 +1,31 @@
 <template>
     <Head title="Post" />
+
+    <Dialog :open="showDeleteDialog" @update:open="(v) => { showDeleteDialog = v }">
+        <DialogContent class="max-w-sm rounded-3xl">
+            <DialogHeader>
+                <DialogTitle>Delete post?</DialogTitle>
+                <DialogDescription>
+                    This will soft-delete the post and remove it from public view. This action cannot be undone.
+                </DialogDescription>
+            </DialogHeader>
+            <DialogFooter class="flex-row justify-end gap-2 pt-2">
+                <button
+                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
+                    @click="showDeleteDialog = false"
+                >
+                    Cancel
+                </button>
+                <button
+                    class="inline-flex h-9 items-center gap-2 rounded-full bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:opacity-90"
+                    @click="confirmDelete"
+                >
+                    <Trash2 class="size-4" /> Delete
+                </button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+
     <AdminLayout>
         <div class="flex items-center justify-between">
             <Link href="/admin/posts" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
@@ -112,9 +138,10 @@
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, Eye, EyeOff, Flag, Heart, MessageCircle, Pencil, Trash2 } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     post: { type: Object, required: true },
@@ -128,8 +155,10 @@ const setStatus = (newStatus) => {
     flagForm.patch(`/admin/posts/${props.post.uuid}/flag`, { preserveScroll: true });
 };
 
-const deletePost = () => {
-    if (!window.confirm('Delete this post? It will be soft-deleted.')) return;
+const showDeleteDialog = ref(false);
+const deletePost = () => { showDeleteDialog.value = true; };
+const confirmDelete = () => {
+    showDeleteDialog.value = false;
     router.delete(`/admin/posts/${props.post.uuid}`);
 };
 

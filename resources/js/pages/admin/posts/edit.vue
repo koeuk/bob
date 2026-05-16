@@ -86,13 +86,39 @@
             </div>
         </form>
     </AdminLayout>
+
+    <Dialog :open="showDeleteDialog" @update:open="(v) => { showDeleteDialog = v }">
+        <DialogContent class="max-w-sm rounded-3xl">
+            <DialogHeader>
+                <DialogTitle>Delete post?</DialogTitle>
+                <DialogDescription>
+                    This will soft-delete the post and remove it from public view. This action cannot be undone.
+                </DialogDescription>
+            </DialogHeader>
+            <DialogFooter class="flex-row justify-end gap-2 pt-2">
+                <button
+                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
+                    @click="showDeleteDialog = false"
+                >
+                    Cancel
+                </button>
+                <button
+                    class="inline-flex h-9 items-center gap-2 rounded-full bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:opacity-90"
+                    @click="confirmDestroy"
+                >
+                    <Trash2 class="size-4" /> Delete
+                </button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, Save, Trash2 } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     post: { type: Object, default: null },
@@ -117,8 +143,10 @@ const submit = () => {
     }
 };
 
-const destroy = () => {
-    if (!window.confirm('Delete this post? It will be soft-removed.')) return;
+const showDeleteDialog = ref(false);
+const destroy = () => { showDeleteDialog.value = true; };
+const confirmDestroy = () => {
+    showDeleteDialog.value = false;
     form.delete(`/admin/posts/${props.post.uuid}`);
 };
 </script>
