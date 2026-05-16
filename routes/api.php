@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommentsController;
+use App\Http\Controllers\Api\ConversationsController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\FeedController;
 use App\Http\Controllers\Api\FriendRequestsController;
@@ -59,6 +60,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('reports/mine', [ReportsController::class, 'mine']);
     Route::post('reports', [ReportsController::class, 'store']);
+
+    Route::get('conversations', [ConversationsController::class, 'index']);
+    Route::get('conversations/unread', [ConversationsController::class, 'unread']);
+    Route::post('conversations', [ConversationsController::class, 'findOrCreate']);
+    Route::get('conversations/{conversation:uuid}/messages', [ConversationsController::class, 'messages']);
+    Route::post('conversations/{conversation:uuid}/messages', [ConversationsController::class, 'send']);
 
     Route::middleware('role:moderator,admin,super_admin')
         ->prefix('admin')
