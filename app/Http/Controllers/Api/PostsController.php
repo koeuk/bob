@@ -88,8 +88,12 @@ class PostsController extends Controller
         $post->load(['user:id,uuid,name,avatar', 'sharedPost.user:id,uuid,name,avatar']);
         $post->loadCount(['likes', 'comments', 'shares']);
 
-        $comments = Comment::with('user:id,uuid,name,avatar')
+        $comments = Comment::with([
+                'user:id,uuid,name,avatar',
+                'replies' => fn($q) => $q->with('user:id,uuid,name,avatar')->withCount('likes'),
+            ])
             ->where('post_id', $post->id)
+            ->whereNull('parent_id')
             ->withCount('likes')
             ->latest()
             ->get();
@@ -100,18 +104,30 @@ class PostsController extends Controller
                 ->where('likeable_id', $post->id)
                 ->first();
 
-            $likedCommentIds = Like::where('user_id', $userId)
+            $allCommentIds = $comments->flatMap(
+                fn($c) => $c->replies->pluck('id')->prepend($c->id)
+            )->all();
+
+            $myCommentLikes = Like::where('user_id', $userId)
                 ->where('likeable_type', Comment::class)
-                ->whereIn('likeable_id', $comments->pluck('id'))
-                ->pluck('likeable_id')
-                ->all();
+                ->whereIn('likeable_id', $allCommentIds)
+                ->get(['likeable_id', 'type'])
+                ->keyBy('likeable_id');
         } else {
             $postLike = null;
-            $likedCommentIds = [];
+            $myCommentLikes = collect();
         }
 
-        $comments->transform(function (Comment $c) use ($likedCommentIds) {
-            $c->liked_by_me = in_array($c->id, $likedCommentIds, true);
+        $comments->transform(function (Comment $c) use ($myCommentLikes) {
+            $like = $myCommentLikes->get($c->id);
+            $c->liked_by_me = (bool) $like;
+            $c->my_reaction = $like?->type;
+            $c->replies->transform(function (Comment $r) use ($myCommentLikes) {
+                $rLike = $myCommentLikes->get($r->id);
+                $r->liked_by_me = (bool) $rLike;
+                $r->my_reaction = $rLike?->type;
+                return $r;
+            });
             return $c;
         });
 

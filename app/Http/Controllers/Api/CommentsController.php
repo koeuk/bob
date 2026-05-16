@@ -87,28 +87,40 @@ class CommentsController extends Controller
      */
     public function like(Request $request, Comment $comment): JsonResponse
     {
+        $data = $request->validate([
+            'type' => ['nullable', 'string', 'in:like,love,haha,wow,sad,angry'],
+        ]);
+        $type = $data['type'] ?? null;
+
         $user = $request->user();
         $existing = Like::where('user_id', $user->id)
             ->where('likeable_type', Comment::class)
             ->where('likeable_id', $comment->id)
-            ->where('type', 'like')
             ->first();
 
         if ($existing) {
-            $existing->delete();
-            $liked = false;
-        } else {
+            if ($type === null || $existing->type === $type) {
+                $existing->delete();
+                $myReaction = null;
+            } else {
+                $existing->update(['type' => $type]);
+                $myReaction = $type;
+            }
+        } elseif ($type !== null) {
             Like::create([
                 'user_id' => $user->id,
                 'likeable_type' => Comment::class,
                 'likeable_id' => $comment->id,
-                'type' => 'like',
+                'type' => $type,
             ]);
-            $liked = true;
+            $myReaction = $type;
+        } else {
+            $myReaction = null;
         }
 
         return response()->json([
-            'liked' => $liked,
+            'my_reaction' => $myReaction,
+            'liked' => $myReaction !== null,
             'likes_count' => $comment->likes()->count(),
         ]);
     }
