@@ -28,13 +28,16 @@ class UsersController extends Controller
                   ->orWhere('receiver_id', $user->id);
             })
             ->with([
-                'sender:id,uuid,name,avatar',
-                'receiver:id,uuid,name,avatar',
+                'sender:id,uuid,name,avatar,last_active_at',
+                'receiver:id,uuid,name,avatar,last_active_at',
             ])
             ->get();
 
         $friends = $friendRequests->map(function ($fr) use ($user) {
-            return $fr->sender_id === $user->id ? $fr->receiver : $fr->sender;
+            $friend = $fr->sender_id === $user->id ? $fr->receiver : $fr->sender;
+            $friend->is_online = $friend->last_active_at
+                && $friend->last_active_at->gt(now()->subMinutes(5));
+            return $friend;
         })->values();
 
         // Friendship status between viewer and this profile user
@@ -57,12 +60,13 @@ class UsersController extends Controller
 
         return response()->json([
             'user'       => [
-                'uuid'       => $user->uuid,
-                'name'       => $user->name,
-                'avatar'     => $user->avatar,
-                'cover'      => $user->cover,
-                'role'       => $user->role,
-                'joined_at'  => $user->created_at,
+                'uuid'      => $user->uuid,
+                'name'      => $user->name,
+                'avatar'    => $user->avatar,
+                'cover'     => $user->cover,
+                'role'      => $user->role,
+                'joined_at' => $user->created_at,
+                'is_online' => $user->last_active_at && $user->last_active_at->gt(now()->subMinutes(5)),
             ],
             'posts'      => $posts,
             'friends'    => $friends,
