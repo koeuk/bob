@@ -31,11 +31,24 @@ class PostsController extends Controller
      */
     public function mine(Request $request): JsonResponse
     {
+        $user = $request->user();
+
         $posts = Post::with('user:id,uuid,name,avatar')
-            ->where('user_id', $request->user()->id)
+            ->where('user_id', $user->id)
             ->withCount(['comments', 'likes'])
             ->latest()
             ->get();
+
+        $likedMap = Like::where('user_id', $user->id)
+            ->where('likeable_type', Post::class)
+            ->whereIn('likeable_id', $posts->pluck('id'))
+            ->pluck('type', 'likeable_id');
+
+        $posts->transform(function (Post $post) use ($likedMap) {
+            $post->my_reaction = $likedMap->get($post->id);
+            $post->liked_by_me = $likedMap->has($post->id);
+            return $post;
+        });
 
         return response()->json($posts);
     }
