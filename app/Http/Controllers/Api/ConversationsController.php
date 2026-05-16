@@ -82,11 +82,25 @@ class ConversationsController extends Controller
             403
         );
 
-        $request->validate(['body' => 'required|string|max:2000']);
+        $request->validate([
+            'body'      => 'nullable|string|max:2000',
+            'images'    => 'nullable|array|max:5',
+            'images.*'  => 'image|max:5120',
+        ]);
+
+        abort_if(! $request->filled('body') && ! $request->hasFile('images'), 422);
+
+        $paths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                $paths[] = $file->store('message-images', 'public');
+            }
+        }
 
         $message = $conversation->messages()->create([
             'user_id' => $user->id,
             'body'    => $request->body,
+            'images'  => $paths ?: null,
         ]);
 
         $message->load('sender:id,uuid,name,avatar');

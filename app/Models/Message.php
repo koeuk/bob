@@ -15,10 +15,11 @@ class Message extends Model
         return ['uuid'];
     }
 
-    protected $fillable = ['conversation_id', 'user_id', 'body', 'read_at'];
+    protected $fillable = ['conversation_id', 'user_id', 'body', 'images', 'read_at'];
 
     protected $casts = [
         'read_at' => 'datetime',
+        'images'  => 'array',
     ];
 
     public function conversation(): BelongsTo
