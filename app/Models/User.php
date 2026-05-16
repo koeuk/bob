@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -47,6 +48,16 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    public function getAvatarAttribute(?string $value): ?string
+    {
+        if (! $value) return null;
+        if (str_starts_with($value, 'http')) {
+            $path = preg_replace('#^https?://[^/]+/storage/#', '', $value);
+            return Storage::url($path);
+        }
+        return Storage::url($value);
     }
 
     public function posts(): HasMany

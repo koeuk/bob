@@ -140,7 +140,7 @@ class AuthController extends Controller
 
         if ($request->hasFile('avatar')) {
             $path = $request->file('avatar')->store('avatars', 'public');
-            $data['avatar'] = url('storage/' . $path);
+            $data['avatar'] = $path;
         }
 
         $user->update($data);

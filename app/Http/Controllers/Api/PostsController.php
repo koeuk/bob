@@ -153,7 +153,7 @@ class PostsController extends Controller
         $imageUrls = [];
         foreach ($request->file('images', []) as $file) {
             $path = $file->store('posts', 'public');
-            $imageUrls[] = url('storage/' . $path);
+            $imageUrls[] = $path;
         }
 
         $post = Post::create([
@@ -193,7 +193,7 @@ class PostsController extends Controller
         $imageUrls = $kept;
         foreach ($request->file('new_images', []) as $file) {
             $path = $file->store('posts', 'public');
-            $imageUrls[] = url('storage/' . $path);
+            $imageUrls[] = $path;
         }
 
         abort_if(empty(trim($data['body'] ?? '')) && empty($imageUrls), 422);

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Post extends Model
 {
@@ -37,6 +38,28 @@ class Post extends Model
     protected $casts = [
         'images' => 'array',
     ];
+
+    private function normalizeStorageUrl(?string $value): ?string
+    {
+        if (! $value) return null;
+        if (str_starts_with($value, 'http')) {
+            $path = preg_replace('#^https?://[^/]+/storage/#', '', $value);
+            return Storage::url($path);
+        }
+        return Storage::url($value);
+    }
+
+    public function getImageAttribute(?string $value): ?string
+    {
+        return $this->normalizeStorageUrl($value);
+    }
+
+    public function getImagesAttribute(mixed $value): ?array
+    {
+        $decoded = is_string($value) ? json_decode($value, true) : $value;
+        if (! is_array($decoded)) return null;
+        return array_map(fn ($v) => $this->normalizeStorageUrl($v), $decoded);
+    }
 
     public function user(): BelongsTo
     {
