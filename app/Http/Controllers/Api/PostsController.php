@@ -39,14 +39,25 @@ class PostsController extends Controller
             ->latest()
             ->get();
 
+        $postIds = $posts->pluck('id')->all();
+
         $likedMap = Like::where('user_id', $user->id)
             ->where('likeable_type', Post::class)
-            ->whereIn('likeable_id', $posts->pluck('id'))
+            ->whereIn('likeable_id', $postIds)
             ->pluck('type', 'likeable_id');
 
-        $posts->transform(function (Post $post) use ($likedMap) {
+        $reactionSummaries = empty($postIds) ? collect() : Like::where('likeable_type', Post::class)
+            ->whereIn('likeable_id', $postIds)
+            ->selectRaw('likeable_id, type, count(*) as count')
+            ->groupBy('likeable_id', 'type')
+            ->get()
+            ->groupBy('likeable_id')
+            ->map(fn ($rows) => $rows->pluck('count', 'type')->toArray());
+
+        $posts->transform(function (Post $post) use ($likedMap, $reactionSummaries) {
             $post->my_reaction = $likedMap->get($post->id);
             $post->liked_by_me = $likedMap->has($post->id);
+            $post->reactions_summary = $reactionSummaries->get($post->id, []);
             return $post;
         });
 
@@ -106,6 +117,12 @@ class PostsController extends Controller
 
         $post->liked_by_me = (bool) $postLike;
         $post->my_reaction = $postLike?->type;
+        $post->reactions_summary = Like::where('likeable_type', Post::class)
+            ->where('likeable_id', $post->id)
+            ->selectRaw('type, count(*) as count')
+            ->groupBy('type')
+            ->pluck('count', 'type')
+            ->toArray();
 
         return response()->json([
             'post' => $post,

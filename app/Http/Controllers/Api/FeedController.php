@@ -69,6 +69,14 @@ class FeedController extends Controller
                 ->keyBy('likeable_id')
             : collect();
 
+        $reactionSummaries = empty($ids) ? collect() : Like::where('likeable_type', Post::class)
+            ->whereIn('likeable_id', $ids)
+            ->selectRaw('likeable_id, type, count(*) as count')
+            ->groupBy('likeable_id', 'type')
+            ->get()
+            ->groupBy('likeable_id')
+            ->map(fn ($rows) => $rows->pluck('count', 'type')->toArray());
+
         // Build friendship status map for post authors
         $friendMap = [];
         if ($userId) {
@@ -99,10 +107,11 @@ class FeedController extends Controller
             }
         }
 
-        $posts->getCollection()->transform(function (Post $p) use ($myLikes, $userId, $friendMap) {
+        $posts->getCollection()->transform(function (Post $p) use ($myLikes, $userId, $friendMap, $reactionSummaries) {
             $like = $myLikes->get($p->id);
             $p->liked_by_me = (bool) $like;
             $p->my_reaction = $like?->type;
+            $p->reactions_summary = $reactionSummaries->get($p->id, []);
             $p->friendship_status = ($userId && $p->user_id !== $userId)
                 ? ($friendMap[$p->user_id] ?? ['status' => 'none'])
                 : null;
