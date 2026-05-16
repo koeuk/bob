@@ -11,27 +11,24 @@
                 </DialogDescription>
             </DialogHeader>
             <div class="pt-1">
-                <textarea
+                <Textarea
                     v-model="banReason"
                     placeholder="Reason for ban…"
                     rows="3"
-                    class="w-full rounded-2xl border border-border bg-secondary/60 px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus:bg-secondary resize-none"
+                    class="rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary resize-none"
                 />
             </div>
             <DialogFooter class="flex-row justify-end gap-2 pt-2">
-                <button
-                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
-                    @click="banTarget = null; banReason = ''"
-                >
+                <Button variant="outline" class="rounded-full" @click="banTarget = null; banReason = ''">
                     Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                     :disabled="!banReason.trim()"
-                    class="inline-flex h-9 items-center gap-2 rounded-full bg-rust px-4 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-50"
+                    class="rounded-full bg-rust text-paper hover:bg-rust/90"
                     @click="confirmBan"
                 >
                     <ShieldBan class="size-4" /> Ban user
-                </button>
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>
@@ -46,42 +43,38 @@
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter class="flex-row justify-end gap-2 pt-2">
-                <button
-                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
-                    @click="deleteTarget = null"
-                >
+                <Button variant="outline" class="rounded-full" @click="deleteTarget = null">
                     Cancel
-                </button>
-                <button
-                    class="inline-flex h-9 items-center gap-2 rounded-full bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:opacity-90"
+                </Button>
+                <Button
+                    class="rounded-full bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     @click="confirmDelete"
                 >
                     <Trash2 class="size-4" /> Delete
-                </button>
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>
 
     <AdminLayout title="Users">
         <div class="flex justify-end">
-            <Link
-                href="/admin/users/create"
-                class="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
-            >
-                <Plus class="size-4" /> New user
-            </Link>
+            <Button as-child class="rounded-full bg-ink text-paper hover:bg-ink/90">
+                <Link href="/admin/users/create">
+                    <Plus class="size-4" /> New user
+                </Link>
+            </Button>
         </div>
 
         <!-- Toolbar -->
-        <div class="rounded-3xl border border-border/60 bg-card p-4 shadow-sm">
+        <Card class="rounded-3xl border-border/60 gap-0 p-4">
             <div class="flex flex-wrap items-center gap-3">
                 <div class="relative min-w-0 flex-1">
                     <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                    <input
+                    <Input
                         v-model="search"
                         type="search"
                         placeholder="Search name or email..."
-                        class="h-10 w-full rounded-full bg-secondary/60 pl-10 pr-4 text-sm outline-none placeholder:text-muted-foreground focus:bg-secondary"
+                        class="h-10 rounded-full bg-secondary/60 pl-10 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                         @keydown.enter="applyFilters"
                     />
                 </div>
@@ -103,17 +96,14 @@
                     <input v-model="bannedOnly" type="checkbox" class="accent-rust" @change="applyFilters" />
                     Banned only
                 </label>
-                <button
-                    class="inline-flex h-10 items-center gap-2 rounded-full bg-ink px-4 text-sm font-medium text-paper hover:opacity-90"
-                    @click="applyFilters"
-                >
+                <Button class="rounded-full bg-ink text-paper hover:bg-ink/90" @click="applyFilters">
                     <Filter class="size-4" /> Apply
-                </button>
+                </Button>
             </div>
-        </div>
+        </Card>
 
         <!-- Table -->
-        <div class="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
+        <Card class="rounded-3xl border-border/60 gap-0 overflow-hidden">
             <div class="grid grid-cols-[1.8fr_1fr_0.8fr_0.6fr_0.8fr_2.5rem] items-center gap-4 border-b border-border/60 px-6 py-3 text-[11px] uppercase tracking-wide text-muted-foreground">
                 <span>User</span>
                 <span>Email</span>
@@ -137,18 +127,18 @@
                         <div class="min-w-0">
                             <div class="flex items-center gap-2">
                                 <Link :href="`/admin/users/${u.uuid}`" class="truncate font-medium hover:text-rust">{{ u.name }}</Link>
-                                <span v-if="isBanned(u)" class="inline-flex items-center gap-1 rounded-full bg-rust/15 px-2 py-0.5 text-[10px] font-medium text-rust">
+                                <Badge v-if="isBanned(u)" class="rounded-full border-0 bg-rust/15 text-rust inline-flex items-center gap-1">
                                     <ShieldBan class="size-3" /> banned
-                                </span>
+                                </Badge>
                             </div>
                             <div class="truncate text-[11px] text-muted-foreground">#{{ u.uuid.slice(0, 8) }}</div>
                         </div>
                     </div>
                     <div class="truncate text-muted-foreground">{{ u.email }}</div>
                     <div>
-                        <span :class="['inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium', roleClasses(u.role)]">
+                        <Badge :class="['rounded-full border-0', roleClasses(u.role)]">
                             {{ u.role }}
-                        </span>
+                        </Badge>
                     </div>
                     <div class="text-muted-foreground">{{ u.posts_count ?? 0 }}</div>
                     <div class="text-muted-foreground">{{ dateFmt(u.created_at) }}</div>
@@ -213,12 +203,17 @@
                     />
                 </div>
             </div>
-        </div>
+        </Card>
     </AdminLayout>
 </template>
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
+import Card from '@/components/ui/Card.vue';
+import { Button } from '@/components/ui/button';
+import Input from '@/components/ui/Input.vue';
+import Badge from '@/components/ui/Badge.vue';
+import Textarea from '@/components/ui/Textarea.vue';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { ChevronDown, Filter, MoreHorizontal, Plus, Search, ShieldBan, Trash2, UserCheck, UserX } from 'lucide-vue-next';

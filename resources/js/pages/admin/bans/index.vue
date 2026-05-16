@@ -10,18 +10,12 @@
                 </DialogDescription>
             </DialogHeader>
             <DialogFooter class="flex-row justify-end gap-2 pt-2">
-                <button
-                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
-                    @click="liftTarget = null"
-                >
+                <Button variant="outline" class="rounded-full" @click="liftTarget = null">
                     Cancel
-                </button>
-                <button
-                    class="inline-flex h-9 items-center gap-2 rounded-full bg-moss px-4 text-sm font-medium text-paper hover:opacity-90"
-                    @click="confirmLift"
-                >
+                </Button>
+                <Button class="rounded-full bg-moss text-paper hover:bg-moss/90" @click="confirmLift">
                     <Undo2 class="size-4" /> Lift ban
-                </button>
+                </Button>
             </DialogFooter>
         </DialogContent>
     </Dialog>
@@ -30,30 +24,27 @@
         <!-- Stats + filter -->
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex gap-3">
-                <div class="rounded-3xl border border-border/60 bg-card px-5 py-3 shadow-sm">
+                <Card class="rounded-3xl border-border/60 gap-0 px-5 py-3">
                     <div class="text-[11px] uppercase tracking-wide text-muted-foreground">Total</div>
                     <div class="font-sans text-2xl font-semibold">{{ counts.all }}</div>
-                </div>
-                <div class="rounded-3xl border border-border/60 bg-rust/5 px-5 py-3 shadow-sm">
+                </Card>
+                <Card class="rounded-3xl border-border/60 gap-0 bg-rust/5 px-5 py-3">
                     <div class="text-[11px] uppercase tracking-wide text-rust">Active</div>
                     <div class="font-sans text-2xl font-semibold text-rust">{{ counts.active }}</div>
-                </div>
+                </Card>
             </div>
             <div class="flex items-center gap-2">
                 <label class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full bg-card px-4 text-sm shadow-sm hover:bg-secondary">
                     <input :checked="activeOnly" type="checkbox" class="accent-rust" @change="toggleActive" />
                     Active only
                 </label>
-                <button
-                    class="inline-flex h-10 items-center gap-2 rounded-full bg-ink px-4 text-sm font-medium text-paper hover:opacity-90"
-                    @click="showCreate = true"
-                >
+                <Button class="rounded-full bg-ink text-paper hover:bg-ink/90" @click="showCreate = true">
                     <Plus class="size-4" /> New ban
-                </button>
+                </Button>
             </div>
         </div>
 
-        <div class="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
+        <Card class="rounded-3xl border-border/60 gap-0 overflow-hidden">
             <ul v-if="bans.data.length" class="divide-y divide-border/60">
                 <li
                     v-for="b in bans.data"
@@ -68,14 +59,14 @@
                             <Link v-if="b.user" :href="`/admin/users/${b.user.uuid}`" class="font-medium hover:text-rust">
                                 {{ b.user?.name ?? 'Deleted user' }}
                             </Link>
-                            <span
+                            <Badge
                                 :class="[
-                                    'inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium',
+                                    'rounded-full border-0',
                                     isActive(b) ? 'bg-rust/15 text-rust' : 'bg-secondary text-muted-foreground',
                                 ]"
                             >
                                 {{ isActive(b) ? 'active' : 'lifted' }}
-                            </span>
+                            </Badge>
                         </div>
                         <div class="mt-0.5 text-sm">{{ b.reason }}</div>
                         <div class="mt-1 text-xs text-muted-foreground">
@@ -84,13 +75,15 @@
                             <span v-else> · permanent</span>
                         </div>
                     </div>
-                    <button
+                    <Button
                         v-if="isActive(b)"
-                        class="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-medium hover:bg-secondary"
+                        variant="outline"
+                        class="rounded-full"
+                        size="sm"
                         @click="lift(b)"
                     >
                         <Undo2 class="size-3.5" /> Lift
-                    </button>
+                    </Button>
                 </li>
             </ul>
             <div v-else class="py-16 text-center text-sm text-muted-foreground">
@@ -114,7 +107,7 @@
                     />
                 </div>
             </div>
-        </div>
+        </Card>
 
         <!-- Create ban modal -->
         <Teleport to="body">
@@ -135,9 +128,7 @@
                                     <div class="min-w-0">
                                         <div class="flex items-center gap-2 text-sm font-medium">
                                             {{ selectedUser.name }}
-                                            <span :class="['rounded-full px-2 py-0.5 text-[10px] font-medium', roleTone(selectedUser.role)]">
-                                                {{ selectedUser.role }}
-                                            </span>
+                                            <Badge :class="['rounded-full border-0', roleTone(selectedUser.role)]">{{ selectedUser.role }}</Badge>
                                         </div>
                                         <div class="truncate text-[11px] text-muted-foreground">{{ selectedUser.email }}</div>
                                     </div>
@@ -184,9 +175,7 @@
                                             <div class="min-w-0 flex-1">
                                                 <div class="flex items-center gap-2 text-sm font-medium">
                                                     <span class="truncate">{{ u.name }}</span>
-                                                    <span :class="['rounded-full px-1.5 py-0.5 text-[9px] font-medium', roleTone(u.role)]">
-                                                        {{ u.role }}
-                                                    </span>
+                                                    <Badge :class="['rounded-full border-0', roleTone(u.role)]">{{ u.role }}</Badge>
                                                 </div>
                                                 <div class="truncate text-[11px] text-muted-foreground">{{ u.email }}</div>
                                             </div>
@@ -202,27 +191,27 @@
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Reason</label>
-                            <textarea
+                            <Textarea
                                 v-model="createForm.reason"
                                 rows="3"
-                                class="w-full rounded-2xl bg-secondary/60 p-3 text-sm outline-none focus:bg-secondary"
+                                class="rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                                 required
                             />
                             <p v-if="createForm.errors.reason" class="mt-1 text-xs text-destructive">{{ createForm.errors.reason }}</p>
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Expires at (optional)</label>
-                            <input
+                            <Input
                                 v-model="createForm.expires_at"
                                 type="datetime-local"
-                                class="w-full rounded-full bg-secondary/60 px-4 py-2 text-sm outline-none focus:bg-secondary"
+                                class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                             />
                         </div>
                         <div class="flex justify-end gap-2 pt-2">
-                            <button type="button" class="rounded-full px-4 py-2 text-sm hover:bg-secondary" @click="showCreate = false">Cancel</button>
-                            <button type="submit" class="rounded-full bg-rust px-4 py-2 text-sm font-medium text-paper hover:opacity-90" :disabled="createForm.processing">
+                            <Button type="button" variant="outline" class="rounded-full" @click="showCreate = false">Cancel</Button>
+                            <Button type="submit" class="rounded-full bg-rust text-paper hover:bg-rust/90" :disabled="createForm.processing">
                                 Ban user
-                            </button>
+                            </Button>
                         </div>
                     </form>
                 </div>
@@ -233,6 +222,11 @@
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
+import Card from '@/components/ui/Card.vue';
+import { Button } from '@/components/ui/button';
+import Input from '@/components/ui/Input.vue';
+import Textarea from '@/components/ui/Textarea.vue';
+import Badge from '@/components/ui/Badge.vue';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ChevronDown, Plus, Search, ShieldBan, Undo2 } from 'lucide-vue-next';
