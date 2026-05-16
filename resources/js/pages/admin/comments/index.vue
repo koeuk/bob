@@ -1,5 +1,31 @@
 <template>
     <Head title="Comments" />
+
+    <Dialog :open="!!deleteTarget" @update:open="(v) => { if (!v) deleteTarget = null }">
+        <DialogContent class="max-w-sm rounded-3xl">
+            <DialogHeader>
+                <DialogTitle>Delete comment?</DialogTitle>
+                <DialogDescription>
+                    This will permanently delete this comment. This action cannot be undone.
+                </DialogDescription>
+            </DialogHeader>
+            <DialogFooter class="flex-row justify-end gap-2 pt-2">
+                <button
+                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
+                    @click="deleteTarget = null"
+                >
+                    Cancel
+                </button>
+                <button
+                    class="inline-flex h-9 items-center gap-2 rounded-full bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:opacity-90"
+                    @click="confirmDelete"
+                >
+                    <Trash2 class="size-4" /> Delete
+                </button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+
     <AdminLayout title="Comments">
         <div class="flex justify-end">
             <button
@@ -280,6 +306,7 @@
 
 <script setup>
 import AdminLayout from '@/layouts/admin-layout.vue';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ChevronDown, Flag, Heart, Pencil, Plus, Search, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
@@ -298,10 +325,13 @@ const apply = () => router.get('/admin/comments', search.value ? { filter: { sea
     preserveState: true, preserveScroll: true, replace: true,
 });
 
-const deleteComment = (c) => {
-    if (!window.confirm('Delete this comment?')) return;
-    router.delete(`/admin/comments/${c.uuid}`, { preserveScroll: true });
+const deleteTarget = ref(null);
+const confirmDelete = () => {
+    if (!deleteTarget.value) return;
+    router.delete(`/admin/comments/${deleteTarget.value.uuid}`, { preserveScroll: true });
+    deleteTarget.value = null;
 };
+const deleteComment = (c) => { deleteTarget.value = c; };
 
 const dateFmt = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();

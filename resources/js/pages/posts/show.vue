@@ -1,5 +1,56 @@
 <template>
     <Head :title="`${post.user?.name} · post`" />
+
+    <Dialog :open="showDeletePost" @update:open="(v) => { showDeletePost = v }">
+        <DialogContent class="max-w-sm rounded-3xl">
+            <DialogHeader>
+                <DialogTitle>Delete post?</DialogTitle>
+                <DialogDescription>
+                    This will soft-delete the post and remove it from public view. This action cannot be undone.
+                </DialogDescription>
+            </DialogHeader>
+            <DialogFooter class="flex-row justify-end gap-2 pt-2">
+                <button
+                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
+                    @click="showDeletePost = false"
+                >
+                    Cancel
+                </button>
+                <button
+                    class="inline-flex h-9 items-center gap-2 rounded-full bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:opacity-90"
+                    @click="confirmDeletePost"
+                >
+                    <Trash2 class="size-4" /> Delete
+                </button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+
+    <Dialog :open="!!deleteCommentTarget" @update:open="(v) => { if (!v) deleteCommentTarget = null }">
+        <DialogContent class="max-w-sm rounded-3xl">
+            <DialogHeader>
+                <DialogTitle>Delete comment?</DialogTitle>
+                <DialogDescription>
+                    This will permanently delete this comment. This action cannot be undone.
+                </DialogDescription>
+            </DialogHeader>
+            <DialogFooter class="flex-row justify-end gap-2 pt-2">
+                <button
+                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
+                    @click="deleteCommentTarget = null"
+                >
+                    Cancel
+                </button>
+                <button
+                    class="inline-flex h-9 items-center gap-2 rounded-full bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:opacity-90"
+                    @click="confirmDeleteComment"
+                >
+                    <Trash2 class="size-4" /> Delete
+                </button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+
     <AppLayout>
         <Link href="/feed" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
             <ArrowLeft class="size-4" /> Back to feed
@@ -187,6 +238,7 @@
 
 <script setup>
 import AppLayout from '@/layouts/app-layout.vue';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, Flag, Heart, MessageCircle, Send, Trash2 } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
@@ -215,14 +267,19 @@ const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).m
 const togglePostLike = () => router.post(`/posts/${props.post.uuid}/like`, {}, { preserveScroll: true });
 const toggleCommentLike = (c) => router.post(`/comments/${c.uuid}/like`, {}, { preserveScroll: true });
 
-const deletePost = () => {
-    if (!window.confirm('Delete this post? It will be soft-removed.')) return;
+const showDeletePost = ref(false);
+const deletePost = () => { showDeletePost.value = true; };
+const confirmDeletePost = () => {
+    showDeletePost.value = false;
     router.delete(`/posts/${props.post.uuid}`);
 };
 
-const deleteComment = (c) => {
-    if (!window.confirm('Delete this comment?')) return;
-    router.delete(`/comments/${c.uuid}`, { preserveScroll: true });
+const deleteCommentTarget = ref(null);
+const deleteComment = (c) => { deleteCommentTarget.value = c; };
+const confirmDeleteComment = () => {
+    if (!deleteCommentTarget.value) return;
+    router.delete(`/comments/${deleteCommentTarget.value.uuid}`, { preserveScroll: true });
+    deleteCommentTarget.value = null;
 };
 
 const commentForm = useForm({ body: '' });

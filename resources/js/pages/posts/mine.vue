@@ -1,5 +1,31 @@
 <template>
     <Head title="My Posts" />
+
+    <Dialog :open="!!deleteTarget" @update:open="(v) => { if (!v) deleteTarget = null }">
+        <DialogContent class="max-w-sm rounded-3xl">
+            <DialogHeader>
+                <DialogTitle>Delete post?</DialogTitle>
+                <DialogDescription>
+                    This will permanently delete this post and all its comments. This action cannot be undone.
+                </DialogDescription>
+            </DialogHeader>
+            <DialogFooter class="flex-row justify-end gap-2 pt-2">
+                <button
+                    class="inline-flex h-9 items-center rounded-full bg-secondary px-4 text-sm font-medium hover:bg-secondary/80"
+                    @click="deleteTarget = null"
+                >
+                    Cancel
+                </button>
+                <button
+                    class="inline-flex h-9 items-center gap-2 rounded-full bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:opacity-90"
+                    @click="confirmDelete"
+                >
+                    <Trash2 class="size-4" /> Delete
+                </button>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
+
     <AppLayout>
         <section class="flex items-end justify-between gap-4 pt-2">
             <div>
@@ -97,9 +123,10 @@
 
 <script setup>
 import AppLayout from '@/layouts/app-layout.vue';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { Heart, MessageCircle, Pencil, Trash2 } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     posts: { type: Object, required: true },
@@ -117,10 +144,13 @@ const statusTone = (s) => {
 };
 const truncate = (t, n = 200) => (t ?? '').length > n ? (t ?? '').slice(0, n) + '…' : t;
 
-const deletePost = (p) => {
-    if (!window.confirm('Delete this post?')) return;
-    router.delete(`/posts/${p.uuid}`, { preserveScroll: true });
+const deleteTarget = ref(null);
+const confirmDelete = () => {
+    if (!deleteTarget.value) return;
+    router.delete(`/posts/${deleteTarget.value.uuid}`, { preserveScroll: true });
+    deleteTarget.value = null;
 };
+const deletePost = (p) => { deleteTarget.value = p; };
 
 const totals = computed(() => ({
     total: props.posts.total,

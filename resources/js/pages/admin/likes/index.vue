@@ -143,8 +143,11 @@ const typeTone = (t) => {
     }
 };
 
-const removeLike = (like) => {
-    if (!window.confirm('Remove this reaction?')) return;
-    router.delete(`/admin/likes/${like.uuid}`, { preserveScroll: true });
+const removeTarget = ref(null);
+const confirmRemove = () => {
+    if (!removeTarget.value) return;
+    router.delete(`/admin/likes/${removeTarget.value.uuid}`, { preserveScroll: true });
+    removeTarget.value = null;
 };
+const removeLike = (like) => { removeTarget.value = like; };
 </script>
