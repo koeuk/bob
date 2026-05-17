@@ -16,180 +16,208 @@
             <!-- Hero: posts this week -->
             <Link
                 href="/posts/mine"
-                class="group relative overflow-hidden rounded-3xl bg-rust p-6 text-paper shadow-sm transition-shadow hover:shadow-md"
+                class="group relative overflow-hidden rounded-3xl bg-rust p-6 text-paper shadow-sm transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
             >
                 <div class="flex items-center justify-between">
-                    <span class="inline-flex size-10 items-center justify-center rounded-2xl bg-paper/20 backdrop-blur">
+                    <span class="inline-flex size-10 items-center justify-center rounded-2xl bg-paper/20 backdrop-blur-sm">
                         <Pencil class="size-5" />
                     </span>
-                    <ArrowUpRight class="size-5 opacity-70 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    <ArrowUpRight class="size-5 opacity-60 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </div>
                 <div class="mt-8">
-                    <div class="text-sm uppercase tracking-wide opacity-80">Posts this week</div>
-                    <div class="mt-1 font-sans text-5xl font-semibold tracking-tight">{{ fmt(stats.posts_this_week) }}</div>
-                    <div class="mt-1 text-xs opacity-80">
-                        <span :class="stats.posts_trend >= 0 ? '' : 'opacity-80'">
-                            {{ stats.posts_trend >= 0 ? '+' : '' }}{{ stats.posts_trend }}% vs last week
-                        </span>
+                    <div class="text-xs uppercase tracking-widest opacity-70 font-medium">Posts this week</div>
+                    <div class="mt-1.5 font-sans text-6xl font-semibold tracking-tight leading-none">{{ fmt(stats.posts_this_week) }}</div>
+                    <div class="mt-2 text-xs opacity-70">
+                        {{ stats.posts_trend >= 0 ? '+' : '' }}{{ stats.posts_trend }}% vs last week
                     </div>
                 </div>
-                <div class="absolute -bottom-10 -right-10 size-40 rounded-full bg-paper/10 blur-2xl"></div>
+                <div class="pointer-events-none absolute -bottom-12 -right-12 size-48 rounded-full bg-paper/10 blur-3xl"></div>
+                <div class="pointer-events-none absolute -top-8 -left-8 size-32 rounded-full bg-paper/5 blur-2xl"></div>
             </Link>
 
             <!-- Figures grid -->
             <div class="grid grid-cols-2 gap-4 lg:col-span-2">
-                <div
+                <Card
                     v-for="f in figures"
                     :key="f.key"
-                    class="flex flex-col justify-between rounded-3xl border border-border/60 bg-card p-5 shadow-sm"
+                    class="rounded-3xl border-border/60 gap-0 p-5 flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 cursor-default"
                 >
-                    <div class="flex items-center justify-between">
-                        <span class="inline-flex size-9 items-center justify-center rounded-2xl bg-secondary text-ink">
+                    <div class="flex items-start justify-between gap-2">
+                        <span class="inline-flex size-9 items-center justify-center rounded-2xl bg-secondary text-ink shrink-0">
                             <component :is="f.icon" class="size-[18px]" />
                         </span>
-                        <span
+                        <Badge
                             :class="[
-                                'inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 text-[10px] font-medium',
+                                'rounded-full border-0 inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-medium shrink-0',
                                 f.trend === 'up' ? 'bg-moss/15 text-moss' : 'bg-rust/15 text-rust',
                             ]"
                         >
                             <component :is="f.trend === 'up' ? ArrowUpRight : ArrowDownRight" class="size-3" />
                             {{ f.sub }}
-                        </span>
+                        </Badge>
                     </div>
-                    <div class="mt-6">
-                        <div class="text-xs uppercase tracking-wide text-muted-foreground">{{ f.label }}</div>
+                    <div class="mt-5">
+                        <div class="text-[11px] uppercase tracking-widest text-muted-foreground font-medium">{{ f.label }}</div>
                         <div class="mt-1 font-sans text-3xl font-semibold tracking-tight">{{ fmt(f.value) }}</div>
                     </div>
-                </div>
+                </Card>
             </div>
         </section>
 
-        <!-- Chart + weekly goal -->
+        <!-- Chart + weekly goal + quick actions -->
         <section class="grid gap-4 lg:grid-cols-3">
-            <div class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm lg:col-span-2">
-                <div class="mb-4 flex items-start justify-between gap-4">
-                    <div>
-                        <h3 class="text-lg font-semibold tracking-tight">Total engagement</h3>
-                        <p class="text-xs text-muted-foreground">posts & reactions · past 8 months</p>
+            <Card class="rounded-3xl border-border/60 gap-0 lg:col-span-2 transition-all duration-200 hover:shadow-md">
+                <CardHeader class="px-6 pt-6 pb-0">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <CardTitle class="text-base">Total engagement</CardTitle>
+                            <p class="text-xs text-muted-foreground mt-0.5">posts & reactions · past 8 months</p>
+                        </div>
                     </div>
-                </div>
-                <div class="h-72">
-                    <Bar :data="chartData" :options="chartOptions" />
-                </div>
-            </div>
+                </CardHeader>
+                <CardContent class="px-6 pb-6 pt-4">
+                    <div class="h-64">
+                        <Bar :data="chartData" :options="chartOptions" />
+                    </div>
+                </CardContent>
+            </Card>
 
             <div class="flex flex-col gap-4">
                 <!-- Weekly goal -->
-                <div class="rounded-3xl border border-border/60 bg-card p-5 shadow-sm">
+                <Card class="rounded-3xl border-border/60 gap-0 p-5 transition-all duration-200 hover:shadow-md">
                     <div class="flex items-center justify-between">
-                        <div class="text-xs uppercase tracking-wide text-muted-foreground">Weekly post goal</div>
+                        <div class="text-[11px] uppercase tracking-widest text-muted-foreground font-medium">Weekly goal</div>
                         <span class="text-[11px] text-muted-foreground">resets Sunday</span>
                     </div>
                     <div class="mt-3 flex items-baseline gap-2">
-                        <span class="font-sans text-4xl font-semibold tracking-tight">
-                            {{ weeklyGoal.progress }}<span class="text-muted-foreground text-2xl">/{{ weeklyGoal.target }}</span>
+                        <span class="font-sans text-4xl font-semibold tracking-tight leading-none">
+                            {{ weeklyGoal.progress }}
                         </span>
-                        <span class="font-sans text-lg font-semibold text-rust">{{ goalPct }}%</span>
+                        <span class="text-muted-foreground text-xl font-medium">/{{ weeklyGoal.target }}</span>
+                        <span class="ml-auto font-sans text-base font-semibold text-rust">{{ goalPct }}%</span>
                     </div>
-                    <div class="mt-3 h-2 overflow-hidden rounded-full bg-secondary">
-                        <div class="h-full rounded-full bg-rust transition-all" :style="{ width: goalPct + '%' }"></div>
+                    <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-secondary">
+                        <div
+                            class="h-full rounded-full transition-all duration-700 ease-out"
+                            :style="{ width: goalPct + '%', background: 'linear-gradient(90deg, oklch(0.57 0.17 35), oklch(0.65 0.18 20))' }"
+                        ></div>
                     </div>
-                </div>
+                    <div class="mt-2 text-[11px] text-muted-foreground">{{ weeklyGoal.target - weeklyGoal.progress }} posts to go</div>
+                </Card>
 
                 <!-- Quick actions -->
-                <div class="rounded-3xl border border-border/60 bg-card p-5 shadow-sm">
-                    <div class="text-xs uppercase tracking-wide text-muted-foreground mb-3">Quick actions</div>
+                <Card class="rounded-3xl border-border/60 gap-0 p-5 transition-all duration-200 hover:shadow-md">
+                    <div class="text-[11px] uppercase tracking-widest text-muted-foreground font-medium mb-3">Quick actions</div>
                     <div class="flex flex-col gap-2">
-                        <Link
-                            href="/feed"
-                            class="inline-flex items-center gap-2 rounded-2xl bg-ink px-4 py-2.5 text-sm font-medium text-paper hover:opacity-90 transition-opacity"
-                        >
-                            <Pencil class="size-4" /> Write a post
-                        </Link>
-                        <Link
-                            href="/posts/mine"
-                            class="inline-flex items-center gap-2 rounded-2xl border border-border px-4 py-2.5 text-sm font-medium hover:bg-secondary transition-colors"
-                        >
-                            <Send class="size-4" /> My posts
-                        </Link>
+                        <Button as-child class="rounded-2xl bg-ink text-paper hover:bg-ink/85 justify-start gap-2 h-10 transition-all duration-150 hover:shadow-sm">
+                            <Link href="/feed">
+                                <Pencil class="size-4" /> Write a post
+                            </Link>
+                        </Button>
+                        <Button as-child variant="outline" class="rounded-2xl justify-start gap-2 h-10 transition-all duration-150 hover:bg-secondary/80">
+                            <Link href="/posts/mine">
+                                <Send class="size-4" /> My posts
+                            </Link>
+                        </Button>
                     </div>
-                </div>
+                </Card>
             </div>
         </section>
 
         <!-- Recent posts + recent activity -->
         <section class="grid gap-4 lg:grid-cols-2">
-            <div class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
-                <div class="mb-4 flex items-center justify-between">
-                    <div>
-                        <h3 class="text-lg font-semibold tracking-tight">My recent posts</h3>
-                        <p class="text-xs text-muted-foreground">latest published</p>
-                    </div>
-                    <Link href="/posts/mine" class="text-xs font-medium text-rust hover:underline">View all &rarr;</Link>
-                </div>
-                <ul v-if="myPosts.length" class="divide-y divide-border/60">
-                    <li v-for="p in myPosts" :key="p.uuid" class="flex items-start gap-3 py-3">
-                        <span class="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-xl bg-rust/10 text-rust">
-                            <Newspaper class="size-4" />
-                        </span>
-                        <div class="min-w-0 flex-1">
-                            <div class="flex items-center gap-2">
-                                <Link :href="`/posts/${p.uuid}`" class="truncate font-medium hover:text-rust transition-colors">
-                                    {{ truncate(p.body) }}
-                                </Link>
-                                <span
-                                    :class="[
-                                        'inline-flex shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium',
-                                        p.status === 'flagged' ? 'bg-rust/15 text-rust'
-                                        : p.status === 'hidden' ? 'bg-ink/10 text-ink'
-                                        : 'bg-moss/15 text-moss',
-                                    ]"
-                                >{{ p.status }}</span>
-                            </div>
-                            <div class="mt-0.5 flex items-center gap-3 text-[11px] text-muted-foreground">
-                                <span class="inline-flex items-center gap-1"><Heart class="size-3" /> {{ p.likes_count }}</span>
-                                <span class="inline-flex items-center gap-1"><MessageSquare class="size-3" /> {{ p.comments_count }}</span>
-                            </div>
+            <Card class="rounded-3xl border-border/60 gap-0 transition-all duration-200 hover:shadow-md">
+                <CardHeader class="px-6 pt-6 pb-0">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <CardTitle class="text-base">My recent posts</CardTitle>
+                            <p class="text-xs text-muted-foreground mt-0.5">latest published</p>
                         </div>
-                        <span class="shrink-0 text-[11px] text-muted-foreground">{{ timeAgo(p.created_at) }}</span>
-                    </li>
-                </ul>
-                <div v-else class="rounded-2xl bg-secondary/50 py-10 text-center text-sm text-muted-foreground">
-                    You haven't posted yet.
-                    <Link href="/feed" class="font-medium text-rust hover:underline">Write your first →</Link>
-                </div>
-            </div>
+                        <Link href="/posts/mine" class="text-xs font-medium text-rust hover:text-rust/80 transition-colors">View all &rarr;</Link>
+                    </div>
+                </CardHeader>
+                <CardContent class="px-6 pb-6 pt-3">
+                    <ul v-if="myPosts.length" class="space-y-0.5">
+                        <li
+                            v-for="p in myPosts"
+                            :key="p.uuid"
+                            class="group/item flex items-start gap-3 rounded-2xl px-3 py-2.5 -mx-3 transition-colors duration-150 hover:bg-secondary/50"
+                        >
+                            <span class="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-xl bg-rust/10 text-rust transition-colors group-hover/item:bg-rust/20">
+                                <Newspaper class="size-4" />
+                            </span>
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-2">
+                                    <Link :href="`/posts/${p.uuid}`" class="truncate text-sm font-medium hover:text-rust transition-colors">
+                                        {{ truncate(p.body) }}
+                                    </Link>
+                                    <Badge
+                                        :class="[
+                                            'shrink-0 rounded-full border-0 px-2 py-0.5 text-[10px] font-medium',
+                                            p.status === 'flagged' ? 'bg-rust/15 text-rust'
+                                            : p.status === 'hidden' ? 'bg-ink/10 text-ink'
+                                            : 'bg-moss/15 text-moss',
+                                        ]"
+                                    >{{ p.status }}</Badge>
+                                </div>
+                                <div class="mt-1 flex items-center gap-3 text-[11px] text-muted-foreground">
+                                    <span class="inline-flex items-center gap-1"><Heart class="size-3" /> {{ p.likes_count }}</span>
+                                    <span class="inline-flex items-center gap-1"><MessageSquare class="size-3" /> {{ p.comments_count }}</span>
+                                    <span class="ml-auto">{{ timeAgo(p.created_at) }}</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div v-else class="rounded-2xl bg-secondary/50 py-10 text-center text-sm text-muted-foreground">
+                        You haven't posted yet. &nbsp;
+                        <Link href="/feed" class="font-medium text-rust hover:underline">Write your first →</Link>
+                    </div>
+                </CardContent>
+            </Card>
 
-            <div class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
-                <div class="mb-4 flex items-center justify-between">
+            <Card class="rounded-3xl border-border/60 gap-0 transition-all duration-200 hover:shadow-md">
+                <CardHeader class="px-6 pt-6 pb-0">
                     <div>
-                        <h3 class="text-lg font-semibold tracking-tight">Recent activity</h3>
-                        <p class="text-xs text-muted-foreground">comments on your posts</p>
+                        <CardTitle class="text-base">Recent activity</CardTitle>
+                        <p class="text-xs text-muted-foreground mt-0.5">comments on your posts</p>
                     </div>
-                </div>
-                <ul v-if="recentActivity.length" class="divide-y divide-border/60">
-                    <li v-for="a in recentActivity" :key="a.uuid" class="flex items-start gap-3 py-3">
-                        <span class="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-xl bg-secondary text-ink">
-                            <MessageSquare class="size-4" />
-                        </span>
-                        <div class="min-w-0 flex-1">
-                            <div class="font-medium truncate">{{ truncate(a.body, 50) }}</div>
-                            <div class="text-xs text-muted-foreground">{{ a.user?.name ?? 'unknown' }}</div>
-                        </div>
-                        <span class="shrink-0 text-[11px] text-muted-foreground">{{ timeAgo(a.created_at) }}</span>
-                    </li>
-                </ul>
-                <div v-else class="rounded-2xl bg-secondary/50 py-10 text-center text-sm text-muted-foreground">
-                    No activity on your posts yet.
-                </div>
-            </div>
+                </CardHeader>
+                <CardContent class="px-6 pb-6 pt-3">
+                    <ul v-if="recentActivity.length" class="space-y-0.5">
+                        <li
+                            v-for="a in recentActivity"
+                            :key="a.uuid"
+                            class="group/item flex items-start gap-3 rounded-2xl px-3 py-2.5 -mx-3 transition-colors duration-150 hover:bg-secondary/50"
+                        >
+                            <span class="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-xl bg-secondary text-ink transition-colors group-hover/item:bg-secondary/80">
+                                <MessageSquare class="size-4" />
+                            </span>
+                            <div class="min-w-0 flex-1">
+                                <div class="text-sm font-medium truncate">{{ truncate(a.body, 50) }}</div>
+                                <div class="mt-0.5 flex items-center gap-2 text-[11px] text-muted-foreground">
+                                    <span>{{ a.user?.name ?? 'unknown' }}</span>
+                                    <span class="ml-auto">{{ timeAgo(a.created_at) }}</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div v-else class="rounded-2xl bg-secondary/50 py-10 text-center text-sm text-muted-foreground">
+                        No activity on your posts yet.
+                    </div>
+                </CardContent>
+            </Card>
         </section>
     </AppLayout>
 </template>
 
 <script setup>
 import AppLayout from '@/layouts/app-layout.vue';
+import Card from '@/components/ui/Card.vue';
+import CardHeader from '@/components/ui/CardHeader.vue';
+import CardTitle from '@/components/ui/CardTitle.vue';
+import CardContent from '@/components/ui/CardContent.vue';
+import Badge from '@/components/ui/Badge.vue';
+import { Button } from '@/components/ui/button';
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import {
     BarController,
@@ -284,16 +312,16 @@ const chartData = computed(() => ({
             label: 'Posts',
             data: props.engagementSeries.map((d) => d.posts),
             backgroundColor: 'oklch(0.22 0.012 60)',
-            borderRadius: 6,
-            barPercentage: 0.7,
+            borderRadius: 8,
+            barPercentage: 0.65,
             categoryPercentage: 0.7,
         },
         {
             label: 'Reactions',
             data: props.engagementSeries.map((d) => d.reactions),
             backgroundColor: 'oklch(0.57 0.17 35)',
-            borderRadius: 6,
-            barPercentage: 0.7,
+            borderRadius: 8,
+            barPercentage: 0.65,
             categoryPercentage: 0.7,
         },
     ],
@@ -307,8 +335,8 @@ const chartOptions = {
             position: 'top',
             align: 'end',
             labels: {
-                boxWidth: 10,
-                boxHeight: 10,
+                boxWidth: 8,
+                boxHeight: 8,
                 usePointStyle: true,
                 pointStyle: 'circle',
                 padding: 16,
@@ -316,15 +344,24 @@ const chartOptions = {
                 font: { size: 11 },
             },
         },
-        tooltip: { intersect: false, mode: 'index' },
+        tooltip: {
+            intersect: false,
+            mode: 'index',
+            padding: 10,
+            cornerRadius: 10,
+            titleFont: { size: 12 },
+            bodyFont: { size: 11 },
+        },
     },
     scales: {
         x: {
-            grid: { display: false, drawBorder: false },
+            grid: { display: false },
+            border: { display: false },
             ticks: { color: 'oklch(0.5 0.018 65)', font: { size: 10 } },
         },
         y: {
-            grid: { color: 'oklch(0.82 0.02 75 / 0.4)', drawBorder: false },
+            grid: { color: 'oklch(0.82 0.02 75 / 0.35)' },
+            border: { display: false, dash: [4, 4] },
             ticks: { color: 'oklch(0.5 0.018 65)', font: { size: 10 } },
         },
     },
