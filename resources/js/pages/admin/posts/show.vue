@@ -25,7 +25,7 @@
 
     <AdminLayout>
         <div class="flex items-center justify-between">
-            <Link href="/admin/posts" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
+            <Link href="/admin/posts" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-moss">
                 <ArrowLeft class="size-4" /> Back to posts
             </Link>
             <Button as-child variant="outline" class="rounded-full">
@@ -38,11 +38,11 @@
         <Card class="rounded-3xl border-border/60 gap-0 p-6">
             <header class="mb-4 flex flex-wrap items-start justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <span class="flex size-12 items-center justify-center rounded-full bg-ink text-sm font-semibold text-paper">
+                    <span class="flex size-12 items-center justify-center rounded-full bg-forest text-sm font-semibold text-paper">
                         {{ initials(post.user?.name) }}
                     </span>
                     <div>
-                        <Link v-if="post.user" :href="`/admin/users/${post.user.uuid}`" class="font-medium hover:text-rust">
+                        <Link v-if="post.user" :href="`/admin/users/${post.user.uuid}`" class="font-medium hover:text-moss">
                             {{ post.user.name }}
                         </Link>
                         <div class="text-xs text-muted-foreground">{{ dateFmt(post.created_at) }}</div>
@@ -80,7 +80,7 @@
                 </Button>
                 <Button
                     :disabled="post.status === 'hidden'"
-                    class="rounded-full bg-ink text-paper hover:bg-ink/90"
+                    class="rounded-full bg-secondary text-foreground hover:bg-secondary/80"
                     @click="setStatus('hidden')"
                 >
                     <EyeOff class="size-4" /> Hide
@@ -104,7 +104,7 @@
                     <li v-for="r in post.reports" :key="r.uuid" class="flex items-start justify-between gap-3 py-3 text-sm">
                         <div>
                             <div class="font-medium">
-                                <Link :href="`/admin/reports/${r.uuid}`" class="hover:text-rust">{{ r.reason }}</Link>
+                                <Link :href="`/admin/reports/${r.uuid}`" class="hover:text-moss">{{ r.reason }}</Link>
                             </div>
                             <div class="text-xs text-muted-foreground">
                                 by {{ r.reporter?.name ?? 'unknown' }} · {{ dateFmt(r.created_at) }}

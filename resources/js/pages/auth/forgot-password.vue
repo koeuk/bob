@@ -1,7 +1,9 @@
 <template>
     <AuthLayout title="Forgot password" description="Enter your email to receive a password reset link">
         <Head title="Forgot password" />
-        <div v-if="status" class="mb-4 text-center text-sm text-green-600">{{ status }}</div>
+        <div v-if="status" class="mb-4 flex items-center justify-center gap-1.5 text-sm font-medium text-moss">
+            <span class="size-1.5 rounded-full bg-moss"></span>{{ status }}
+        </div>
         <form class="flex flex-col gap-6" @submit.prevent="submit">
             <div class="grid gap-2">
                 <Label for="email">Email</Label>

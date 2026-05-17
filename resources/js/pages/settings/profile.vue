@@ -48,7 +48,7 @@
                     <div v-if="mustVerifyEmail && !user.email_verified_at" class="text-sm">
                         Your email is unverified.
                         <Link href="/email/verification-notification" method="post" as="button" class="text-primary underline">Resend verification email</Link>
-                        <span v-if="status === 'verification-link-sent'" class="ml-2 text-green-600">Sent.</span>
+                        <span v-if="status === 'verification-link-sent'" class="ml-2 text-moss">Sent.</span>
                     </div>
 
                     <div class="flex items-center gap-3">

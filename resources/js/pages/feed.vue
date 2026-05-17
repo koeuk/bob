@@ -9,7 +9,7 @@
         <!-- Composer -->
         <form class="rounded-3xl border border-border/60 bg-card p-5 shadow-sm" @submit.prevent="submitPost">
             <div class="flex gap-3">
-                <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-ink text-sm font-semibold text-paper">
+                <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-forest text-sm font-semibold text-paper">
                     {{ initials(me?.name) }}
                 </span>
                 <div class="flex-1">
@@ -25,7 +25,7 @@
                         <span class="text-[11px] text-muted-foreground">{{ composer.body.length }}/10000</span>
                         <button
                             type="submit"
-                            class="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40"
+                            class="inline-flex items-center gap-2 rounded-full bg-moss px-4 py-2 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40"
                             :disabled="!composer.body.trim() || composer.processing"
                         >
                             <Send class="size-4" /> Post
@@ -53,7 +53,7 @@
                         </div>
                     </div>
                     <button
-                        class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-rust"
+                        class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-moss"
                         title="Report this post"
                         @click="openReport(p)"
                     >
@@ -62,7 +62,7 @@
                 </header>
 
                 <Link :href="`/posts/${p.uuid}`" class="mt-3 block">
-                    <p class="whitespace-pre-wrap text-[15px] leading-relaxed hover:text-rust">{{ truncate(p.body) }}</p>
+                    <p class="whitespace-pre-wrap text-[15px] leading-relaxed hover:text-moss">{{ truncate(p.body) }}</p>
                 </Link>
 
                 <footer class="mt-4 flex items-center gap-1 text-sm">
@@ -106,7 +106,7 @@
                     v-html="link.label"
                     :class="[
                         'inline-flex min-w-8 items-center justify-center rounded-full px-2.5 py-1 text-xs',
-                        link.active ? 'bg-ink text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
+                        link.active ? 'bg-moss text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
                     ]"
                     preserve-scroll
                     preserve-state
@@ -137,7 +137,7 @@
                             </button>
                             <button
                                 type="submit"
-                                class="rounded-full bg-rust px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
+                                class="rounded-full bg-moss px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
                                 :disabled="reportForm.processing"
                             >
                                 Submit report

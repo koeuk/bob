@@ -13,7 +13,7 @@
                     :key="r.uuid"
                     class="flex items-start gap-4 px-6 py-4"
                 >
-                    <span class="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-2xl bg-rust/10 text-rust">
+                    <span class="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-2xl bg-moss/10 text-moss">
                         <Flag class="size-5" />
                     </span>
                     <div class="min-w-0 flex-1">
@@ -52,7 +52,7 @@
                         v-html="link.label"
                         :class="[
                             'inline-flex min-w-8 items-center justify-center rounded-full px-2.5 py-1 text-xs',
-                            link.active ? 'bg-ink text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
+                            link.active ? 'bg-moss text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
                         ]"
                         preserve-scroll
                         preserve-state

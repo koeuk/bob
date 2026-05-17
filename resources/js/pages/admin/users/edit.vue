@@ -1,7 +1,7 @@
 <template>
     <Head :title="isNew ? 'New user' : `Edit · ${user.name}`" />
     <AdminLayout>
-        <Link :href="isNew ? '/admin/users' : `/admin/users/${user.uuid}`" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink transition-colors">
+        <Link :href="isNew ? '/admin/users' : `/admin/users/${user.uuid}`" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-moss transition-colors">
             <ArrowLeft class="size-4" /> {{ isNew ? 'Back to users' : `Back to ${user.name}` }}
         </Link>
 
@@ -18,7 +18,7 @@
                     <!-- Avatar -->
                     <div class="flex items-center gap-5">
                         <div class="relative size-16 shrink-0">
-                            <div class="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-ink text-base font-semibold text-paper">
+                            <div class="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-forest text-base font-semibold text-paper">
                                 <img v-if="avatarPreview" :src="avatarPreview" class="size-16 object-cover" alt="" />
                                 <template v-else>{{ initials(createForm.name) }}</template>
                             </div>
@@ -88,7 +88,7 @@
                     </div>
 
                     <div class="flex justify-end pt-2">
-                        <Button type="submit" :disabled="createForm.processing" class="rounded-full bg-ink text-paper hover:bg-ink/90">
+                        <Button type="submit" :disabled="createForm.processing" class="rounded-full bg-moss text-paper hover:bg-moss/90">
                             <Save class="size-4" /> Create user
                         </Button>
                     </div>
@@ -106,8 +106,8 @@
                             <button
                                 class="flex items-center gap-2.5 rounded-2xl px-3 py-2 transition-all duration-200"
                                 :class="currentStep === s.key
-                                    ? 'bg-ink text-paper shadow-sm'
-                                    : 'text-muted-foreground hover:text-ink hover:bg-secondary/60'"
+                                    ? 'bg-moss text-paper shadow-sm'
+                                    : 'text-muted-foreground hover:text-moss hover:bg-secondary/60'"
                                 @click="currentStep = s.key"
                             >
                                 <span
@@ -131,7 +131,7 @@
                     <form v-if="currentStep === 'profile'" class="space-y-5" @submit.prevent="submitProfile">
                         <div class="flex items-start gap-5">
                             <div class="relative size-16 shrink-0">
-                                <div class="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-ink text-base font-semibold text-paper">
+                                <div class="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-forest text-base font-semibold text-paper">
                                     <img v-if="avatarPreview" :src="avatarPreview" class="size-16 object-cover" alt="" />
                                     <template v-else>{{ initials(profileForm.name || user.name) }}</template>
                                 </div>
@@ -166,7 +166,7 @@
                             </p>
                             <span v-else />
                             <div class="flex items-center gap-2">
-                                <Button type="submit" :disabled="profileForm.processing || !profileForm.isDirty" class="rounded-full bg-ink text-paper hover:bg-ink/90">
+                                <Button type="submit" :disabled="profileForm.processing || !profileForm.isDirty" class="rounded-full bg-moss text-paper hover:bg-moss/90">
                                     <Save class="size-4" /> Save profile
                                 </Button>
                                 <Button type="button" variant="outline" class="rounded-full" @click="goNext">
@@ -196,7 +196,7 @@
                                 <Button type="button" variant="outline" class="rounded-full" @click="goPrev">
                                     <ChevronLeft class="size-4" /> Back
                                 </Button>
-                                <Button type="submit" :disabled="securityForm.processing || !securityForm.password" class="rounded-full bg-ink text-paper hover:bg-ink/90">
+                                <Button type="submit" :disabled="securityForm.processing || !securityForm.password" class="rounded-full bg-moss text-paper hover:bg-moss/90">
                                     <Save class="size-4" /> Update password
                                 </Button>
                                 <Button v-if="canAssignRole" type="button" variant="outline" class="rounded-full" @click="goNext">
@@ -217,15 +217,15 @@
                                     :class="[
                                         'relative flex cursor-pointer flex-col gap-1.5 rounded-2xl border-2 p-4 transition-all duration-150',
                                         roleForm.role === r.value
-                                            ? 'border-ink bg-ink/5'
+                                            ? 'border-moss bg-moss/5'
                                             : 'border-border/60 bg-secondary/30 hover:border-border hover:bg-secondary/60',
                                     ]"
                                 >
                                     <input type="radio" :value="r.value" v-model="roleForm.role" class="sr-only" />
-                                    <component :is="r.icon" class="size-5" :class="roleForm.role === r.value ? 'text-ink' : 'text-muted-foreground'" />
-                                    <span class="text-sm font-semibold" :class="roleForm.role === r.value ? 'text-ink' : 'text-ink/70'">{{ r.label }}</span>
+                                    <component :is="r.icon" class="size-5" :class="roleForm.role === r.value ? 'text-moss' : 'text-muted-foreground'" />
+                                    <span class="text-sm font-semibold" :class="roleForm.role === r.value ? 'text-moss' : 'text-ink/70'">{{ r.label }}</span>
                                     <span class="text-[11px] text-muted-foreground leading-snug">{{ r.desc }}</span>
-                                    <span v-if="roleForm.role === r.value" class="absolute right-3 top-3 flex size-4 items-center justify-center rounded-full bg-ink">
+                                    <span v-if="roleForm.role === r.value" class="absolute right-3 top-3 flex size-4 items-center justify-center rounded-full bg-moss">
                                         <CheckIcon class="size-2.5 text-paper" />
                                     </span>
                                 </label>
@@ -242,7 +242,7 @@
                                 <Button type="button" variant="outline" class="rounded-full" @click="goPrev">
                                     <ChevronLeft class="size-4" /> Back
                                 </Button>
-                                <Button type="submit" :disabled="roleForm.processing || roleForm.role === user.role" class="rounded-full bg-ink text-paper hover:bg-ink/90">
+                                <Button type="submit" :disabled="roleForm.processing || roleForm.role === user.role" class="rounded-full bg-moss text-paper hover:bg-moss/90">
                                     <Save class="size-4" /> Save role
                                 </Button>
                             </div>

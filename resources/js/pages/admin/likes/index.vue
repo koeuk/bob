@@ -55,7 +55,7 @@
                     <Link
                         v-if="l.user"
                         :href="`/admin/users/${l.user.uuid}`"
-                        class="truncate font-medium hover:text-rust"
+                        class="truncate font-medium hover:text-moss"
                     >{{ l.user.name }}</Link>
                     <span v-else class="truncate text-muted-foreground">deleted user</span>
                     <span>
@@ -91,7 +91,7 @@
                         v-html="link.label"
                         :class="[
                             'inline-flex min-w-8 items-center justify-center rounded-full px-2.5 py-1 text-xs',
-                            link.active ? 'bg-ink text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
+                            link.active ? 'bg-moss text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
                         ]"
                         preserve-scroll
                         preserve-state

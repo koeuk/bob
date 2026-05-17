@@ -58,7 +58,7 @@
 
     <AdminLayout title="Users">
         <div class="flex justify-end">
-            <Button as-child class="rounded-full bg-ink text-paper hover:bg-ink/90">
+            <Button as-child class="rounded-full bg-moss text-paper hover:bg-moss/90">
                 <Link href="/admin/users/create">
                     <Plus class="size-4" /> New user
                 </Link>
@@ -109,10 +109,10 @@
                     </PopoverContent>
                 </Popover>
                 <label class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full bg-secondary/60 px-4 text-sm hover:bg-secondary">
-                    <input v-model="bannedOnly" type="checkbox" class="accent-rust" @change="applyFilters" />
+                    <input v-model="bannedOnly" type="checkbox" class="accent-moss" @change="applyFilters" />
                     Banned only
                 </label>
-                <Button class="rounded-full bg-ink text-paper hover:bg-ink/90" @click="applyFilters">
+                <Button class="rounded-full bg-moss text-paper hover:bg-moss/90" @click="applyFilters">
                     <Filter class="size-4" /> Apply
                 </Button>
             </div>
@@ -136,13 +136,13 @@
                     class="grid grid-cols-[1.8fr_1fr_0.8fr_0.6fr_0.8fr_2.5rem] items-center gap-4 px-6 py-3 text-sm"
                 >
                     <div class="flex min-w-0 items-center gap-3">
-                        <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-ink text-xs font-semibold text-paper overflow-hidden">
+                        <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-forest text-xs font-semibold text-paper overflow-hidden">
                             <img v-if="u.avatar" :src="`/storage/${u.avatar}`" :alt="u.name" class="size-9 object-cover" />
                             <template v-else>{{ initials(u.name) }}</template>
                         </span>
                         <div class="min-w-0">
                             <div class="flex items-center gap-2">
-                                <Link :href="`/admin/users/${u.uuid}`" class="truncate font-medium hover:text-rust">{{ u.name }}</Link>
+                                <Link :href="`/admin/users/${u.uuid}`" class="truncate font-medium hover:text-moss">{{ u.name }}</Link>
                                 <Badge v-if="isBanned(u)" class="rounded-full border-0 bg-rust/15 text-rust inline-flex items-center gap-1">
                                     <ShieldBan class="size-3" /> banned
                                 </Badge>
@@ -160,7 +160,7 @@
                     <div class="text-muted-foreground">{{ dateFmt(u.created_at) }}</div>
                     <div class="relative flex justify-end">
                         <button
-                            class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-ink"
+                            class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
                             @click="toggleRow(u.uuid)"
                         >
                             <MoreHorizontal class="size-4" />
@@ -212,7 +212,7 @@
                         v-html="link.label"
                         :class="[
                             'inline-flex min-w-8 items-center justify-center rounded-full px-2.5 py-1 text-xs',
-                            link.active ? 'bg-ink text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
+                            link.active ? 'bg-moss text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
                         ]"
                         preserve-scroll
                         preserve-state

@@ -1,7 +1,7 @@
 <template>
     <Head :title="isNew ? 'New page' : page.title" />
     <AdminLayout>
-        <Link href="/admin/pages" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
+        <Link href="/admin/pages" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-moss">
             <ArrowLeft class="size-4" /> Back to pages
         </Link>
 
@@ -43,7 +43,7 @@
                     </Popover>
                     <Button
                         type="submit"
-                        class="rounded-full bg-ink text-paper hover:bg-ink/90"
+                        class="rounded-full bg-moss text-paper hover:bg-moss/90"
                         :disabled="form.processing"
                     >
                         <Save class="size-4" /> {{ isNew ? 'Create' : 'Save' }}

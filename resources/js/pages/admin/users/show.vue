@@ -21,7 +21,7 @@
     </Dialog>
 
     <AdminLayout>
-        <Link href="/admin/users" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink transition-colors">
+        <Link href="/admin/users" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-moss transition-colors">
             <ArrowLeft class="size-4" /> Back to users
         </Link>
 
@@ -31,7 +31,7 @@
                 <div class="flex items-center gap-5">
                     <div class="relative size-20 shrink-0">
                         <img v-if="user.avatar" :src="`/storage/${user.avatar}`" :alt="user.name" class="size-20 rounded-2xl object-cover" />
-                        <span v-else class="flex size-20 items-center justify-center rounded-2xl bg-ink font-sans text-2xl font-semibold text-paper">
+                        <span v-else class="flex size-20 items-center justify-center rounded-2xl bg-forest font-sans text-2xl font-semibold text-paper">
                             {{ initials(user.name) }}
                         </span>
                     </div>
@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
-                    <Button as-child class="rounded-full bg-ink text-paper hover:bg-ink/90">
+                    <Button as-child class="rounded-full bg-moss text-paper hover:bg-moss/90">
                         <Link :href="`/admin/users/${user.uuid}/edit`">
                             <Pencil class="size-4" /> Edit
                         </Link>
@@ -131,7 +131,7 @@
                         <li v-for="r in reportsAgainst" :key="r.uuid" class="flex items-start gap-3 py-3 text-sm">
                             <div class="flex-1">
                                 <div class="font-medium">
-                                    <Link :href="`/admin/reports/${r.uuid}`" class="hover:text-rust transition-colors">{{ r.reason }}</Link>
+                                    <Link :href="`/admin/reports/${r.uuid}`" class="hover:text-moss transition-colors">{{ r.reason }}</Link>
                                 </div>
                                 <div class="text-xs text-muted-foreground">filed by {{ r.reporter?.name ?? 'unknown' }} · {{ dateFmt(r.created_at) }}</div>
                             </div>

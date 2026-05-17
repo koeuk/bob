@@ -16,7 +16,7 @@
             <!-- Hero: posts this week -->
             <Link
                 href="/posts/mine"
-                class="group relative overflow-hidden rounded-3xl bg-rust p-6 text-paper shadow-sm transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+                class="group relative overflow-hidden rounded-3xl bg-forest p-6 text-paper shadow-sm shadow-forest/30 transition-all duration-200 hover:shadow-lg hover:shadow-forest/25 hover:-translate-y-0.5 animate-reveal"
             >
                 <div class="flex items-center justify-between">
                     <span class="inline-flex size-10 items-center justify-center rounded-2xl bg-paper/20 backdrop-blur-sm">
@@ -94,12 +94,12 @@
                             {{ weeklyGoal.progress }}
                         </span>
                         <span class="text-muted-foreground text-xl font-medium">/{{ weeklyGoal.target }}</span>
-                        <span class="ml-auto font-sans text-base font-semibold text-rust">{{ goalPct }}%</span>
+                        <span class="ml-auto font-sans text-base font-semibold text-moss">{{ goalPct }}%</span>
                     </div>
                     <div class="mt-3 h-1.5 overflow-hidden rounded-full bg-secondary">
                         <div
                             class="h-full rounded-full transition-all duration-700 ease-out"
-                            :style="{ width: goalPct + '%', background: 'linear-gradient(90deg, oklch(0.57 0.17 35), oklch(0.65 0.18 20))' }"
+                            :style="{ width: goalPct + '%', background: 'linear-gradient(90deg, var(--forest), var(--moss))' }"
                         ></div>
                     </div>
                     <div class="mt-2 text-[11px] text-muted-foreground">{{ weeklyGoal.target - weeklyGoal.progress }} posts to go</div>
@@ -109,7 +109,7 @@
                 <Card class="rounded-3xl border-border/60 gap-0 p-5 transition-all duration-200 hover:shadow-md">
                     <div class="text-[11px] uppercase tracking-widest text-muted-foreground font-medium mb-3">Quick actions</div>
                     <div class="flex flex-col gap-2">
-                        <Button as-child class="rounded-2xl bg-ink text-paper hover:bg-ink/85 justify-start gap-2 h-10 transition-all duration-150 hover:shadow-sm">
+                        <Button as-child class="rounded-2xl bg-moss text-paper hover:bg-moss/90 justify-start gap-2 h-10 transition-all duration-150 hover:shadow-sm hover:shadow-moss/20">
                             <Link href="/feed">
                                 <Pencil class="size-4" /> Write a post
                             </Link>
@@ -133,7 +133,7 @@
                             <CardTitle class="text-base">My recent posts</CardTitle>
                             <p class="text-xs text-muted-foreground mt-0.5">latest published</p>
                         </div>
-                        <Link href="/posts/mine" class="text-xs font-medium text-rust hover:text-rust/80 transition-colors">View all &rarr;</Link>
+                        <Link href="/posts/mine" class="text-xs font-medium text-moss hover:text-moss/80 transition-colors">View all &rarr;</Link>
                     </div>
                 </CardHeader>
                 <CardContent class="px-6 pb-6 pt-3">
@@ -143,12 +143,12 @@
                             :key="p.uuid"
                             class="group/item flex items-start gap-3 rounded-2xl px-3 py-2.5 -mx-3 transition-colors duration-150 hover:bg-secondary/50"
                         >
-                            <span class="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-xl bg-rust/10 text-rust transition-colors group-hover/item:bg-rust/20">
+                            <span class="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-xl bg-moss/10 text-moss transition-colors group-hover/item:bg-moss/20">
                                 <Newspaper class="size-4" />
                             </span>
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-2">
-                                    <Link :href="`/posts/${p.uuid}`" class="truncate text-sm font-medium hover:text-rust transition-colors">
+                                    <Link :href="`/posts/${p.uuid}`" class="truncate text-sm font-medium hover:text-moss transition-colors">
                                         {{ truncate(p.body) }}
                                     </Link>
                                     <Badge
@@ -311,7 +311,7 @@ const chartData = computed(() => ({
         {
             label: 'Posts',
             data: props.engagementSeries.map((d) => d.posts),
-            backgroundColor: 'oklch(0.22 0.012 60)',
+            backgroundColor: 'oklch(0.26 0.11 147)',
             borderRadius: 8,
             barPercentage: 0.65,
             categoryPercentage: 0.7,

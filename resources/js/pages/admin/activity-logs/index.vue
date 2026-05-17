@@ -19,7 +19,7 @@
         <div class="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
             <ul v-if="logs.data.length" class="divide-y divide-border/60">
                 <li v-for="log in logs.data" :key="log.uuid" class="flex items-start gap-4 px-6 py-3">
-                    <span class="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-ink text-[11px] font-semibold text-paper">
+                    <span class="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-forest text-[11px] font-semibold text-paper">
                         {{ initials(log.admin?.name) }}
                     </span>
                     <div class="min-w-0 flex-1">
@@ -54,7 +54,7 @@
                         v-html="link.label"
                         :class="[
                             'inline-flex min-w-8 items-center justify-center rounded-full px-2.5 py-1 text-xs',
-                            link.active ? 'bg-ink text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
+                            link.active ? 'bg-moss text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
                         ]"
                         preserve-scroll
                         preserve-state

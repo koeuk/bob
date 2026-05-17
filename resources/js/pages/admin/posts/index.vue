@@ -2,7 +2,7 @@
     <Head title="Posts" />
     <AdminLayout title="Posts">
         <div class="flex justify-end">
-            <Button as-child class="rounded-full bg-ink text-paper hover:bg-ink/90">
+            <Button as-child class="rounded-full bg-moss text-paper hover:bg-moss/90">
                 <Link href="/admin/posts/create">
                     <Plus class="size-4" /> New post
                 </Link>
@@ -63,7 +63,7 @@
             >
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2.5">
-                        <span class="flex size-8 items-center justify-center rounded-full bg-ink text-[11px] font-semibold text-paper">
+                        <span class="flex size-8 items-center justify-center rounded-full bg-forest text-[11px] font-semibold text-paper">
                             {{ initials(p.user?.name) }}
                         </span>
                         <div>
@@ -73,7 +73,7 @@
                     </div>
                     <Badge :class="['rounded-full border-0', statusTone(p.status)]">{{ p.status }}</Badge>
                 </div>
-                <p class="text-sm leading-relaxed text-muted-foreground group-hover:text-ink">
+                <p class="text-sm leading-relaxed text-muted-foreground group-hover:text-moss">
                     {{ truncate(p.body) }}
                 </p>
                 <div class="flex items-center gap-5 pt-1 text-xs text-muted-foreground">
@@ -100,7 +100,7 @@
                     v-html="link.label"
                     :class="[
                         'inline-flex min-w-8 items-center justify-center rounded-full px-2.5 py-1 text-xs',
-                        link.active ? 'bg-ink text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
+                        link.active ? 'bg-moss text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
                     ]"
                     preserve-scroll
                     preserve-state

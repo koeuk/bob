@@ -1,7 +1,7 @@
 <template>
     <AuthLayout title="Verify email" description="Please verify your email address by clicking the link we just sent">
         <Head title="Verify email" />
-        <div v-if="status === 'verification-link-sent'" class="mb-4 text-sm text-green-600">
+        <div v-if="status === 'verification-link-sent'" class="mb-4 flex items-center gap-1.5 text-sm font-medium text-moss">
             A new verification link has been sent to your email.
         </div>
         <form class="flex flex-col gap-4" @submit.prevent="submit">

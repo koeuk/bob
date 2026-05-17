@@ -1,7 +1,7 @@
 <template>
     <Head :title="isNew ? 'New post' : 'Edit post'" />
     <AdminLayout>
-        <Link href="/admin/posts" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
+        <Link href="/admin/posts" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-moss">
             <ArrowLeft class="size-4" /> Back to posts
         </Link>
 
@@ -22,7 +22,7 @@
                     </Button>
                     <Button
                         type="submit"
-                        class="rounded-full bg-ink text-paper hover:bg-ink/90"
+                        class="rounded-full bg-moss text-paper hover:bg-moss/90"
                         :disabled="form.processing"
                     >
                         <Save class="size-4" /> {{ isNew ? 'Create' : 'Save' }}

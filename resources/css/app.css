@@ -18,6 +18,7 @@
     --color-paper: var(--paper);
     --color-ink: var(--ink);
     --color-moss: var(--moss);
+    --color-forest: var(--forest);
     --color-rust: var(--rust);
     --color-hairline: var(--hairline);
 
@@ -69,90 +70,99 @@
     --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* ─── Light mode ─────────────────────────────────────────────────────── */
 :root {
-    /* bob — editorial warm paper palette */
-    --paper: oklch(0.964 0.012 82);
-    --ink: oklch(0.188 0.012 60);
-    --moss: oklch(0.42 0.07 142);
-    --rust: oklch(0.57 0.17 35);
+    /* bob — warm paper + deep forest green */
+    --paper:    oklch(0.964 0.012 82);
+    --ink:      oklch(0.188 0.012 60);
+    --forest:   oklch(0.26 0.11 147);   /* deep brand green — logo, sidebar bg */
+    --moss:     oklch(0.38 0.14 145);   /* primary UI green — buttons, badges, links */
+    --rust:     oklch(0.57 0.17 35);
     --hairline: oklch(0.82 0.02 75);
 
-    --background: var(--paper);
-    --foreground: var(--ink);
-    --card: oklch(0.985 0.008 85);
-    --card-foreground: var(--ink);
-    --popover: oklch(0.98 0.01 82);
+    --background:         var(--paper);
+    --foreground:         var(--ink);
+    --card:               oklch(0.990 0.006 88);
+    --card-foreground:    var(--ink);
+    --popover:            oklch(0.98 0.01 82);
     --popover-foreground: var(--ink);
-    --primary: var(--moss);
+    --primary:            var(--moss);
     --primary-foreground: oklch(0.97 0.01 85);
-    --secondary: oklch(0.92 0.018 78);
+    --secondary:          oklch(0.92 0.018 78);
     --secondary-foreground: var(--ink);
-    --muted: oklch(0.93 0.015 80);
-    --muted-foreground: oklch(0.5 0.018 65);
-    --accent: var(--rust);
-    --accent-foreground: oklch(0.97 0.01 85);
-    --destructive: oklch(0.52 0.2 28);
+    --muted:              oklch(0.93 0.015 80);
+    --muted-foreground:   oklch(0.5 0.018 65);
+    --accent:             var(--rust);
+    --accent-foreground:  oklch(0.97 0.01 85);
+    --destructive:        oklch(0.52 0.2 28);
     --destructive-foreground: oklch(0.98 0.01 85);
-    --border: var(--hairline);
-    --input: oklch(0.85 0.018 78);
-    --ring: oklch(0.45 0.07 142);
-    --chart-1: var(--moss);
-    --chart-2: var(--rust);
-    --chart-3: oklch(0.7 0.08 85);
-    --chart-4: oklch(0.35 0.05 260);
-    --chart-5: oklch(0.65 0.12 200);
-    --radius: 0.75rem;
-    --sidebar: oklch(0.93 0.015 80);
-    --sidebar-foreground: var(--ink);
-    --sidebar-primary: var(--moss);
-    --sidebar-primary-foreground: oklch(0.97 0.01 85);
-    --sidebar-accent: oklch(0.92 0.018 78);
-    --sidebar-accent-foreground: var(--ink);
-    --sidebar-border: var(--hairline);
-    --sidebar-ring: var(--moss);
+    --border:             var(--hairline);
+    --input:              oklch(0.85 0.018 78);
+    --ring:               var(--moss);
+    --chart-1:            var(--moss);
+    --chart-2:            var(--rust);
+    --chart-3:            oklch(0.7 0.08 85);
+    --chart-4:            oklch(0.35 0.05 260);
+    --chart-5:            oklch(0.65 0.12 200);
+    --radius:             0.75rem;
+
+    /* Deep green sidebar */
+    --sidebar:                     oklch(0.22 0.10 147);
+    --sidebar-foreground:          oklch(0.88 0.05 145);
+    --sidebar-primary:             oklch(0.52 0.16 145);
+    --sidebar-primary-foreground:  oklch(0.97 0.01 85);
+    --sidebar-accent:              oklch(0.30 0.10 147);
+    --sidebar-accent-foreground:   oklch(0.92 0.04 145);
+    --sidebar-border:              oklch(0.32 0.09 147);
+    --sidebar-ring:                var(--moss);
 }
 
+/* ─── Dark mode ──────────────────────────────────────────────────────── */
 .dark {
-    --paper: oklch(0.155 0.008 52);
-    --ink: oklch(0.94 0.015 85);
-    --moss: oklch(0.74 0.12 138);
-    --rust: oklch(0.68 0.17 38);
+    --paper:    oklch(0.155 0.008 52);
+    --ink:      oklch(0.94 0.015 85);
+    --forest:   oklch(0.38 0.13 147);
+    --moss:     oklch(0.60 0.17 145);
+    --rust:     oklch(0.68 0.17 38);
     --hairline: oklch(0.28 0.012 55);
 
-    --background: var(--paper);
-    --foreground: var(--ink);
-    --card: oklch(0.19 0.01 52);
-    --card-foreground: var(--ink);
-    --popover: oklch(0.18 0.01 52);
+    --background:         var(--paper);
+    --foreground:         var(--ink);
+    --card:               oklch(0.19 0.01 52);
+    --card-foreground:    var(--ink);
+    --popover:            oklch(0.18 0.01 52);
     --popover-foreground: var(--ink);
-    --primary: var(--moss);
+    --primary:            var(--moss);
     --primary-foreground: oklch(0.155 0.008 52);
-    --secondary: oklch(0.24 0.01 55);
+    --secondary:          oklch(0.24 0.01 55);
     --secondary-foreground: var(--ink);
-    --muted: oklch(0.22 0.012 55);
-    --muted-foreground: oklch(0.68 0.02 72);
-    --accent: var(--rust);
-    --accent-foreground: oklch(0.97 0.01 85);
-    --destructive: oklch(0.55 0.2 28);
+    --muted:              oklch(0.22 0.012 55);
+    --muted-foreground:   oklch(0.68 0.02 72);
+    --accent:             var(--rust);
+    --accent-foreground:  oklch(0.97 0.01 85);
+    --destructive:        oklch(0.55 0.2 28);
     --destructive-foreground: oklch(0.98 0.01 85);
-    --border: var(--hairline);
-    --input: oklch(0.26 0.012 55);
-    --ring: var(--moss);
-    --chart-1: var(--moss);
-    --chart-2: var(--rust);
-    --chart-3: oklch(0.8 0.1 85);
-    --chart-4: oklch(0.6 0.1 260);
-    --chart-5: oklch(0.7 0.12 200);
-    --sidebar: oklch(0.17 0.01 52);
-    --sidebar-foreground: var(--ink);
-    --sidebar-primary: var(--moss);
-    --sidebar-primary-foreground: oklch(0.155 0.008 52);
-    --sidebar-accent: oklch(0.23 0.012 55);
-    --sidebar-accent-foreground: var(--ink);
-    --sidebar-border: var(--hairline);
-    --sidebar-ring: var(--moss);
+    --border:             var(--hairline);
+    --input:              oklch(0.26 0.012 55);
+    --ring:               var(--moss);
+    --chart-1:            var(--moss);
+    --chart-2:            var(--rust);
+    --chart-3:            oklch(0.8 0.1 85);
+    --chart-4:            oklch(0.6 0.1 260);
+    --chart-5:            oklch(0.7 0.12 200);
+
+    /* Deep green sidebar — dark */
+    --sidebar:                     oklch(0.17 0.08 147);
+    --sidebar-foreground:          oklch(0.84 0.06 145);
+    --sidebar-primary:             oklch(0.55 0.17 145);
+    --sidebar-primary-foreground:  oklch(0.97 0.01 85);
+    --sidebar-accent:              oklch(0.24 0.09 147);
+    --sidebar-accent-foreground:   oklch(0.90 0.05 145);
+    --sidebar-border:              oklch(0.26 0.09 147);
+    --sidebar-ring:                var(--moss);
 }
 
+/* ─── Base layer ─────────────────────────────────────────────────────── */
 @layer base {
     * {
         @apply border-border;
@@ -160,23 +170,25 @@
 
     html {
         font-feature-settings: 'ss01', 'ss02', 'cv11';
+        /* Enable smooth color transitions across the whole app */
+        --tw-transition-duration: 150ms;
     }
 
     body {
         @apply bg-background text-foreground;
         background-image:
-            radial-gradient(at 0% 0%, color-mix(in oklch, var(--rust) 4%, transparent) 0%, transparent 45%),
-            radial-gradient(at 100% 100%, color-mix(in oklch, var(--moss) 5%, transparent) 0%, transparent 55%);
+            radial-gradient(at 0% 0%,   color-mix(in oklch, var(--rust)   4%, transparent) 0%, transparent 45%),
+            radial-gradient(at 100% 100%, color-mix(in oklch, var(--forest) 7%, transparent) 0%, transparent 55%);
         background-attachment: fixed;
     }
 
     .dark body {
         background-image:
-            radial-gradient(at 0% 0%, color-mix(in oklch, var(--rust) 8%, transparent) 0%, transparent 45%),
-            radial-gradient(at 100% 100%, color-mix(in oklch, var(--moss) 10%, transparent) 0%, transparent 55%);
+            radial-gradient(at 0% 0%,   color-mix(in oklch, var(--rust)   8%, transparent) 0%, transparent 45%),
+            radial-gradient(at 100% 100%, color-mix(in oklch, var(--forest) 14%, transparent) 0%, transparent 55%);
     }
 
-    /* Tailwind v4 dropped the default cursor:pointer on buttons/links. Bring it back. */
+    /* Restore pointer cursor (Tailwind v4 dropped it) */
     button:not(:disabled),
     [role='button']:not([aria-disabled='true']),
     a[href],
@@ -189,7 +201,91 @@
     [aria-disabled='true'] {
         cursor: not-allowed;
     }
+
+    /* Subtle press feedback on all interactive buttons */
+    button:not(:disabled):active,
+    [role='button']:not([aria-disabled='true']):active {
+        transform: scale(0.97);
+        transition: transform 80ms ease;
+    }
+
+    /* Links inherit smooth color change */
+    a {
+        transition: color 150ms ease, opacity 150ms ease;
+    }
 }
+
+/* ─── Keyframes ──────────────────────────────────────────────────────── */
+
+@keyframes bob-reveal {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bob-slide-in {
+    from { opacity: 0; transform: translateX(-10px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes bob-scale-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes bob-underline {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
+
+@keyframes bob-shimmer {
+    from { background-position: -200% 0; }
+    to   { background-position:  200% 0; }
+}
+
+/* ─── Animation utilities ─────────────────────────────────────────────── */
+
+@utility animate-reveal {
+    animation: bob-reveal 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@utility animate-slide-in {
+    animation: bob-slide-in 0.30s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@utility animate-scale-in {
+    animation: bob-scale-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Stagger helpers — apply on list children */
+@utility stagger-1 { animation-delay:  60ms; }
+@utility stagger-2 { animation-delay: 110ms; }
+@utility stagger-3 { animation-delay: 160ms; }
+@utility stagger-4 { animation-delay: 210ms; }
+@utility stagger-5 { animation-delay: 260ms; }
+@utility stagger-6 { animation-delay: 310ms; }
+
+/* ─── Card utilities ─────────────────────────────────────────────────── */
+
+@utility card-hover {
+    transition: box-shadow 200ms ease, transform 200ms ease, border-color 200ms ease;
+    &:hover {
+        box-shadow:
+            0 0 0 1px color-mix(in oklch, var(--moss) 25%, transparent),
+            0 6px 24px color-mix(in oklch, var(--forest) 10%, transparent),
+            0 2px 6px  oklch(0 0 0 / 0.05);
+        transform: translateY(-2px);
+        border-color: color-mix(in oklch, var(--moss) 35%, transparent);
+    }
+}
+
+@utility card-active {
+    border-color: color-mix(in oklch, var(--moss) 40%, transparent);
+    box-shadow:
+        0 0 0 2px color-mix(in oklch, var(--moss) 20%, transparent),
+        0 4px 16px color-mix(in oklch, var(--forest) 12%, transparent);
+}
+
+/* ─── Typography utilities ──────────────────────────────────────────── */
 
 @utility font-serif {
     font-family: var(--font-serif);
@@ -201,19 +297,11 @@
     font-feature-settings: 'zero';
 }
 
-/* Editorial underline: thin ruled line w/ breathing room */
-@utility rule-t {
-    border-top: 1px solid var(--hairline);
-}
-@utility rule-b {
-    border-bottom: 1px solid var(--hairline);
-}
-@utility rule-l {
-    border-left: 1px solid var(--hairline);
-}
-@utility rule-r {
-    border-right: 1px solid var(--hairline);
-}
+/* Editorial hairline borders */
+@utility rule-t { border-top:    1px solid var(--hairline); }
+@utility rule-b { border-bottom: 1px solid var(--hairline); }
+@utility rule-l { border-left:   1px solid var(--hairline); }
+@utility rule-r { border-right:  1px solid var(--hairline); }
 
 /* Paper grain — subtle noise overlay */
 @utility grain {
@@ -223,19 +311,15 @@
         position: absolute;
         inset: 0;
         pointer-events: none;
-        opacity: 0.05;
+        opacity: 0.04;
         mix-blend-mode: multiply;
         background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
     }
 }
 
-/* Marquee-style display numbers */
-@keyframes bob-reveal {
-    from { opacity: 0; transform: translateY(6px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes bob-underline {
-    from { transform: scaleX(0); }
-    to { transform: scaleX(1); }
+/* Green glow ring — for stat highlights, active nav */
+@utility glow-green {
+    box-shadow:
+        0 0 0 1px color-mix(in oklch, var(--moss) 30%, transparent),
+        0 0 12px  color-mix(in oklch, var(--moss) 18%, transparent);
 }

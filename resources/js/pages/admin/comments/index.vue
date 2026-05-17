@@ -22,7 +22,7 @@
 
     <AdminLayout title="Comments">
         <div class="flex justify-end">
-            <Button class="rounded-full bg-ink text-paper hover:bg-ink/90" @click="openCreate">
+            <Button class="rounded-full bg-moss text-paper hover:bg-moss/90" @click="openCreate">
                 <Plus class="size-4" /> New comment
             </Button>
         </div>
@@ -52,7 +52,7 @@
                         <div class="flex items-center gap-2 text-sm">
                             <span class="font-medium">{{ c.user?.name ?? 'unknown' }}</span>
                             <span class="text-[11px] text-muted-foreground">{{ dateFmt(c.created_at) }}</span>
-                            <Link v-if="c.post" :href="`/admin/posts/${c.post.uuid}`" class="text-[11px] text-muted-foreground hover:text-rust">
+                            <Link v-if="c.post" :href="`/admin/posts/${c.post.uuid}`" class="text-[11px] text-muted-foreground hover:text-moss">
                                 on &ldquo;{{ truncate(c.post.body, 40) }}&rdquo;
                             </Link>
                         </div>
@@ -66,7 +66,7 @@
                     </div>
                     <div class="flex items-center gap-1">
                         <button
-                            class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-ink"
+                            class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-moss"
                             title="Edit"
                             @click="openEdit(c)"
                         >
@@ -96,7 +96,7 @@
                         v-html="link.label"
                         :class="[
                             'inline-flex min-w-8 items-center justify-center rounded-full px-2.5 py-1 text-xs',
-                            link.active ? 'bg-ink text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
+                            link.active ? 'bg-moss text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
                         ]"
                         preserve-scroll
                         preserve-state
@@ -117,7 +117,7 @@
                             <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Post</label>
                             <div v-if="selectedPost" class="flex items-center justify-between gap-3 rounded-2xl bg-secondary p-3">
                                 <p class="min-w-0 flex-1 truncate text-sm">{{ selectedPost.preview }}</p>
-                                <button type="button" class="text-xs text-muted-foreground hover:text-ink" @click="clearPost">Change</button>
+                                <button type="button" class="text-xs text-muted-foreground hover:text-foreground" @click="clearPost">Change</button>
                             </div>
                             <div v-else class="relative">
                                 <button
@@ -165,7 +165,7 @@
                             <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Author</label>
                             <div v-if="selectedAuthor" class="flex items-center justify-between rounded-2xl bg-secondary p-3">
                                 <div class="flex items-center gap-3">
-                                    <span class="flex size-9 items-center justify-center rounded-full bg-ink text-xs font-semibold text-paper">
+                                    <span class="flex size-9 items-center justify-center rounded-full bg-forest text-xs font-semibold text-paper">
                                         {{ initials(selectedAuthor.name) }}
                                     </span>
                                     <div class="min-w-0">
@@ -178,7 +178,7 @@
                                         <div class="truncate text-[11px] text-muted-foreground">{{ selectedAuthor.email }}</div>
                                     </div>
                                 </div>
-                                <button type="button" class="text-xs text-muted-foreground hover:text-ink" @click="clearAuthor">Change</button>
+                                <button type="button" class="text-xs text-muted-foreground hover:text-foreground" @click="clearAuthor">Change</button>
                             </div>
                             <div v-else class="relative">
                                 <button
@@ -210,7 +210,7 @@
                                             class="flex cursor-pointer items-center gap-3 px-3 py-2 hover:bg-secondary"
                                             @click="pickAuthor(a)"
                                         >
-                                            <span class="flex size-8 items-center justify-center rounded-full bg-ink text-[10px] font-semibold text-paper">
+                                            <span class="flex size-8 items-center justify-center rounded-full bg-forest text-[10px] font-semibold text-paper">
                                                 {{ initials(a.name) }}
                                             </span>
                                             <div class="min-w-0 flex-1">
@@ -243,7 +243,7 @@
                             <Button variant="outline" class="rounded-full" type="button" @click="showCreate = false">Cancel</Button>
                             <Button
                                 type="submit"
-                                class="rounded-full bg-ink text-paper hover:bg-ink/90"
+                                class="rounded-full bg-moss text-paper hover:bg-moss/90"
                                 :disabled="createForm.processing || !createForm.post_uuid || !createForm.body.trim()"
                             >
                                 Post comment
@@ -286,7 +286,7 @@
                             <Button variant="outline" class="rounded-full" type="button" @click="editTarget = null">
                                 Cancel
                             </Button>
-                            <Button type="submit" class="rounded-full bg-ink text-paper hover:bg-ink/90" :disabled="editForm.processing">
+                            <Button type="submit" class="rounded-full bg-moss text-paper hover:bg-moss/90" :disabled="editForm.processing">
                                 Save
                             </Button>
                         </div>

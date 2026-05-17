@@ -22,7 +22,7 @@
 
     <AdminLayout title="Pages">
         <div class="flex justify-end">
-            <Button as-child class="rounded-full bg-ink text-paper hover:bg-ink/90">
+            <Button as-child class="rounded-full bg-moss text-paper hover:bg-moss/90">
                 <Link href="/admin/pages/create">
                     <Plus class="size-4" /> New page
                 </Link>
@@ -41,7 +41,7 @@
                             <FileText class="size-5" />
                         </span>
                         <div class="min-w-0">
-                            <Link :href="`/admin/pages/${p.uuid}/edit`" class="truncate font-medium hover:text-rust">
+                            <Link :href="`/admin/pages/${p.uuid}/edit`" class="truncate font-medium hover:text-moss">
                                 {{ p.title }}
                             </Link>
                             <div class="truncate text-xs text-muted-foreground">/{{ p.slug }}</div>

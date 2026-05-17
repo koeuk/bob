@@ -34,7 +34,7 @@
             </div>
             <Link
                 href="/feed"
-                class="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
+                class="inline-flex items-center gap-2 rounded-full bg-moss px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
             >
                 <Pencil class="size-4" /> Write new
             </Link>
@@ -80,7 +80,7 @@
                 </header>
 
                 <Link :href="`/posts/${p.uuid}`" class="mt-2 block">
-                    <p class="whitespace-pre-wrap text-[15px] leading-relaxed hover:text-rust">{{ truncate(p.body) }}</p>
+                    <p class="whitespace-pre-wrap text-[15px] leading-relaxed hover:text-moss">{{ truncate(p.body) }}</p>
                 </Link>
 
                 <footer class="mt-3 flex items-center gap-4 text-xs text-muted-foreground">
@@ -94,7 +94,7 @@
             <p class="text-sm text-muted-foreground">You haven't posted yet.</p>
             <Link
                 href="/feed"
-                class="mt-4 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
+                class="mt-4 inline-flex items-center gap-2 rounded-full bg-moss px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
             >
                 <Pencil class="size-4" /> Write your first
             </Link>
@@ -111,7 +111,7 @@
                     v-html="link.label"
                     :class="[
                         'inline-flex min-w-8 items-center justify-center rounded-full px-2.5 py-1 text-xs',
-                        link.active ? 'bg-ink text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
+                        link.active ? 'bg-moss text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
                     ]"
                     preserve-scroll
                     preserve-state

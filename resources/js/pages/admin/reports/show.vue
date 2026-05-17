@@ -1,7 +1,7 @@
 <template>
     <Head title="Report" />
     <AdminLayout>
-        <Link href="/admin/reports" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
+        <Link href="/admin/reports" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-moss">
             <ArrowLeft class="size-4" /> Back to reports
         </Link>
 

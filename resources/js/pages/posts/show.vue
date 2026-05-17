@@ -52,7 +52,7 @@
     </Dialog>
 
     <AppLayout>
-        <Link href="/feed" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-ink">
+        <Link href="/feed" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-moss">
             <ArrowLeft class="size-4" /> Back to feed
         </Link>
 
@@ -60,7 +60,7 @@
         <article class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
             <header class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-3">
-                    <span class="flex size-12 items-center justify-center rounded-full bg-ink text-sm font-semibold text-paper">
+                    <span class="flex size-12 items-center justify-center rounded-full bg-forest text-sm font-semibold text-paper">
                         {{ initials(post.user?.name) }}
                     </span>
                     <div>
@@ -71,7 +71,7 @@
                 <div class="flex items-center gap-1">
                     <button
                         v-if="!isAuthor"
-                        class="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-rust"
+                        class="inline-flex size-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-moss"
                         title="Report"
                         @click="openReport('post', post.uuid, 'this post')"
                     >
@@ -114,7 +114,7 @@
         <!-- Composer -->
         <form class="rounded-3xl border border-border/60 bg-card p-5 shadow-sm" @submit.prevent="submitComment">
             <div class="flex gap-3">
-                <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-ink text-xs font-semibold text-paper">
+                <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-forest text-xs font-semibold text-paper">
                     {{ initials(me?.name) }}
                 </span>
                 <div class="flex-1">
@@ -129,7 +129,7 @@
                     <div class="mt-2 flex justify-end">
                         <button
                             type="submit"
-                            class="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40"
+                            class="inline-flex items-center gap-2 rounded-full bg-moss px-4 py-2 text-sm font-medium text-paper hover:opacity-90 disabled:opacity-40"
                             :disabled="!commentForm.body.trim() || commentForm.processing"
                         >
                             <Send class="size-4" /> Reply
@@ -162,7 +162,7 @@
                     <div class="flex items-center">
                         <button
                             v-if="c.user_id !== me?.id && c.user?.uuid !== me?.uuid"
-                            class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-rust"
+                            class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-moss"
                             title="Report"
                             @click="openReport('comment', c.uuid, 'this comment')"
                         >
@@ -223,7 +223,7 @@
                             </button>
                             <button
                                 type="submit"
-                                class="rounded-full bg-rust px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
+                                class="rounded-full bg-moss px-4 py-2 text-sm font-medium text-paper hover:opacity-90"
                                 :disabled="reportForm.processing"
                             >
                                 Submit report

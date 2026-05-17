@@ -10,7 +10,7 @@
                     <Plus class="size-4" /> Add setting
                 </Button>
                 <Button
-                    class="rounded-full bg-ink text-paper hover:bg-ink/90"
+                    class="rounded-full bg-moss text-paper hover:bg-moss/90"
                     :disabled="form.processing"
                     @click="submit"
                 >
@@ -23,7 +23,7 @@
             <Card v-for="(rows, group) in groupedRows" :key="group" class="rounded-3xl border-border/60 gap-0">
                 <CardHeader class="px-6 pt-6 pb-0">
                     <CardTitle class="flex items-center gap-2">
-                        <span class="inline-flex size-8 items-center justify-center rounded-full bg-rust/10 text-xs font-semibold text-rust">
+                        <span class="inline-flex size-8 items-center justify-center rounded-full bg-forest text-xs font-semibold text-paper">
                             {{ group.slice(0, 1).toUpperCase() }}
                         </span>
                         <span class="capitalize">{{ group }}</span>

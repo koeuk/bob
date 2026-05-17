@@ -37,7 +37,7 @@
                     <Link
                         v-if="canResetPassword"
                         href="/forgot-password"
-                        class="text-xs font-medium text-muted-foreground hover:text-foreground"
+                        class="text-xs font-medium text-muted-foreground hover:text-moss transition-colors duration-150"
                     >
                         Forgot password?
                     </Link>
@@ -89,7 +89,7 @@
             <!-- Divider + sign up -->
             <div v-if="canRegister" class="pt-3 text-center text-sm text-muted-foreground">
                 Don&rsquo;t have an account?
-                <Link href="/register" class="font-medium text-foreground hover:text-primary">Sign up</Link>
+                <Link href="/register" class="font-medium text-moss hover:text-moss/80 transition-colors duration-150">Sign up</Link>
             </div>
         </form>
     </AuthLayout>

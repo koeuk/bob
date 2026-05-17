@@ -4,7 +4,7 @@
         <!-- Greeting -->
         <section class="pt-2">
             <h1 class="font-sans text-4xl font-semibold tracking-tight sm:text-5xl">
-                {{ greeting }}, <span class="text-rust">{{ firstName }}</span>
+                {{ greeting }}, <span class="text-moss">{{ firstName }}</span>
             </h1>
             <p class="mt-2 max-w-xl text-sm text-muted-foreground">
                 Stay on top of moderation, monitor growth, and review the room.
@@ -16,7 +16,7 @@
             <!-- Pending reports hero card (rust accent) -->
             <Link
                 href="/admin/reports?filter[status]=pending"
-                class="group relative overflow-hidden rounded-3xl bg-rust p-6 text-paper shadow-sm transition-shadow hover:shadow-md"
+                class="group relative overflow-hidden rounded-3xl bg-forest p-6 text-paper shadow-sm shadow-forest/20 transition-shadow hover:shadow-md"
             >
                 <div class="flex items-center justify-between">
                     <span class="inline-flex size-10 items-center justify-center rounded-2xl bg-paper/20 backdrop-blur">
@@ -115,18 +115,18 @@
                             <CardTitle>Recent reports</CardTitle>
                             <p class="text-xs text-muted-foreground">last 8</p>
                         </div>
-                        <Link href="/admin/reports" class="text-xs font-medium text-rust hover:underline">View all &rarr;</Link>
+                        <Link href="/admin/reports" class="text-xs font-medium text-moss hover:underline">View all &rarr;</Link>
                     </div>
                 </CardHeader>
                 <CardContent class="px-6 pb-6 pt-4">
                     <ul v-if="recentReports.length" class="divide-y divide-border/60">
                         <li v-for="r in recentReports" :key="r.uuid" class="flex items-start gap-3 py-3">
-                            <span class="mt-0.5 inline-flex size-8 items-center justify-center rounded-xl bg-rust/10 text-rust">
+                            <span class="mt-0.5 inline-flex size-8 items-center justify-center rounded-xl bg-moss/10 text-moss">
                                 <Flag class="size-4" />
                             </span>
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-2">
-                                    <Link :href="`/admin/reports/${r.uuid}`" class="truncate font-medium hover:text-rust">
+                                    <Link :href="`/admin/reports/${r.uuid}`" class="truncate font-medium hover:text-moss">
                                         {{ reportableTitle(r) }}
                                     </Link>
                                     <Badge
@@ -158,7 +158,7 @@
                             <CardTitle>Recent activity</CardTitle>
                             <p class="text-xs text-muted-foreground">admin actions</p>
                         </div>
-                        <Link href="/admin/activity-logs" class="text-xs font-medium text-rust hover:underline">View all &rarr;</Link>
+                        <Link href="/admin/activity-logs" class="text-xs font-medium text-moss hover:underline">View all &rarr;</Link>
                     </div>
                 </CardHeader>
                 <CardContent class="px-6 pb-6 pt-4">
@@ -260,7 +260,7 @@ const chartData = computed(() => ({
         {
             label: 'Posts',
             data: chartLabels.value.posts,
-            backgroundColor: 'oklch(0.22 0.012 60)',
+            backgroundColor: 'oklch(0.26 0.11 147)',
             borderRadius: 6,
             barPercentage: 0.7,
         },

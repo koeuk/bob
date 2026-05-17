@@ -1,16 +1,19 @@
 <template>
     <SidebarProvider>
         <Sidebar collapsible="icon">
+            <!-- Logo -->
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" as-child class="data-[slot=sidebar-menu-button]:!p-1.5">
                             <Link href="/admin/dashboard">
-                                <span class="flex size-8 items-center justify-center rounded-xl bg-rust text-paper shadow-sm shrink-0">
+                                <span class="flex size-8 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm shrink-0">
                                     <span class="font-serif text-lg leading-none">b</span>
                                 </span>
                                 <div class="grid flex-1 text-left text-sm leading-tight">
-                                    <span class="font-semibold tracking-tight">bob<span class="text-rust">/</span>admin</span>
+                                    <span class="font-semibold tracking-tight text-sidebar-foreground">
+                                        bob<span class="opacity-50">/</span>admin
+                                    </span>
                                 </div>
                             </Link>
                         </SidebarMenuButton>
@@ -18,6 +21,7 @@
                 </SidebarMenu>
             </SidebarHeader>
 
+            <!-- Nav items -->
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupContent>
@@ -35,6 +39,7 @@
                 </SidebarGroup>
             </SidebarContent>
 
+            <!-- Footer -->
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
@@ -52,21 +57,32 @@
         </Sidebar>
 
         <SidebarInset>
-            <header class="flex h-14 shrink-0 items-center gap-2 border-b border-border/60 px-4">
-                <SidebarTrigger class="-ml-1" />
+            <!-- Top bar -->
+            <header class="flex h-14 shrink-0 items-center gap-2 border-b border-border/50 bg-background/60 px-4 backdrop-blur">
+                <SidebarTrigger class="-ml-1 text-muted-foreground hover:text-moss transition-colors" />
                 <Separator orientation="vertical" class="mx-2 h-4" />
 
                 <div class="flex flex-1 items-center justify-between">
-                    <div class="flex items-center rounded-lg border border-border/60 bg-card/70 p-0.5 shadow-sm">
-                        <Link href="/dashboard" class="rounded-md px-3 py-1 text-xs font-medium text-muted-foreground hover:text-ink transition-colors">App</Link>
-                        <Link href="/admin/dashboard" class="rounded-md px-3 py-1 text-xs font-medium bg-ink text-paper shadow-sm transition-colors">Admin</Link>
+                    <!-- App / Admin switcher -->
+                    <div class="flex items-center rounded-lg border border-border/50 bg-card/70 p-0.5 shadow-sm">
+                        <Link
+                            href="/dashboard"
+                            class="rounded-md px-3 py-1 text-xs font-medium text-muted-foreground hover:text-ink transition-colors duration-150"
+                        >App</Link>
+                        <Link
+                            href="/admin/dashboard"
+                            class="rounded-md px-3 py-1 text-xs font-semibold bg-moss text-paper shadow-sm transition-all duration-150"
+                        >Admin</Link>
                     </div>
 
+                    <!-- Right: appearance + user -->
                     <div class="flex items-center gap-2">
                         <AppearanceDropdown />
                         <DropdownMenu>
-                            <DropdownMenuTrigger class="flex items-center gap-2 rounded-full border border-border/60 bg-card/70 py-1 pl-1 pr-3 shadow-sm hover:text-rust transition-colors">
-                                <span class="flex size-7 items-center justify-center rounded-full bg-ink text-paper text-xs font-semibold">
+                            <DropdownMenuTrigger
+                                class="flex items-center gap-2 rounded-full border border-border/60 bg-card/70 py-1 pl-1 pr-3 shadow-sm transition-all duration-150 hover:border-moss/40"
+                            >
+                                <span class="flex size-7 items-center justify-center rounded-full bg-forest text-paper text-xs font-semibold">
                                     {{ initials }}
                                 </span>
                                 <span class="hidden text-left sm:block">
@@ -83,26 +99,36 @@
                 </div>
             </header>
 
-            <div class="flex flex-1 flex-col gap-6 p-6">
+            <!-- Page content -->
+            <div class="flex flex-1 flex-col gap-6 p-6 animate-reveal">
                 <div v-if="title">
                     <h1 class="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h1>
                 </div>
 
+                <!-- Flash messages -->
                 <Transition
-                    enter-active-class="transition duration-200 ease-out"
-                    enter-from-class="-translate-y-1 opacity-0"
-                    leave-active-class="transition duration-150 ease-in"
+                    enter-active-class="transition-all duration-300 ease-out"
+                    enter-from-class="-translate-y-2 opacity-0"
+                    leave-active-class="transition-all duration-200 ease-in"
                     leave-to-class="-translate-y-1 opacity-0"
                 >
-                    <div v-if="page.props.flash?.status" class="rounded-xl bg-moss/10 px-4 py-3 text-sm text-moss">
+                    <div
+                        v-if="page.props.flash?.status"
+                        class="flex items-center gap-2.5 rounded-xl border border-moss/20 bg-moss/8 px-4 py-3 text-sm font-medium text-moss"
+                    >
+                        <span class="size-1.5 rounded-full bg-moss"></span>
                         {{ page.props.flash.status }}
                     </div>
                 </Transition>
                 <Transition
-                    enter-active-class="transition duration-200 ease-out"
-                    enter-from-class="-translate-y-1 opacity-0"
+                    enter-active-class="transition-all duration-300 ease-out"
+                    enter-from-class="-translate-y-2 opacity-0"
                 >
-                    <div v-if="page.props.flash?.error" class="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                    <div
+                        v-if="page.props.flash?.error"
+                        class="flex items-center gap-2.5 rounded-xl border border-destructive/20 bg-destructive/8 px-4 py-3 text-sm font-medium text-destructive"
+                    >
+                        <span class="size-1.5 rounded-full bg-destructive"></span>
                         {{ page.props.flash.error }}
                     </div>
                 </Transition>
@@ -120,42 +146,21 @@ import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vue';
 import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vue';
 import UserMenuContent from '@/components/user-menu-content.vue';
 import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarHeader,
-    SidebarInset,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    SidebarProvider,
-    SidebarRail,
-    SidebarTrigger,
+    Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent,
+    SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
+    SidebarProvider, SidebarRail, SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Separator } from '@/components/ui/separator';
 import { Link, usePage } from '@inertiajs/vue3';
 import {
-    ActivitySquare,
-    ArrowLeft,
-    ChevronDown,
-    FileText,
-    Flag,
-    Gauge,
-    Heart,
-    MessageSquare,
-    Newspaper,
-    Settings as SettingsIcon,
-    ShieldBan,
-    Users,
+    ActivitySquare, ArrowLeft, ChevronDown, FileText, Flag, Gauge, Heart,
+    MessageSquare, Newspaper, Settings as SettingsIcon, ShieldBan, Users,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 defineProps({ title: { type: String, default: '' } });
 
 const page = usePage();
-
 const user = computed(() => page.props.auth?.user);
 const initials = computed(() => {
     const name = user.value?.name ?? '';
@@ -164,17 +169,18 @@ const initials = computed(() => {
 const isSuperOrAdmin = computed(() => ['admin', 'super_admin'].includes(user.value?.role));
 
 const sideNav = computed(() => [
-    { href: '/admin/dashboard', label: 'Dashboard', icon: Gauge },
-    { href: '/admin/users', label: 'Users', icon: Users },
-    { href: '/admin/reports', label: 'Reports', icon: Flag },
-    { href: '/admin/bans', label: 'Bans', icon: ShieldBan },
-    { href: '/admin/posts', label: 'Posts', icon: Newspaper },
-    { href: '/admin/comments', label: 'Comments', icon: MessageSquare },
-    { href: '/admin/likes', label: 'Likes', icon: Heart },
-    { href: '/admin/pages', label: 'Pages', icon: FileText },
+    { href: '/admin/dashboard',     label: 'Dashboard', icon: Gauge },
+    { href: '/admin/users',         label: 'Users',     icon: Users },
+    { href: '/admin/reports',       label: 'Reports',   icon: Flag },
+    { href: '/admin/bans',          label: 'Bans',      icon: ShieldBan },
+    { href: '/admin/posts',         label: 'Posts',     icon: Newspaper },
+    { href: '/admin/comments',      label: 'Comments',  icon: MessageSquare },
+    { href: '/admin/likes',         label: 'Likes',     icon: Heart },
+    { href: '/admin/pages',         label: 'Pages',     icon: FileText },
     ...(isSuperOrAdmin.value ? [{ href: '/admin/settings', label: 'Settings', icon: SettingsIcon }] : []),
-    { href: '/admin/activity-logs', label: 'Activity', icon: ActivitySquare },
+    { href: '/admin/activity-logs', label: 'Activity',  icon: ActivitySquare },
 ]);
 
-const isActive = (href) => page.url === href || page.url.startsWith(href + '/') || page.url.startsWith(href + '?');
+const isActive = (href) =>
+    page.url === href || page.url.startsWith(href + '/') || page.url.startsWith(href + '?');
 </script>

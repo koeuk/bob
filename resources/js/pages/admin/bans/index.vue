@@ -38,7 +38,7 @@
                     <input :checked="activeOnly" type="checkbox" class="accent-rust" @change="toggleActive" />
                     Active only
                 </label>
-                <Button class="rounded-full bg-ink text-paper hover:bg-ink/90" @click="showCreate = true">
+                <Button class="rounded-full bg-moss text-paper hover:bg-moss/90" @click="showCreate = true">
                     <Plus class="size-4" /> New ban
                 </Button>
             </div>
@@ -56,7 +56,7 @@
                     </span>
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-2">
-                            <Link v-if="b.user" :href="`/admin/users/${b.user.uuid}`" class="font-medium hover:text-rust">
+                            <Link v-if="b.user" :href="`/admin/users/${b.user.uuid}`" class="font-medium hover:text-moss">
                                 {{ b.user?.name ?? 'Deleted user' }}
                             </Link>
                             <Badge
@@ -100,7 +100,7 @@
                         v-html="link.label"
                         :class="[
                             'inline-flex min-w-8 items-center justify-center rounded-full px-2.5 py-1 text-xs',
-                            link.active ? 'bg-ink text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
+                            link.active ? 'bg-moss text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
                         ]"
                         preserve-scroll
                         preserve-state
@@ -122,7 +122,7 @@
                             <!-- Selected chip -->
                             <div v-if="selectedUser" class="flex items-center justify-between rounded-2xl bg-secondary p-3">
                                 <div class="flex items-center gap-3">
-                                    <span class="flex size-9 items-center justify-center rounded-full bg-ink text-xs font-semibold text-paper">
+                                    <span class="flex size-9 items-center justify-center rounded-full bg-forest text-xs font-semibold text-paper">
                                         {{ initials(selectedUser.name) }}
                                     </span>
                                     <div class="min-w-0">
@@ -133,7 +133,7 @@
                                         <div class="truncate text-[11px] text-muted-foreground">{{ selectedUser.email }}</div>
                                     </div>
                                 </div>
-                                <button type="button" class="text-xs text-muted-foreground hover:text-ink" @click="clearUser">
+                                <button type="button" class="text-xs text-muted-foreground hover:text-foreground" @click="clearUser">
                                     Change
                                 </button>
                             </div>
@@ -169,7 +169,7 @@
                                             class="flex cursor-pointer items-center gap-3 px-3 py-2 hover:bg-secondary"
                                             @click="pickUser(u)"
                                         >
-                                            <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-ink text-[10px] font-semibold text-paper">
+                                            <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-forest text-[10px] font-semibold text-paper">
                                                 {{ initials(u.name) }}
                                             </span>
                                             <div class="min-w-0 flex-1">

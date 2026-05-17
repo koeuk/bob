@@ -8,7 +8,7 @@
                 :key="t.key"
                 :class="[
                     'inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-colors',
-                    activeTab === t.key ? 'bg-ink text-paper' : 'text-muted-foreground hover:text-ink',
+                    activeTab === t.key ? 'bg-moss text-paper' : 'text-muted-foreground hover:text-moss',
                 ]"
                 @click="setTab(t.key)"
             >
@@ -39,7 +39,7 @@
                     </span>
                     <div class="min-w-0 flex-1">
                         <div class="flex flex-wrap items-center gap-2">
-                            <Link :href="`/admin/reports/${r.uuid}`" class="truncate font-medium hover:text-rust">
+                            <Link :href="`/admin/reports/${r.uuid}`" class="truncate font-medium hover:text-moss">
                                 {{ r.reason }}
                             </Link>
                             <Badge :class="['rounded-full border-0', statusTone(r.status)]">{{ r.status }}</Badge>
@@ -51,7 +51,7 @@
                             · {{ dateFmt(r.created_at) }}
                         </div>
                     </div>
-                    <Link :href="`/admin/reports/${r.uuid}`" class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground group-hover:bg-ink group-hover:text-paper">
+                    <Link :href="`/admin/reports/${r.uuid}`" class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground group-hover:bg-moss group-hover:text-paper">
                         <ChevronRight class="size-4" />
                     </Link>
                 </li>
@@ -72,7 +72,7 @@
                         v-html="link.label"
                         :class="[
                             'inline-flex min-w-8 items-center justify-center rounded-full px-2.5 py-1 text-xs',
-                            link.active ? 'bg-ink text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
+                            link.active ? 'bg-moss text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
                         ]"
                         preserve-scroll
                         preserve-state
