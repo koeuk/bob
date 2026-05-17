@@ -52,12 +52,36 @@
                         </div>
                         <div>
                             <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Role</label>
-                            <select v-model="createForm.role" class="h-11 w-full rounded-2xl bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary transition-colors">
-                                <option value="user">User</option>
-                                <option value="moderator">Moderator</option>
-                                <option v-if="canCreateAdmin" value="admin">Admin</option>
-                                <option v-if="canCreateAdmin" value="super_admin">Super Admin</option>
-                            </select>
+                            <Popover v-model:open="openCreateRole">
+                                <PopoverTrigger as-child>
+                                    <button
+                                        type="button"
+                                        role="combobox"
+                                        :aria-expanded="openCreateRole"
+                                        class="h-11 w-full flex items-center justify-between rounded-2xl bg-secondary/60 px-4 text-sm outline-none hover:bg-secondary transition-colors"
+                                    >
+                                        {{ createRoleLabel }}
+                                        <ChevronsUpDown class="ml-2 size-4 shrink-0 text-muted-foreground" />
+                                    </button>
+                                </PopoverTrigger>
+                                <PopoverContent class="w-48 p-0">
+                                    <Command>
+                                        <CommandList>
+                                            <CommandGroup>
+                                                <CommandItem
+                                                    v-for="o in createRoleOptions"
+                                                    :key="o.value"
+                                                    :value="o.value"
+                                                    @select="(ev) => { createForm.role = ev.detail.value; openCreateRole = false }"
+                                                >
+                                                    <CheckIcon :class="cn('mr-2 size-4', createForm.role === o.value ? 'opacity-100' : 'opacity-0')" />
+                                                    {{ o.label }}
+                                                </CommandItem>
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
                             <p v-if="!canCreateAdmin" class="mt-1 text-[11px] text-muted-foreground">Only super admins can create admin-level accounts.</p>
                             <p v-if="createForm.errors.role" class="mt-1 text-xs text-destructive">{{ createForm.errors.role }}</p>
                         </div>
@@ -237,7 +261,10 @@ import Card from '@/components/ui/Card.vue';
 import { Button } from '@/components/ui/button';
 import Input from '@/components/ui/Input.vue';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Camera, Check as CheckIcon, ChevronLeft, ChevronRight, Crown, Save, Shield, User, UserCog } from 'lucide-vue-next';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
+import { cn } from '@/lib/utils';
+import { ArrowLeft, Camera, Check as CheckIcon, ChevronsUpDown, ChevronLeft, ChevronRight, Crown, Save, Shield, User, UserCog } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -249,6 +276,14 @@ const isNew = computed(() => !props.user);
 const currentRole = computed(() => page.props.auth?.user?.role);
 const canCreateAdmin = computed(() => currentRole.value === 'super_admin');
 const canAssignRole = computed(() => currentRole.value === 'super_admin');
+
+const openCreateRole = ref(false);
+const createRoleOptions = computed(() => [
+    { value: 'user', label: 'User' },
+    { value: 'moderator', label: 'Moderator' },
+    ...(canCreateAdmin.value ? [{ value: 'admin', label: 'Admin' }, { value: 'super_admin', label: 'Super Admin' }] : []),
+]);
+const createRoleLabel = computed(() => createRoleOptions.value.find(o => o.value === createForm.role)?.label ?? 'Select role...');
 
 const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
 

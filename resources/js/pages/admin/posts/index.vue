@@ -21,12 +21,36 @@
                         @keydown.enter="apply"
                     />
                 </div>
-                <select v-model="status" class="h-10 rounded-full bg-secondary/60 px-4 text-sm outline-none" @change="apply">
-                    <option value="">All statuses</option>
-                    <option value="active">Active</option>
-                    <option value="flagged">Flagged</option>
-                    <option value="hidden">Hidden</option>
-                </select>
+                <Popover v-model:open="openStatus">
+                    <PopoverTrigger as-child>
+                        <button
+                            type="button"
+                            role="combobox"
+                            :aria-expanded="openStatus"
+                            class="h-10 inline-flex items-center gap-2 rounded-full bg-secondary/60 px-4 text-sm outline-none hover:bg-secondary"
+                        >
+                            {{ statusLabel }}
+                            <ChevronsUpDown class="size-3.5 text-muted-foreground" />
+                        </button>
+                    </PopoverTrigger>
+                    <PopoverContent class="w-44 p-0">
+                        <Command>
+                            <CommandList>
+                                <CommandGroup>
+                                    <CommandItem
+                                        v-for="o in statusOptions"
+                                        :key="o.value"
+                                        :value="o.value"
+                                        @select="(ev) => { status = ev.detail.value; openStatus = false; apply() }"
+                                    >
+                                        <Check :class="cn('mr-2 size-4', status === o.value ? 'opacity-100' : 'opacity-0')" />
+                                        {{ o.label }}
+                                    </CommandItem>
+                                </CommandGroup>
+                            </CommandList>
+                        </Command>
+                    </PopoverContent>
+                </Popover>
             </div>
         </Card>
 
@@ -93,8 +117,11 @@ import { Button } from '@/components/ui/button';
 import Input from '@/components/ui/Input.vue';
 import Badge from '@/components/ui/Badge.vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { Flag, Heart, MessageCircle, Plus, Search } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
+import { cn } from '@/lib/utils';
+import { Check, ChevronsUpDown, Flag, Heart, MessageCircle, Plus, Search } from 'lucide-vue-next';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     posts: { type: Object, required: true },
@@ -104,6 +131,15 @@ const props = defineProps({
 const page = usePage();
 const search = ref(props.filters?.filter?.search ?? '');
 const status = ref(props.filters?.filter?.status ?? '');
+
+const statusOptions = [
+    { value: '', label: 'All statuses' },
+    { value: 'active', label: 'Active' },
+    { value: 'flagged', label: 'Flagged' },
+    { value: 'hidden', label: 'Hidden' },
+];
+const openStatus = ref(false);
+const statusLabel = computed(() => statusOptions.find(o => o.value === status.value)?.label ?? 'All statuses');
 
 const apply = () => router.get('/admin/posts', {
     filter: {

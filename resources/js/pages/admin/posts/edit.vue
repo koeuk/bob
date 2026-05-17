@@ -34,15 +34,38 @@
                 <div class="space-y-4">
                     <div>
                         <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Author</label>
-                        <select
-                            v-model="form.user_uuid"
-                            class="h-11 w-full rounded-full bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary"
-                            required
-                        >
-                            <option v-for="a in authors" :key="a.uuid" :value="a.uuid">
-                                {{ a.name }} — {{ a.email }}
-                            </option>
-                        </select>
+                        <Popover v-model:open="openAuthor">
+                            <PopoverTrigger as-child>
+                                <button
+                                    type="button"
+                                    role="combobox"
+                                    :aria-expanded="openAuthor"
+                                    class="h-11 w-full flex items-center justify-between rounded-full bg-secondary/60 px-4 text-sm outline-none hover:bg-secondary"
+                                >
+                                    <span :class="form.user_uuid ? '' : 'text-muted-foreground'">{{ selectedAuthorLabel }}</span>
+                                    <ChevronsUpDown class="ml-2 size-4 shrink-0 text-muted-foreground" />
+                                </button>
+                            </PopoverTrigger>
+                            <PopoverContent class="w-80 p-0">
+                                <Command>
+                                    <CommandInput placeholder="Search author..." />
+                                    <CommandList>
+                                        <CommandEmpty>No author found.</CommandEmpty>
+                                        <CommandGroup>
+                                            <CommandItem
+                                                v-for="a in authors"
+                                                :key="a.uuid"
+                                                :value="a.uuid"
+                                                @select="(ev) => { form.user_uuid = ev.detail.value; openAuthor = false }"
+                                            >
+                                                <Check :class="cn('mr-2 size-4', form.user_uuid === a.uuid ? 'opacity-100' : 'opacity-0')" />
+                                                {{ a.name }} — {{ a.email }}
+                                            </CommandItem>
+                                        </CommandGroup>
+                                    </CommandList>
+                                </Command>
+                            </PopoverContent>
+                        </Popover>
                         <p v-if="form.errors.user_uuid" class="mt-1 text-xs text-destructive">{{ form.errors.user_uuid }}</p>
                     </div>
 
@@ -62,14 +85,36 @@
 
                         <div>
                             <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Status</label>
-                            <select
-                                v-model="form.status"
-                                class="h-11 w-full rounded-full bg-secondary/60 px-4 text-sm outline-none focus:bg-secondary"
-                            >
-                                <option value="active">Active</option>
-                                <option value="flagged">Flagged</option>
-                                <option value="hidden">Hidden</option>
-                            </select>
+                            <Popover v-model:open="openStatus">
+                                <PopoverTrigger as-child>
+                                    <button
+                                        type="button"
+                                        role="combobox"
+                                        :aria-expanded="openStatus"
+                                        class="h-11 w-full flex items-center justify-between rounded-full bg-secondary/60 px-4 text-sm outline-none hover:bg-secondary"
+                                    >
+                                        {{ selectedStatusLabel }}
+                                        <ChevronsUpDown class="ml-2 size-4 shrink-0 text-muted-foreground" />
+                                    </button>
+                                </PopoverTrigger>
+                                <PopoverContent class="w-48 p-0">
+                                    <Command>
+                                        <CommandList>
+                                            <CommandGroup>
+                                                <CommandItem
+                                                    v-for="o in statusOptions"
+                                                    :key="o.value"
+                                                    :value="o.value"
+                                                    @select="(ev) => { form.status = ev.detail.value; openStatus = false }"
+                                                >
+                                                    <Check :class="cn('mr-2 size-4', form.status === o.value ? 'opacity-100' : 'opacity-0')" />
+                                                    {{ o.label }}
+                                                </CommandItem>
+                                            </CommandGroup>
+                                        </CommandList>
+                                    </Command>
+                                </PopoverContent>
+                            </Popover>
                             <p v-if="form.errors.status" class="mt-1 text-xs text-destructive">{{ form.errors.status }}</p>
                         </div>
                     </div>
@@ -118,8 +163,11 @@ import { Button } from '@/components/ui/button';
 import Input from '@/components/ui/Input.vue';
 import Textarea from '@/components/ui/Textarea.vue';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
-import { ArrowLeft, Save, Trash2 } from 'lucide-vue-next';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import { ArrowLeft, Check, ChevronsUpDown, Save, Trash2 } from 'lucide-vue-next';
+import { cn } from '@/lib/utils';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -127,14 +175,31 @@ const props = defineProps({
     authors: { type: Array, default: () => [] },
 });
 
-const page = usePage();
 const isNew = computed(() => !props.post);
+
+const statusOptions = [
+    { value: 'active', label: 'Active' },
+    { value: 'flagged', label: 'Flagged' },
+    { value: 'hidden', label: 'Hidden' },
+];
 
 const form = useForm({
     body: props.post?.body ?? '',
     status: props.post?.status ?? 'active',
     user_uuid: props.post?.user?.uuid ?? props.authors[0]?.uuid ?? '',
     reason: '',
+});
+
+const openAuthor = ref(false);
+const openStatus = ref(false);
+
+const selectedAuthorLabel = computed(() => {
+    const a = props.authors.find(a => a.uuid === form.user_uuid);
+    return a ? `${a.name} — ${a.email}` : 'Select author...';
+});
+
+const selectedStatusLabel = computed(() => {
+    return statusOptions.find(o => o.value === form.status)?.label ?? 'Select status...';
 });
 
 const submit = () => {

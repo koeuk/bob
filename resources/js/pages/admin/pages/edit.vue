@@ -11,13 +11,36 @@
                     {{ isNew ? 'New page' : 'Edit page' }}
                 </h1>
                 <div class="flex items-center gap-2">
-                    <select
-                        v-model="form.status"
-                        class="h-10 rounded-full bg-secondary/60 px-4 text-sm outline-none"
-                    >
-                        <option value="draft">Draft</option>
-                        <option value="published">Published</option>
-                    </select>
+                    <Popover v-model:open="openStatus">
+                        <PopoverTrigger as-child>
+                            <button
+                                type="button"
+                                role="combobox"
+                                :aria-expanded="openStatus"
+                                class="h-10 inline-flex items-center gap-2 rounded-full bg-secondary/60 px-4 text-sm outline-none hover:bg-secondary"
+                            >
+                                {{ statusLabel }}
+                                <ChevronsUpDown class="size-3.5 text-muted-foreground" />
+                            </button>
+                        </PopoverTrigger>
+                        <PopoverContent class="w-40 p-0">
+                            <Command>
+                                <CommandList>
+                                    <CommandGroup>
+                                        <CommandItem
+                                            v-for="o in statusOptions"
+                                            :key="o.value"
+                                            :value="o.value"
+                                            @select="(ev) => { form.status = ev.detail.value; openStatus = false }"
+                                        >
+                                            <Check :class="cn('mr-2 size-4', form.status === o.value ? 'opacity-100' : 'opacity-0')" />
+                                            {{ o.label }}
+                                        </CommandItem>
+                                    </CommandGroup>
+                                </CommandList>
+                            </Command>
+                        </PopoverContent>
+                    </Popover>
                     <Button
                         type="submit"
                         class="rounded-full bg-ink text-paper hover:bg-ink/90"
@@ -82,7 +105,7 @@
 import AdminLayout from '@/layouts/admin-layout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { ArrowLeft, Save } from 'lucide-vue-next';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import Card from '@/components/ui/Card.vue';
 import CardHeader from '@/components/ui/CardHeader.vue';
 import CardTitle from '@/components/ui/CardTitle.vue';
@@ -90,6 +113,10 @@ import CardContent from '@/components/ui/CardContent.vue';
 import { Button } from '@/components/ui/button';
 import Input from '@/components/ui/Input.vue';
 import Textarea from '@/components/ui/Textarea.vue';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
+import { cn } from '@/lib/utils';
+import { Check, ChevronsUpDown } from 'lucide-vue-next';
 
 const props = defineProps({
     page: { type: Object, default: null },
@@ -98,12 +125,20 @@ const props = defineProps({
 const inertiaPage = usePage();
 const isNew = computed(() => !props.page);
 
+const statusOptions = [
+    { value: 'draft', label: 'Draft' },
+    { value: 'published', label: 'Published' },
+];
+const openStatus = ref(false);
+
 const form = useForm({
     slug: props.page?.slug ?? '',
     title: props.page?.title ?? '',
     body: props.page?.body ?? '',
     status: props.page?.status ?? 'draft',
 });
+
+const statusLabel = computed(() => statusOptions.find(o => o.value === form.status)?.label ?? 'Draft');
 
 const submit = () => {
     if (isNew.value) {

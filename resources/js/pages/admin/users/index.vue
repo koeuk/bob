@@ -78,20 +78,36 @@
                         @keydown.enter="applyFilters"
                     />
                 </div>
-                <div class="relative">
-                    <select
-                        v-model="roleFilter"
-                        class="h-10 appearance-none rounded-full bg-secondary/60 pl-4 pr-9 text-sm outline-none hover:bg-secondary"
-                        @change="applyFilters"
-                    >
-                        <option value="">All roles</option>
-                        <option value="user">User</option>
-                        <option value="moderator">Moderator</option>
-                        <option value="admin">Admin</option>
-                        <option value="super_admin">Super Admin</option>
-                    </select>
-                    <ChevronDown class="pointer-events-none absolute right-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
-                </div>
+                <Popover v-model:open="openRoleFilter">
+                    <PopoverTrigger as-child>
+                        <button
+                            type="button"
+                            role="combobox"
+                            :aria-expanded="openRoleFilter"
+                            class="h-10 inline-flex items-center gap-2 rounded-full bg-secondary/60 px-4 text-sm outline-none hover:bg-secondary"
+                        >
+                            {{ roleFilterLabel }}
+                            <ChevronsUpDown class="size-3.5 text-muted-foreground" />
+                        </button>
+                    </PopoverTrigger>
+                    <PopoverContent class="w-44 p-0">
+                        <Command>
+                            <CommandList>
+                                <CommandGroup>
+                                    <CommandItem
+                                        v-for="o in roleOptions"
+                                        :key="o.value"
+                                        :value="o.value"
+                                        @select="(ev) => { roleFilter = ev.detail.value; openRoleFilter = false; applyFilters() }"
+                                    >
+                                        <Check :class="cn('mr-2 size-4', roleFilter === o.value ? 'opacity-100' : 'opacity-0')" />
+                                        {{ o.label }}
+                                    </CommandItem>
+                                </CommandGroup>
+                            </CommandList>
+                        </Command>
+                    </PopoverContent>
+                </Popover>
                 <label class="inline-flex h-10 cursor-pointer items-center gap-2 rounded-full bg-secondary/60 px-4 text-sm hover:bg-secondary">
                     <input v-model="bannedOnly" type="checkbox" class="accent-rust" @change="applyFilters" />
                     Banned only
@@ -216,7 +232,10 @@ import Badge from '@/components/ui/Badge.vue';
 import Textarea from '@/components/ui/Textarea.vue';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import { ChevronDown, Filter, MoreHorizontal, Plus, Search, ShieldBan, Trash2, UserCheck, UserX } from 'lucide-vue-next';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
+import { cn } from '@/lib/utils';
+import { Check, ChevronsUpDown, Filter, MoreHorizontal, Plus, Search, ShieldBan, Trash2, UserCheck, UserX } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
 
 const props = defineProps({
@@ -228,6 +247,16 @@ const page = usePage();
 const search = ref(props.filters?.filter?.search ?? '');
 const roleFilter = ref(props.filters?.filter?.role ?? '');
 const bannedOnly = ref(!!props.filters?.filter?.banned);
+
+const roleOptions = [
+    { value: '', label: 'All roles' },
+    { value: 'user', label: 'User' },
+    { value: 'moderator', label: 'Moderator' },
+    { value: 'admin', label: 'Admin' },
+    { value: 'super_admin', label: 'Super Admin' },
+];
+const openRoleFilter = ref(false);
+const roleFilterLabel = computed(() => roleOptions.find(o => o.value === roleFilter.value)?.label ?? 'All roles');
 
 const applyFilters = () => {
     router.get(
