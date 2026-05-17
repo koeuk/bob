@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\FriendRequest;
+use App\Models\Like;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,10 +18,36 @@ class UsersController extends Controller
 
         $posts = $user->posts()
             ->where('visibility', 'public')
-            ->with('user:id,uuid,name,avatar')
-            ->withCount(['comments', 'likes'])
+            ->with(['user:id,uuid,name,avatar', 'sharedPost.user:id,uuid,name,avatar'])
+            ->withCount(['comments', 'likes', 'shares'])
             ->latest()
             ->get();
+
+        $postIds = $posts->pluck('id')->all();
+
+        $myLikes = ($viewer && !empty($postIds))
+            ? Like::where('user_id', $viewer->id)
+                ->where('likeable_type', Post::class)
+                ->whereIn('likeable_id', $postIds)
+                ->get(['likeable_id', 'type'])
+                ->keyBy('likeable_id')
+            : collect();
+
+        $reactionSummaries = empty($postIds) ? collect() : Like::where('likeable_type', Post::class)
+            ->whereIn('likeable_id', $postIds)
+            ->selectRaw('likeable_id, type, count(*) as count')
+            ->groupBy('likeable_id', 'type')
+            ->get()
+            ->groupBy('likeable_id')
+            ->map(fn ($rows) => $rows->pluck('count', 'type')->toArray());
+
+        $posts->transform(function (Post $p) use ($myLikes, $reactionSummaries) {
+            $like = $myLikes->get($p->id);
+            $p->liked_by_me = (bool) $like;
+            $p->my_reaction = $like?->type;
+            $p->reactions_summary = $reactionSummaries->get($p->id, []);
+            return $p;
+        });
 
         // Accepted friends of this user
         $friendRequests = FriendRequest::where('status', 'accepted')
