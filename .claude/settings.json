@@ -37,7 +37,8 @@
     ],
     "additionalDirectories": [
       "/home/koeuk/Desktop/bob/resources/js/composables",
-      "/tmp"
+      "/tmp",
+      "/home/koeuk/Desktop/bob"
     ]
   }
 }
