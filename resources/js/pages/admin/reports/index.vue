@@ -2,14 +2,18 @@
     <Head title="Reports" />
     <AdminLayout title="Reports">
         <!-- Tabs -->
-        <div class="flex flex-wrap items-center gap-2 rounded-full border border-border/60 bg-card p-1.5 shadow-sm w-fit">
+        <div class="relative flex items-center rounded-full border border-border/60 bg-card p-1.5 shadow-sm w-fit">
+            <!-- Sliding indicator -->
+            <div
+                class="absolute rounded-full bg-moss transition-all duration-300 ease-in-out"
+                :style="sliderStyle"
+            />
             <button
-                v-for="t in tabs"
+                v-for="(t, i) in tabs"
                 :key="t.key"
-                :class="[
-                    'inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-colors',
-                    activeTab === t.key ? 'bg-moss text-paper' : 'text-muted-foreground hover:text-moss',
-                ]"
+                :ref="el => { if (el) tabRefs[i] = el }"
+                class="relative z-10 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-colors"
+                :class="activeTab === t.key ? 'text-paper' : 'text-muted-foreground hover:text-moss'"
                 @click="setTab(t.key)"
             >
                 {{ t.label }}
@@ -87,9 +91,9 @@
 import AdminLayout from '@/layouts/admin-layout.vue';
 import Card from '@/components/ui/Card.vue';
 import Badge from '@/components/ui/Badge.vue';
-import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { ChevronRight, Flag, Inbox } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
 const props = defineProps({
     reports: { type: Object, required: true },
@@ -97,8 +101,25 @@ const props = defineProps({
     counts: { type: Object, required: true },
 });
 
-const page = usePage();
 const activeTab = ref(props.filters?.filter?.status ?? 'all');
+const tabRefs = ref([]);
+const sliderStyle = ref({});
+
+const updateSlider = () => {
+    const activeIndex = tabs.value.findIndex(t => t.key === activeTab.value);
+    const el = tabRefs.value[activeIndex];
+    if (el) {
+        sliderStyle.value = {
+            left: `${el.offsetLeft}px`,
+            top: `${el.offsetTop}px`,
+            width: `${el.offsetWidth}px`,
+            height: `${el.offsetHeight}px`,
+        };
+    }
+};
+
+onMounted(() => nextTick(updateSlider));
+watch(activeTab, () => nextTick(updateSlider));
 
 const tabs = computed(() => [
     { key: 'all', label: 'All', count: props.reports.total },
