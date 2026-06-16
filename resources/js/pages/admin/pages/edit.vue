@@ -60,7 +60,7 @@
                             <Input
                                 v-model="form.title"
                                 type="text"
-                                class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full text-base"
+                                class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full text-base"
                                 placeholder="About us"
                                 required
                             />
@@ -72,7 +72,7 @@
                             <Input
                                 v-model="form.slug"
                                 type="text"
-                                class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full font-mono text-sm"
+                                class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full font-mono text-sm"
                                 placeholder="about-us"
                                 required
                             />
@@ -84,7 +84,7 @@
                             <Textarea
                                 v-model="form.body"
                                 rows="18"
-                                class="rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full p-4 font-mono text-sm leading-relaxed"
+                                class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full p-4 font-mono text-sm leading-relaxed"
                                 placeholder="# About us..."
                                 required
                             />

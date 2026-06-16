@@ -9,7 +9,7 @@
                         v-model="actionFilter"
                         type="search"
                         placeholder="Filter by action (e.g. user.ban, post.delete)..."
-                        class="h-10 w-full rounded-full bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary pl-10 pr-4"
+                        class="h-10 w-full rounded-full bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary pl-10 pr-4"
                         @keydown.enter="apply"
                     />
                 </div>

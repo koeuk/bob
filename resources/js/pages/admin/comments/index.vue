@@ -35,7 +35,7 @@
                         v-model="search"
                         type="search"
                         placeholder="Search comment body..."
-                        class="h-10 w-full rounded-full bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary pl-10 pr-4"
+                        class="h-10 w-full rounded-full bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary pl-10 pr-4"
                         @keydown.enter="apply"
                     />
                 </div>
@@ -230,7 +230,7 @@
                             <Textarea
                                 v-model="createForm.body"
                                 rows="5"
-                                class="rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full p-3 text-sm"
+                                class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full p-3 text-sm"
                                 placeholder="Write the comment..."
                                 required
                                 maxlength="2000"
@@ -268,7 +268,7 @@
                             <Textarea
                                 v-model="editForm.body"
                                 rows="5"
-                                class="rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full p-3 text-sm"
+                                class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full p-3 text-sm"
                                 required
                             />
                             <p v-if="editForm.errors.body" class="mt-1 text-xs text-destructive">{{ editForm.errors.body }}</p>
@@ -278,7 +278,7 @@
                             <Input
                                 v-model="editForm.reason"
                                 type="text"
-                                class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
+                                class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                                 placeholder="Logged in activity log"
                             />
                         </div>

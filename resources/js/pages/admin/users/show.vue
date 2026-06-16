@@ -169,12 +169,12 @@
                     <form class="mt-5 space-y-4" @submit.prevent="submitBan">
                         <div>
                             <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Reason</label>
-                            <Textarea v-model="banForm.reason" rows="3" class="rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" placeholder="Repeated harassment..." required />
+                            <Textarea v-model="banForm.reason" rows="3" class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" placeholder="Repeated harassment..." required />
                             <p v-if="banForm.errors.reason" class="mt-1 text-xs text-destructive">{{ banForm.errors.reason }}</p>
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Expires at (optional)</label>
-                            <Input v-model="banForm.expires_at" type="datetime-local" class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
+                            <Input v-model="banForm.expires_at" type="datetime-local" class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
                             <p class="mt-1 text-xs text-muted-foreground">Leave empty for a permanent ban.</p>
                         </div>
                         <div class="flex justify-end gap-2 pt-2">

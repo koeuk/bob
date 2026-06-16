@@ -15,7 +15,7 @@
                     v-model="banReason"
                     placeholder="Reason for ban…"
                     rows="3"
-                    class="rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary resize-none"
+                    class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary resize-none"
                 />
             </div>
             <DialogFooter class="flex-row justify-end gap-2 pt-2">

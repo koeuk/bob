@@ -194,7 +194,7 @@
                             <Textarea
                                 v-model="createForm.reason"
                                 rows="3"
-                                class="rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
+                                class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                                 required
                             />
                             <p v-if="createForm.errors.reason" class="mt-1 text-xs text-destructive">{{ createForm.errors.reason }}</p>
@@ -204,7 +204,7 @@
                             <Input
                                 v-model="createForm.expires_at"
                                 type="datetime-local"
-                                class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
+                                class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                             />
                         </div>
                         <div class="flex justify-end gap-2 pt-2">

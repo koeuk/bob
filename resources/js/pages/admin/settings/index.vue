@@ -40,13 +40,13 @@
                                 v-model="row.key"
                                 type="text"
                                 placeholder="key"
-                                class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary font-mono text-sm"
+                                class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary font-mono text-sm"
                             />
                             <Input
                                 v-model="row.value"
                                 type="text"
                                 placeholder="value"
-                                class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary text-sm"
+                                class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary text-sm"
                             />
                             <button
                                 class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"

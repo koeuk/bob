@@ -55,7 +55,7 @@
                     <Textarea
                         v-model="resolveForm.resolution_note"
                         rows="3"
-                        class="rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
+                        class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                         placeholder="Deleted offending post, warned user..."
                         required
                     />
@@ -76,7 +76,7 @@
                     <Textarea
                         v-model="dismissForm.resolution_note"
                         rows="3"
-                        class="rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
+                        class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                         placeholder="Duplicate report..."
                     />
                     <Button type="submit" variant="outline" class="mt-3 rounded-full" :disabled="dismissForm.processing">

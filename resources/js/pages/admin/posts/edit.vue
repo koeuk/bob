@@ -75,7 +75,7 @@
                             <Textarea
                                 v-model="form.body"
                                 rows="10"
-                                class="rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
+                                class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                                 placeholder="Write the post body..."
                                 required
                             />
@@ -124,7 +124,7 @@
                         <Input
                             v-model="form.reason"
                             type="text"
-                            class="h-11 rounded-2xl bg-secondary/60 border-0 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
+                            class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                             placeholder="Why are you editing this? Logged for audit."
                         />
                     </div>
