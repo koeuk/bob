@@ -33,7 +33,7 @@
             <Card
                 v-for="p in pages.data"
                 :key="p.uuid"
-                class="rounded-3xl border-border/60 gap-0 group flex flex-col gap-3 p-5 transition-shadow hover:shadow-md"
+                class="glass rounded-3xl gap-0 group flex flex-col gap-3 p-5 card-hover"
             >
                 <div class="flex items-start justify-between gap-3">
                     <div class="flex items-center gap-3">
@@ -64,7 +64,7 @@
             </Card>
         </div>
 
-        <div v-if="!pages.data.length" class="rounded-3xl border border-border/60 bg-card py-16 text-center text-sm text-muted-foreground shadow-sm">
+        <div v-if="!pages.data.length" class="glass rounded-3xl py-16 text-center text-sm text-muted-foreground">
             No pages yet. Create one to get started.
         </div>
     </AdminLayout>

@@ -92,7 +92,7 @@
                                 <ChevronDown class="hidden size-3.5 text-muted-foreground sm:block" />
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" class="w-56">
-                                <UserMenuContent :user="user" />
+                                <UserMenuContent :user="user" :is-admin="true" />
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
