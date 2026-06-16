@@ -119,7 +119,7 @@
         </Card>
 
         <!-- Table -->
-        <Card class="rounded-3xl border-white gap-0 overflow-hidden !bg-white/80">
+        <Card class="rounded-3xl border-white gap-0 overflow-hidden">
             <div class="grid grid-cols-[1.8fr_1fr_0.8fr_0.6fr_0.8fr_2.5rem] items-center gap-4 border-b border-white px-6 py-3 text-[11px] uppercase tracking-wide text-muted-foreground">
                 <span>User</span>
                 <span>Email</span>

@@ -63,20 +63,23 @@
                 <Separator orientation="vertical" class="mx-2 h-4" />
 
                 <div class="flex flex-1 items-center justify-between">
-                    <!-- App / Admin switcher -->
-                    <div class="flex items-center rounded-lg border border-border/50 bg-card/70 p-0.5 shadow-sm">
+                    <!-- Left placeholder for balance -->
+                    <div class="flex-1" />
+
+                    <!-- App / Admin switcher (centered) -->
+                    <div class="flex items-center rounded-xl border border-border/50 bg-card/70 p-1 shadow-sm">
                         <Link
                             href="/dashboard"
-                            class="rounded-md px-3 py-1 text-xs font-medium text-muted-foreground hover:text-ink transition-colors duration-150"
+                            class="rounded-lg px-5 py-2 text-sm font-medium text-muted-foreground hover:text-ink transition-colors duration-150"
                         >App</Link>
                         <Link
                             href="/admin/dashboard"
-                            class="rounded-md px-3 py-1 text-xs font-semibold bg-moss text-paper shadow-sm transition-all duration-150"
+                            class="rounded-lg px-5 py-2 text-sm font-semibold bg-moss text-paper shadow-sm transition-all duration-150"
                         >Admin</Link>
                     </div>
 
                     <!-- Right: appearance + user -->
-                    <div class="flex items-center gap-2">
+                    <div class="flex flex-1 items-center justify-end gap-2">
                         <AppearanceDropdown />
                         <DropdownMenu>
                             <DropdownMenuTrigger
