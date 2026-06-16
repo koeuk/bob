@@ -20,7 +20,7 @@
         </div>
 
         <div class="space-y-6">
-            <Card v-for="(rows, group) in groupedRows" :key="group" class="rounded-3xl border-border/60 gap-0">
+            <Card v-for="(rows, group) in groupedRows" :key="group" class="rounded-3xl border-white gap-0">
                 <CardHeader class="px-6 pt-6 pb-0">
                     <CardTitle class="flex items-center gap-2">
                         <span class="inline-flex size-8 items-center justify-center rounded-full bg-forest text-xs font-semibold text-paper">
@@ -40,13 +40,13 @@
                                 v-model="row.key"
                                 type="text"
                                 placeholder="key"
-                                class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary font-mono text-sm"
+                                class="h-11 rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary font-mono text-sm"
                             />
                             <Input
                                 v-model="row.value"
                                 type="text"
                                 placeholder="value"
-                                class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary text-sm"
+                                class="h-11 rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary text-sm"
                             />
                             <button
                                 class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
@@ -60,7 +60,7 @@
             </Card>
         </div>
 
-        <div v-if="!state.rows.length" class="rounded-3xl border border-border/60 bg-card py-16 text-center text-sm text-muted-foreground shadow-sm">
+        <div v-if="!state.rows.length" class="rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card py-16 text-center text-sm text-muted-foreground">
             No settings yet. Click &ldquo;Add setting&rdquo; to create one.
         </div>
     </AdminLayout>

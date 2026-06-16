@@ -57,7 +57,7 @@
         </Link>
 
         <!-- Post -->
-        <article class="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
+        <article class="rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card p-6">
             <header class="flex items-center justify-between gap-2">
                 <div class="flex items-center gap-3">
                     <span class="flex size-12 items-center justify-center rounded-full bg-forest text-sm font-semibold text-paper">
@@ -112,7 +112,7 @@
         </article>
 
         <!-- Composer -->
-        <form class="rounded-3xl border border-border/60 bg-card p-5 shadow-sm" @submit.prevent="submitComment">
+        <form class="rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card p-5" @submit.prevent="submitComment">
             <div class="flex gap-3">
                 <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-forest text-xs font-semibold text-paper">
                     {{ initials(me?.name) }}
@@ -147,7 +147,7 @@
             <div
                 v-for="c in comments"
                 :key="c.uuid"
-                class="rounded-3xl border border-border/60 bg-card p-5 shadow-sm"
+                class="rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card p-5"
             >
                 <header class="flex items-start justify-between gap-3">
                     <div class="flex items-center gap-3">
@@ -198,7 +198,7 @@
             </div>
         </section>
 
-        <div v-else class="rounded-3xl border border-border/60 bg-card py-10 text-center text-sm text-muted-foreground shadow-sm">
+        <div v-else class="rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card py-10 text-center text-sm text-muted-foreground">
             No replies yet. Say something.
         </div>
 

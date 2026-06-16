@@ -24,11 +24,11 @@
         <!-- Stats + filter -->
         <div class="flex flex-wrap items-center justify-between gap-4">
             <div class="flex gap-3">
-                <Card class="rounded-3xl border-border/60 gap-0 px-5 py-3">
+                <Card class="min-w-44 rounded-3xl border-white gap-0 px-6 py-4">
                     <div class="text-[11px] uppercase tracking-wide text-muted-foreground">Total</div>
                     <div class="font-sans text-2xl font-semibold">{{ counts.all }}</div>
                 </Card>
-                <Card class="rounded-3xl border-border/60 gap-0 bg-rust/5 px-5 py-3">
+                <Card class="min-w-44 rounded-3xl border-white gap-0 bg-rust/5 px-6 py-4">
                     <div class="text-[11px] uppercase tracking-wide text-rust">Active</div>
                     <div class="font-sans text-2xl font-semibold text-rust">{{ counts.active }}</div>
                 </Card>
@@ -44,7 +44,7 @@
             </div>
         </div>
 
-        <Card class="rounded-3xl border-border/60 gap-0 overflow-hidden">
+        <Card class="rounded-3xl border-white gap-0 overflow-hidden">
             <ul v-if="bans.data.length" class="divide-y divide-border/60">
                 <li
                     v-for="b in bans.data"
@@ -90,7 +90,7 @@
                 No bans.
             </div>
 
-            <div v-if="bans.data.length" class="flex items-center justify-between border-t border-border/60 px-6 py-4 text-xs text-muted-foreground">
+            <div v-if="bans.data.length" class="flex items-center justify-between border-t border-white px-6 py-4 text-xs text-muted-foreground">
                 <span>Showing {{ bans.from }}–{{ bans.to }} of {{ bans.total }}</span>
                 <div class="flex items-center gap-1">
                     <Link
@@ -150,9 +150,9 @@
                                 </button>
                                 <div
                                     v-if="pickerOpen"
-                                    class="absolute left-0 right-0 z-10 mt-1 overflow-hidden rounded-2xl border border-border/60 bg-popover shadow-lg"
+                                    class="absolute left-0 right-0 z-10 mt-1 overflow-hidden rounded-2xl border-2 border-white dark:border-white/10 shadow-sm bg-popover shadow-lg"
                                 >
-                                    <div class="relative border-b border-border/60">
+                                    <div class="relative border-b border-white">
                                         <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                                         <input
                                             v-model="userSearch"
@@ -194,7 +194,7 @@
                             <Textarea
                                 v-model="createForm.reason"
                                 rows="3"
-                                class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
+                                class="rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                                 required
                             />
                             <p v-if="createForm.errors.reason" class="mt-1 text-xs text-destructive">{{ createForm.errors.reason }}</p>
@@ -204,7 +204,7 @@
                             <Input
                                 v-model="createForm.expires_at"
                                 type="datetime-local"
-                                class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
+                                class="h-11 rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                             />
                         </div>
                         <div class="flex justify-end gap-2 pt-2">

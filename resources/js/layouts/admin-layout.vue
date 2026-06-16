@@ -80,7 +80,7 @@
                         <AppearanceDropdown />
                         <DropdownMenu>
                             <DropdownMenuTrigger
-                                class="flex items-center gap-2 rounded-full border border-border/60 bg-card/70 py-1 pl-1 pr-3 shadow-sm transition-all duration-150 hover:border-moss/40"
+                                class="flex items-center gap-2 rounded-full border-2 border-white dark:border-white/10 shadow-sm bg-card/70 py-1 pl-1 pr-3 shadow-sm transition-all duration-150 hover:border-moss/40"
                             >
                                 <span class="flex size-7 items-center justify-center rounded-full bg-forest text-paper text-xs font-semibold">
                                     {{ initials }}

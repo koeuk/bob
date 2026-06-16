@@ -40,7 +40,7 @@
                 <Card
                     v-for="f in figures"
                     :key="f.key"
-                    class="rounded-3xl border-border/60 gap-0 p-5 flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 cursor-default"
+                    class="rounded-3xl border border-transparent dark:border-border gap-0 p-5 flex flex-col justify-between transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 cursor-default"
                 >
                     <div class="flex items-start justify-between gap-2">
                         <span class="inline-flex size-9 items-center justify-center rounded-2xl bg-secondary text-ink shrink-0">
@@ -66,7 +66,7 @@
 
         <!-- Chart + weekly goal + quick actions -->
         <section class="grid gap-4 lg:grid-cols-3">
-            <Card class="rounded-3xl border-border/60 gap-0 lg:col-span-2 transition-all duration-200 hover:shadow-md">
+            <Card class="rounded-3xl border-white gap-0 lg:col-span-2 transition-all duration-200 hover:shadow-md">
                 <CardHeader class="px-6 pt-6 pb-0">
                     <div class="flex items-start justify-between gap-4">
                         <div>
@@ -84,7 +84,7 @@
 
             <div class="flex flex-col gap-4">
                 <!-- Weekly goal -->
-                <Card class="rounded-3xl border-border/60 gap-0 p-5 transition-all duration-200 hover:shadow-md">
+                <Card class="rounded-3xl border-white gap-0 p-5 transition-all duration-200 hover:shadow-md">
                     <div class="flex items-center justify-between">
                         <div class="text-[11px] uppercase tracking-widest text-muted-foreground font-medium">Weekly goal</div>
                         <span class="text-[11px] text-muted-foreground">resets Sunday</span>
@@ -106,7 +106,7 @@
                 </Card>
 
                 <!-- Quick actions -->
-                <Card class="rounded-3xl border-border/60 gap-0 p-5 transition-all duration-200 hover:shadow-md">
+                <Card class="rounded-3xl border-white gap-0 p-5 transition-all duration-200 hover:shadow-md">
                     <div class="text-[11px] uppercase tracking-widest text-muted-foreground font-medium mb-3">Quick actions</div>
                     <div class="flex flex-col gap-2">
                         <Button as-child class="rounded-2xl bg-moss text-paper hover:bg-moss/90 justify-start gap-2 h-10 transition-all duration-150 hover:shadow-sm hover:shadow-moss/20">
@@ -126,7 +126,7 @@
 
         <!-- Recent posts + recent activity -->
         <section class="grid gap-4 lg:grid-cols-2">
-            <Card class="rounded-3xl border-border/60 gap-0 transition-all duration-200 hover:shadow-md">
+            <Card class="rounded-3xl border-white gap-0 transition-all duration-200 hover:shadow-md">
                 <CardHeader class="px-6 pt-6 pb-0">
                     <div class="flex items-center justify-between">
                         <div>
@@ -175,7 +175,7 @@
                 </CardContent>
             </Card>
 
-            <Card class="rounded-3xl border-border/60 gap-0 transition-all duration-200 hover:shadow-md">
+            <Card class="rounded-3xl border-white gap-0 transition-all duration-200 hover:shadow-md">
                 <CardHeader class="px-6 pt-6 pb-0">
                     <div>
                         <CardTitle class="text-base">Recent activity</CardTitle>

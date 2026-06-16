@@ -7,7 +7,7 @@
         </section>
 
         <!-- Composer -->
-        <form class="rounded-3xl border border-border/60 bg-card p-5 shadow-sm" @submit.prevent="submitPost">
+        <form class="rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card p-5" @submit.prevent="submitPost">
             <div class="flex gap-3">
                 <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-forest text-sm font-semibold text-paper">
                     {{ initials(me?.name) }}
@@ -40,7 +40,7 @@
             <article
                 v-for="p in posts.data"
                 :key="p.uuid"
-                class="rounded-3xl border border-border/60 bg-card p-5 shadow-sm"
+                class="rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card p-5"
             >
                 <header class="flex items-center justify-between gap-2">
                     <div class="flex items-center gap-3">
@@ -91,7 +91,7 @@
             </article>
         </div>
 
-        <div v-else class="rounded-3xl border border-border/60 bg-card py-16 text-center text-sm text-muted-foreground shadow-sm">
+        <div v-else class="rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card py-16 text-center text-sm text-muted-foreground">
             Nothing yet. Be the first to write.
         </div>
 

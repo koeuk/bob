@@ -2,7 +2,7 @@
     <Head title="Reports" />
     <AdminLayout title="Reports">
         <!-- Tabs -->
-        <div class="relative flex items-center rounded-full border border-border/60 bg-card p-1.5 shadow-sm w-fit">
+        <div class="relative flex items-center rounded-full border-2 border-white dark:border-white/10 shadow-sm bg-card p-1.5 shadow-sm w-fit">
             <!-- Sliding indicator -->
             <div
                 class="absolute rounded-full bg-moss transition-all duration-300 ease-in-out"
@@ -31,7 +31,7 @@
         </div>
 
         <!-- Queue -->
-        <Card class="rounded-3xl border-border/60 gap-0 overflow-hidden">
+        <Card class="rounded-3xl border-white gap-0 overflow-hidden">
             <ul v-if="reports.data.length" class="divide-y divide-border/60">
                 <li
                     v-for="r in reports.data"
@@ -66,7 +66,7 @@
                 <p class="mt-3 text-sm text-muted-foreground">No reports in this queue.</p>
             </div>
 
-            <div v-if="reports.data.length" class="flex items-center justify-between border-t border-border/60 px-6 py-4 text-xs text-muted-foreground">
+            <div v-if="reports.data.length" class="flex items-center justify-between border-t border-white px-6 py-4 text-xs text-muted-foreground">
                 <span>Showing {{ reports.from }}–{{ reports.to }} of {{ reports.total }}</span>
                 <div class="flex items-center gap-1">
                     <Link

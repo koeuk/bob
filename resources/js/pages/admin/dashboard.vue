@@ -37,7 +37,7 @@
                 <Card
                     v-for="f in figures"
                     :key="f.key"
-                    class="rounded-3xl border-border/60 gap-0 p-5 flex flex-col justify-between"
+                    class="rounded-3xl border-white gap-0 p-5 flex flex-col justify-between"
                 >
                     <div class="flex items-center justify-between">
                         <span class="inline-flex size-9 items-center justify-center rounded-2xl bg-secondary text-ink">
@@ -63,7 +63,7 @@
 
         <!-- Chart + active snapshot -->
         <section class="grid gap-4 lg:grid-cols-3">
-            <Card class="rounded-3xl border-border/60 gap-0 lg:col-span-2">
+            <Card class="rounded-3xl border-white gap-0 lg:col-span-2">
                 <CardHeader class="px-6 pt-6 pb-0">
                     <div class="flex items-start justify-between gap-4">
                         <div>
@@ -80,7 +80,7 @@
             </Card>
 
             <div class="flex flex-col gap-4">
-                <Card class="rounded-3xl border-border/60 gap-0 p-5">
+                <Card class="rounded-3xl border-white gap-0 p-5">
                     <div class="text-xs uppercase tracking-wide text-muted-foreground">Active now</div>
                     <div class="mt-2 flex items-baseline gap-2">
                         <span class="font-sans text-4xl font-semibold tracking-tight">{{ fmt(stats.users_active_5m) }}</span>
@@ -90,7 +90,7 @@
                         </span>
                     </div>
                 </Card>
-                <Card class="rounded-3xl border-border/60 gap-0 p-5">
+                <Card class="rounded-3xl border-white gap-0 p-5">
                     <div class="text-xs uppercase tracking-wide text-muted-foreground">New today</div>
                     <div class="mt-3 grid grid-cols-2 gap-3">
                         <div>
@@ -108,7 +108,7 @@
 
         <!-- Recent reports + activity -->
         <section class="grid gap-4 lg:grid-cols-2">
-            <Card class="rounded-3xl border-border/60 gap-0">
+            <Card class="rounded-3xl border-white gap-0">
                 <CardHeader class="px-6 pt-6 pb-0">
                     <div class="flex items-center justify-between">
                         <div>
@@ -151,7 +151,7 @@
                 </CardContent>
             </Card>
 
-            <Card class="rounded-3xl border-border/60 gap-0">
+            <Card class="rounded-3xl border-white gap-0">
                 <CardHeader class="px-6 pt-6 pb-0">
                     <div class="flex items-center justify-between">
                         <div>

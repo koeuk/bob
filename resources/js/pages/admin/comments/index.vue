@@ -27,7 +27,7 @@
             </Button>
         </div>
 
-        <Card class="rounded-3xl border-border/60 gap-0 p-4">
+        <Card class="rounded-3xl border-white gap-0 p-4">
             <div class="flex flex-wrap items-center gap-3">
                 <div class="relative flex-1">
                     <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -35,14 +35,14 @@
                         v-model="search"
                         type="search"
                         placeholder="Search comment body..."
-                        class="h-10 w-full rounded-full bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary pl-10 pr-4"
+                        class="h-10 w-full rounded-full bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary pl-10 pr-4"
                         @keydown.enter="apply"
                     />
                 </div>
             </div>
         </Card>
 
-        <div class="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
+        <div class="overflow-hidden rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card">
             <ul v-if="comments.data.length" class="divide-y divide-border/60">
                 <li v-for="c in comments.data" :key="c.uuid" class="flex items-start gap-4 px-6 py-4">
                     <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary text-[11px] font-semibold">
@@ -86,7 +86,7 @@
                 No comments.
             </div>
 
-            <div v-if="comments.data.length" class="flex items-center justify-between border-t border-border/60 px-6 py-4 text-xs text-muted-foreground">
+            <div v-if="comments.data.length" class="flex items-center justify-between border-t border-white px-6 py-4 text-xs text-muted-foreground">
                 <span>Showing {{ comments.from }}–{{ comments.to }} of {{ comments.total }}</span>
                 <div class="flex items-center gap-1">
                     <Link
@@ -130,9 +130,9 @@
                                 </button>
                                 <div
                                     v-if="postPickerOpen"
-                                    class="absolute left-0 right-0 z-10 mt-1 overflow-hidden rounded-2xl border border-border/60 bg-popover shadow-lg"
+                                    class="absolute left-0 right-0 z-10 mt-1 overflow-hidden rounded-2xl border-2 border-white dark:border-white/10 shadow-sm bg-popover shadow-lg"
                                 >
-                                    <div class="relative border-b border-border/60">
+                                    <div class="relative border-b border-white">
                                         <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                                         <input
                                             v-model="postSearch"
@@ -191,9 +191,9 @@
                                 </button>
                                 <div
                                     v-if="authorPickerOpen"
-                                    class="absolute left-0 right-0 z-10 mt-1 overflow-hidden rounded-2xl border border-border/60 bg-popover shadow-lg"
+                                    class="absolute left-0 right-0 z-10 mt-1 overflow-hidden rounded-2xl border-2 border-white dark:border-white/10 shadow-sm bg-popover shadow-lg"
                                 >
-                                    <div class="relative border-b border-border/60">
+                                    <div class="relative border-b border-white">
                                         <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                                         <input
                                             v-model="authorSearch"
@@ -230,7 +230,7 @@
                             <Textarea
                                 v-model="createForm.body"
                                 rows="5"
-                                class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full p-3 text-sm"
+                                class="rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full p-3 text-sm"
                                 placeholder="Write the comment..."
                                 required
                                 maxlength="2000"
@@ -268,7 +268,7 @@
                             <Textarea
                                 v-model="editForm.body"
                                 rows="5"
-                                class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full p-3 text-sm"
+                                class="rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary w-full p-3 text-sm"
                                 required
                             />
                             <p v-if="editForm.errors.body" class="mt-1 text-xs text-destructive">{{ editForm.errors.body }}</p>
@@ -278,7 +278,7 @@
                             <Input
                                 v-model="editForm.reason"
                                 type="text"
-                                class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
+                                class="h-11 rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                                 placeholder="Logged in activity log"
                             />
                         </div>

@@ -1,7 +1,7 @@
 <template>
     <Head title="Activity" />
     <AdminLayout title="Activity log">
-        <Card class="rounded-3xl border-border/60 gap-0 p-4">
+        <Card class="rounded-3xl border-white gap-0 p-4">
             <div class="flex flex-wrap items-center gap-3">
                 <div class="relative flex-1">
                     <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -9,14 +9,14 @@
                         v-model="actionFilter"
                         type="search"
                         placeholder="Filter by action (e.g. user.ban, post.delete)..."
-                        class="h-10 w-full rounded-full bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary pl-10 pr-4"
+                        class="h-10 w-full rounded-full bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary pl-10 pr-4"
                         @keydown.enter="apply"
                     />
                 </div>
             </div>
         </Card>
 
-        <div class="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
+        <div class="overflow-hidden rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card">
             <ul v-if="logs.data.length" class="divide-y divide-border/60">
                 <li v-for="log in logs.data" :key="log.uuid" class="flex items-start gap-4 px-6 py-3">
                     <span class="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-forest text-[11px] font-semibold text-paper">
@@ -44,7 +44,7 @@
                 <p class="mt-3 text-sm text-muted-foreground">No activity recorded yet.</p>
             </div>
 
-            <div v-if="logs.data.length" class="flex items-center justify-between border-t border-border/60 px-6 py-4 text-xs text-muted-foreground">
+            <div v-if="logs.data.length" class="flex items-center justify-between border-t border-white px-6 py-4 text-xs text-muted-foreground">
                 <span>Showing {{ logs.from }}–{{ logs.to }} of {{ logs.total }}</span>
                 <div class="flex items-center gap-1">
                     <Link

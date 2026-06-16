@@ -6,7 +6,7 @@
             <p class="mt-1 text-sm text-muted-foreground">Reports you've filed and what happened.</p>
         </section>
 
-        <div class="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
+        <div class="overflow-hidden rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card">
             <ul v-if="reports.data.length" class="divide-y divide-border/60">
                 <li
                     v-for="r in reports.data"
@@ -42,7 +42,7 @@
                 <p class="mt-3 text-sm text-muted-foreground">You haven't filed any reports.</p>
             </div>
 
-            <div v-if="reports.data.length && reports.links.length > 3" class="flex items-center justify-between border-t border-border/60 px-6 py-4 text-xs text-muted-foreground">
+            <div v-if="reports.data.length && reports.links.length > 3" class="flex items-center justify-between border-t border-white px-6 py-4 text-xs text-muted-foreground">
                 <span>Showing {{ reports.from }}–{{ reports.to }} of {{ reports.total }}</span>
                 <div class="flex items-center gap-1">
                     <Link

@@ -35,7 +35,7 @@
             </Button>
         </div>
 
-        <Card class="rounded-3xl border-border/60 gap-0 p-6">
+        <Card class="rounded-3xl border-white gap-0 p-6">
             <header class="mb-4 flex flex-wrap items-start justify-between gap-4">
                 <div class="flex items-center gap-3">
                     <span class="flex size-12 items-center justify-center rounded-full bg-forest text-sm font-semibold text-paper">
@@ -61,7 +61,7 @@
         </Card>
 
         <!-- Moderation actions -->
-        <Card class="rounded-3xl border-border/60 gap-0 p-4">
+        <Card class="rounded-3xl border-white gap-0 p-4">
             <div class="flex flex-wrap items-center gap-2">
                 <span class="mr-2 text-xs uppercase tracking-wide text-muted-foreground">Moderate</span>
                 <Button
@@ -97,7 +97,7 @@
         </Card>
 
         <!-- Reports for this post -->
-        <Card v-if="post.reports?.length" class="rounded-3xl border-border/60 gap-0">
+        <Card v-if="post.reports?.length" class="rounded-3xl border-white gap-0">
             <CardHeader class="px-6 pt-6 pb-0"><CardTitle>Reports on this post</CardTitle></CardHeader>
             <CardContent class="px-6 pb-6 pt-4">
                 <ul class="divide-y divide-border/60">
@@ -117,7 +117,7 @@
         </Card>
 
         <!-- Comments -->
-        <Card v-if="post.comments?.length" class="rounded-3xl border-border/60 gap-0">
+        <Card v-if="post.comments?.length" class="rounded-3xl border-white gap-0">
             <CardHeader class="px-6 pt-6 pb-0"><CardTitle>Comments ({{ post.comments.length }})</CardTitle></CardHeader>
             <CardContent class="px-6 pb-6 pt-4">
                 <ul class="divide-y divide-border/60">

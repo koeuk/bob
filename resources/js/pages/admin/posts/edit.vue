@@ -30,7 +30,7 @@
                 </div>
             </div>
 
-            <Card class="rounded-3xl border-border/60 gap-0 p-6">
+            <Card class="rounded-3xl border-white gap-0 p-6">
                 <div class="space-y-4">
                     <div>
                         <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Author</label>
@@ -75,7 +75,7 @@
                             <Textarea
                                 v-model="form.body"
                                 rows="10"
-                                class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
+                                class="rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                                 placeholder="Write the post body..."
                                 required
                             />
@@ -124,7 +124,7 @@
                         <Input
                             v-model="form.reason"
                             type="text"
-                            class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
+                            class="h-11 rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                             placeholder="Why are you editing this? Logged for audit."
                         />
                     </div>

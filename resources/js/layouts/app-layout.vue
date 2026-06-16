@@ -12,7 +12,7 @@
                 </Link>
 
                 <!-- App / Admin switcher -->
-                <div v-if="isModerator" class="flex items-center rounded-xl border border-border/60 bg-card/70 p-0.5 shadow-sm">
+                <div v-if="isModerator" class="flex items-center rounded-xl border-2 border-transparent dark:border-border shadow-sm bg-card/70 p-0.5 shadow-sm">
                     <Link
                         href="/dashboard"
                         class="rounded-lg px-4 py-1.5 text-xs font-semibold bg-moss text-paper shadow-sm transition-all duration-150"
@@ -28,7 +28,7 @@
                     <AppearanceDropdown />
                     <DropdownMenu>
                         <DropdownMenuTrigger
-                            class="flex items-center gap-2 rounded-full border border-border/60 bg-card/70 py-1 pl-1 pr-3 shadow-sm transition-all duration-150 hover:border-moss/40 hover:shadow-moss/10"
+                            class="flex items-center gap-2 rounded-full border-2 border-white dark:border-white/10 shadow-sm bg-card/70 py-1 pl-1 pr-3 shadow-sm transition-all duration-150 hover:border-moss/40 hover:shadow-moss/10"
                         >
                             <span class="flex size-7 items-center justify-center rounded-full bg-forest text-paper text-xs font-semibold">
                                 {{ initials }}

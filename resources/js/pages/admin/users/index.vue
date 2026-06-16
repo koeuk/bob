@@ -15,7 +15,7 @@
                     v-model="banReason"
                     placeholder="Reason for ban…"
                     rows="3"
-                    class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary resize-none"
+                    class="rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary resize-none"
                 />
             </div>
             <DialogFooter class="flex-row justify-end gap-2 pt-2">
@@ -66,7 +66,7 @@
         </div>
 
         <!-- Toolbar -->
-        <Card class="rounded-3xl border-border/60 gap-0 p-4">
+        <Card class="rounded-3xl border-white gap-0 p-4">
             <div class="flex flex-wrap items-center gap-3">
                 <div class="relative min-w-0 flex-1">
                     <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -119,8 +119,8 @@
         </Card>
 
         <!-- Table -->
-        <Card class="rounded-3xl border-border/60 gap-0 overflow-hidden">
-            <div class="grid grid-cols-[1.8fr_1fr_0.8fr_0.6fr_0.8fr_2.5rem] items-center gap-4 border-b border-border/60 px-6 py-3 text-[11px] uppercase tracking-wide text-muted-foreground">
+        <Card class="rounded-3xl border-white gap-0 overflow-hidden !bg-white/80">
+            <div class="grid grid-cols-[1.8fr_1fr_0.8fr_0.6fr_0.8fr_2.5rem] items-center gap-4 border-b border-white px-6 py-3 text-[11px] uppercase tracking-wide text-muted-foreground">
                 <span>User</span>
                 <span>Email</span>
                 <span>Role</span>
@@ -167,7 +167,7 @@
                         </button>
                         <div
                             v-if="openRow === u.uuid"
-                            class="absolute right-0 top-10 z-10 w-44 overflow-hidden rounded-2xl border border-border/60 bg-popover shadow-lg"
+                            class="absolute right-0 top-10 z-10 w-44 overflow-hidden rounded-2xl border-2 border-white dark:border-white/10 shadow-sm bg-popover shadow-lg"
                         >
                             <Link :href="`/admin/users/${u.uuid}`" class="block px-4 py-2 text-sm hover:bg-secondary">View profile</Link>
                             <Link :href="`/admin/users/${u.uuid}/edit`" class="block px-4 py-2 text-sm hover:bg-secondary">Edit user</Link>
@@ -185,7 +185,7 @@
                             >
                                 <UserCheck class="size-4" /> Unban
                             </button>
-                            <div class="border-t border-border/60 my-1" />
+                            <div class="border-t border-white my-1" />
                             <button
                                 class="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-destructive hover:bg-secondary"
                                 @click="deleteTarget = u; openRow = null"
@@ -202,7 +202,7 @@
             </div>
 
             <!-- Pagination -->
-            <div v-if="users.data.length" class="flex items-center justify-between border-t border-border/60 px-6 py-4 text-xs text-muted-foreground">
+            <div v-if="users.data.length" class="flex items-center justify-between border-t border-white px-6 py-4 text-xs text-muted-foreground">
                 <span>Showing {{ users.from }}–{{ users.to }} of {{ users.total }}</span>
                 <div class="flex items-center gap-1">
                     <Link

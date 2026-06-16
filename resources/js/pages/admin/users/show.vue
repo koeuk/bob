@@ -26,7 +26,7 @@
         </Link>
 
         <!-- Profile header -->
-        <Card class="rounded-3xl border-border/60 gap-0 p-6">
+        <Card class="rounded-3xl border-white gap-0 p-6">
             <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                 <div class="flex items-center gap-5">
                     <div class="relative size-20 shrink-0">
@@ -83,15 +83,15 @@
 
         <!-- Stats -->
         <section class="grid gap-4 sm:grid-cols-3">
-            <Card class="rounded-3xl border-border/60 gap-0 p-5">
+            <Card class="rounded-3xl border-white gap-0 p-5">
                 <div class="text-xs uppercase tracking-wide text-muted-foreground">Posts</div>
                 <div class="mt-2 font-sans text-3xl font-semibold tracking-tight">{{ user.posts_count ?? 0 }}</div>
             </Card>
-            <Card class="rounded-3xl border-border/60 gap-0 p-5">
+            <Card class="rounded-3xl border-white gap-0 p-5">
                 <div class="text-xs uppercase tracking-wide text-muted-foreground">Comments</div>
                 <div class="mt-2 font-sans text-3xl font-semibold tracking-tight">{{ user.comments_count ?? 0 }}</div>
             </Card>
-            <Card class="rounded-3xl border-border/60 gap-0 p-5">
+            <Card class="rounded-3xl border-white gap-0 p-5">
                 <div class="text-xs uppercase tracking-wide text-muted-foreground">Reports filed</div>
                 <div class="mt-2 font-sans text-3xl font-semibold tracking-tight">{{ user.reports_filed_count ?? 0 }}</div>
             </Card>
@@ -99,7 +99,7 @@
 
         <div class="grid gap-4 lg:grid-cols-2">
             <!-- Ban history -->
-            <Card class="rounded-3xl border-border/60 gap-0">
+            <Card class="rounded-3xl border-white gap-0">
                 <CardHeader class="px-6 pt-6 pb-0"><CardTitle>Ban history</CardTitle></CardHeader>
                 <CardContent class="px-6 pb-6 pt-4">
                     <ul v-if="user.bans?.length" class="divide-y divide-border/60">
@@ -124,7 +124,7 @@
             </Card>
 
             <!-- Reports against -->
-            <Card class="rounded-3xl border-border/60 gap-0">
+            <Card class="rounded-3xl border-white gap-0">
                 <CardHeader class="px-6 pt-6 pb-0"><CardTitle>Reports against this user</CardTitle></CardHeader>
                 <CardContent class="px-6 pb-6 pt-4">
                     <ul v-if="reportsAgainst.length" class="divide-y divide-border/60">
@@ -144,7 +144,7 @@
         </div>
 
         <!-- Activity -->
-        <Card class="rounded-3xl border-border/60 gap-0">
+        <Card class="rounded-3xl border-white gap-0">
             <CardHeader class="px-6 pt-6 pb-0"><CardTitle>Activity</CardTitle></CardHeader>
             <CardContent class="px-6 pb-6 pt-4">
                 <ul v-if="activity.length" class="divide-y divide-border/60">
@@ -169,12 +169,12 @@
                     <form class="mt-5 space-y-4" @submit.prevent="submitBan">
                         <div>
                             <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Reason</label>
-                            <Textarea v-model="banForm.reason" rows="3" class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" placeholder="Repeated harassment..." required />
+                            <Textarea v-model="banForm.reason" rows="3" class="rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary" placeholder="Repeated harassment..." required />
                             <p v-if="banForm.errors.reason" class="mt-1 text-xs text-destructive">{{ banForm.errors.reason }}</p>
                         </div>
                         <div>
                             <label class="mb-1 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Expires at (optional)</label>
-                            <Input v-model="banForm.expires_at" type="datetime-local" class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
+                            <Input v-model="banForm.expires_at" type="datetime-local" class="h-11 rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
                             <p class="mt-1 text-xs text-muted-foreground">Leave empty for a permanent ban.</p>
                         </div>
                         <div class="flex justify-end gap-2 pt-2">

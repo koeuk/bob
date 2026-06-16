@@ -13,7 +13,7 @@
 
         <!-- ── CREATE: single flat form ── -->
         <template v-if="isNew">
-            <Card class="rounded-3xl border-border/60 gap-0 p-6">
+            <Card class="rounded-3xl border-white gap-0 p-6">
                 <form class="space-y-6" @submit.prevent="submitCreate">
                     <!-- Avatar -->
                     <div class="flex items-center gap-5">
@@ -22,7 +22,7 @@
                                 <img v-if="avatarPreview" :src="avatarPreview" class="size-16 object-cover" alt="" />
                                 <template v-else>{{ initials(createForm.name) }}</template>
                             </div>
-                            <button type="button" class="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-card border border-border/60 shadow-sm hover:bg-secondary transition-colors" @click="$refs.avatarInput.click()">
+                            <button type="button" class="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-card border-2 border-white dark:border-white/10 shadow-sm shadow-sm hover:bg-secondary transition-colors" @click="$refs.avatarInput.click()">
                                 <Camera class="size-3 text-muted-foreground" />
                             </button>
                             <input ref="avatarInput" type="file" accept="image/*" class="hidden" @change="onAvatarChange" />
@@ -37,17 +37,17 @@
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div>
                             <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Name</label>
-                            <Input v-model="createForm.name" type="text" required class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
+                            <Input v-model="createForm.name" type="text" required class="h-11 rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
                             <p v-if="createForm.errors.name" class="mt-1 text-xs text-destructive">{{ createForm.errors.name }}</p>
                         </div>
                         <div>
                             <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</label>
-                            <Input v-model="createForm.email" type="email" required class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
+                            <Input v-model="createForm.email" type="email" required class="h-11 rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
                             <p v-if="createForm.errors.email" class="mt-1 text-xs text-destructive">{{ createForm.errors.email }}</p>
                         </div>
                         <div>
                             <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Password</label>
-                            <Input v-model="createForm.password" type="password" required minlength="8" placeholder="Minimum 8 characters" class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
+                            <Input v-model="createForm.password" type="password" required minlength="8" placeholder="Minimum 8 characters" class="h-11 rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
                             <p v-if="createForm.errors.password" class="mt-1 text-xs text-destructive">{{ createForm.errors.password }}</p>
                         </div>
                         <div>
@@ -98,9 +98,9 @@
 
         <!-- ── EDIT: stepped form ── -->
         <template v-else>
-            <Card class="rounded-3xl border-border/60 gap-0 overflow-hidden">
+            <Card class="rounded-3xl border-white gap-0 overflow-hidden">
                 <!-- Step tabs -->
-                <div class="border-b border-border/60 px-6 py-5">
+                <div class="border-b border-white px-6 py-5">
                     <div class="flex items-center gap-0">
                         <template v-for="(s, i) in visibleSteps" :key="s.key">
                             <button
@@ -135,7 +135,7 @@
                                     <img v-if="avatarPreview" :src="avatarPreview" class="size-16 object-cover" alt="" />
                                     <template v-else>{{ initials(profileForm.name || user.name) }}</template>
                                 </div>
-                                <button type="button" class="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-card border border-border/60 shadow-sm hover:bg-secondary transition-colors" @click="$refs.avatarInput.click()">
+                                <button type="button" class="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-card border-2 border-white dark:border-white/10 shadow-sm shadow-sm hover:bg-secondary transition-colors" @click="$refs.avatarInput.click()">
                                     <Camera class="size-3 text-muted-foreground" />
                                 </button>
                                 <input ref="avatarInput" type="file" accept="image/*" class="hidden" @change="onAvatarChange" />
@@ -150,12 +150,12 @@
                         <div class="grid gap-4 sm:grid-cols-2">
                             <div>
                                 <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Name</label>
-                                <Input v-model="profileForm.name" type="text" class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
+                                <Input v-model="profileForm.name" type="text" class="h-11 rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
                                 <p v-if="profileForm.errors.name" class="mt-1 text-xs text-destructive">{{ profileForm.errors.name }}</p>
                             </div>
                             <div>
                                 <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</label>
-                                <Input v-model="profileForm.email" type="email" class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
+                                <Input v-model="profileForm.email" type="email" class="h-11 rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
                                 <p v-if="profileForm.errors.email" class="mt-1 text-xs text-destructive">{{ profileForm.errors.email }}</p>
                             </div>
                         </div>
@@ -182,7 +182,7 @@
                             <p class="text-sm text-muted-foreground mb-4">Set a new password for this user. Leave blank to keep the current password.</p>
                             <div class="max-w-sm">
                                 <label class="mb-1.5 block text-xs font-medium uppercase tracking-wide text-muted-foreground">New password</label>
-                                <Input v-model="securityForm.password" type="password" placeholder="Minimum 8 characters" minlength="8" class="h-11 rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
+                                <Input v-model="securityForm.password" type="password" placeholder="Minimum 8 characters" minlength="8" class="h-11 rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary" />
                                 <p v-if="securityForm.errors.password" class="mt-1 text-xs text-destructive">{{ securityForm.errors.password }}</p>
                             </div>
                         </div>
@@ -218,7 +218,7 @@
                                         'relative flex cursor-pointer flex-col gap-1.5 rounded-2xl border-2 p-4 transition-all duration-150',
                                         roleForm.role === r.value
                                             ? 'border-moss bg-moss/5'
-                                            : 'border-border/60 bg-secondary/30 hover:border-border hover:bg-secondary/60',
+                                            : 'border-white bg-secondary/30 hover:border-border hover:bg-secondary/60',
                                     ]"
                                 >
                                     <input type="radio" :value="r.value" v-model="roleForm.role" class="sr-only" />

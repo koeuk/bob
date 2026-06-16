@@ -42,15 +42,15 @@
 
         <!-- Stats -->
         <div class="grid grid-cols-3 gap-3">
-            <div class="rounded-3xl border border-border/60 bg-card px-5 py-4 shadow-sm">
+            <div class="rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card px-5 py-4">
                 <div class="text-[11px] uppercase tracking-wide text-muted-foreground">Total</div>
                 <div class="font-sans text-2xl font-semibold">{{ totals.total }}</div>
             </div>
-            <div class="rounded-3xl border border-border/60 bg-card px-5 py-4 shadow-sm">
+            <div class="rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card px-5 py-4">
                 <div class="text-[11px] uppercase tracking-wide text-moss">Active (this page)</div>
                 <div class="font-sans text-2xl font-semibold text-moss">{{ totals.active }}</div>
             </div>
-            <div class="rounded-3xl border border-border/60 bg-card px-5 py-4 shadow-sm">
+            <div class="rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card px-5 py-4">
                 <div class="text-[11px] uppercase tracking-wide text-rust">Flagged</div>
                 <div class="font-sans text-2xl font-semibold text-rust">{{ totals.flagged }}</div>
             </div>
@@ -61,7 +61,7 @@
             <article
                 v-for="p in posts.data"
                 :key="p.uuid"
-                class="rounded-3xl border border-border/60 bg-card p-5 shadow-sm"
+                class="rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card p-5"
             >
                 <header class="flex items-start justify-between gap-3">
                     <div class="flex items-center gap-3 text-xs text-muted-foreground">
@@ -90,7 +90,7 @@
             </article>
         </div>
 
-        <div v-else class="rounded-3xl border border-border/60 bg-card py-16 text-center shadow-sm">
+        <div v-else class="rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card py-16 text-center">
             <p class="text-sm text-muted-foreground">You haven't posted yet.</p>
             <Link
                 href="/feed"

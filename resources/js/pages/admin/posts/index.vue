@@ -9,7 +9,7 @@
             </Button>
         </div>
 
-        <Card class="rounded-3xl border-border/60 gap-0 p-4">
+        <Card class="rounded-3xl border-white gap-0 p-4">
             <div class="flex flex-wrap items-center gap-3">
                 <div class="relative min-w-0 flex-1">
                     <Search class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -17,7 +17,7 @@
                         v-model="search"
                         type="search"
                         placeholder="Search body..."
-                        class="h-10 w-full rounded-full bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary pl-10"
+                        class="h-10 w-full rounded-full bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary pl-10"
                         @keydown.enter="apply"
                     />
                 </div>
@@ -59,7 +59,7 @@
                 v-for="p in posts.data"
                 :key="p.uuid"
                 :href="`/admin/posts/${p.uuid}`"
-                class="group flex flex-col gap-3 rounded-3xl border border-border/60 bg-card p-5 shadow-sm transition-shadow hover:shadow-md"
+                class="group flex flex-col gap-3 rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card p-5 shadow-sm transition-shadow hover:shadow-md"
             >
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2.5">
@@ -86,7 +86,7 @@
             </Link>
         </div>
 
-        <Card v-if="!posts.data.length" class="rounded-3xl border-border/60 gap-0 p-6">
+        <Card v-if="!posts.data.length" class="rounded-3xl border-white gap-0 p-6">
             <div class="py-10 text-center text-sm text-muted-foreground">No posts match.</div>
         </Card>
 

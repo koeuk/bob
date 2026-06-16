@@ -5,7 +5,7 @@
             <ArrowLeft class="size-4" /> Back to reports
         </Link>
 
-        <Card class="rounded-3xl border-border/60 gap-0 p-6">
+        <Card class="rounded-3xl border-white gap-0 p-6">
             <div class="flex flex-wrap items-start justify-between gap-4">
                 <div class="flex items-start gap-4">
                     <span class="flex size-12 items-center justify-center rounded-2xl bg-rust/10 text-rust">
@@ -33,7 +33,7 @@
         </Card>
 
         <!-- Reported content preview -->
-        <Card class="rounded-3xl border-border/60 gap-0 p-6">
+        <Card class="rounded-3xl border-white gap-0 p-6">
             <div class="mb-3 text-xs uppercase tracking-wide text-muted-foreground">Reported {{ reportableLabel.toLowerCase() }}</div>
             <div v-if="report.reportable" class="rounded-2xl bg-secondary/40 p-4 text-sm">
                 <pre class="whitespace-pre-wrap break-words font-sans">{{ report.reportable.body ?? report.reportable.name ?? JSON.stringify(report.reportable, null, 2) }}</pre>
@@ -46,7 +46,7 @@
         <!-- Review form -->
         <section v-if="report.status !== 'resolved' && report.status !== 'dismissed'" class="grid gap-4 lg:grid-cols-2">
             <form @submit.prevent="resolve">
-                <Card class="rounded-3xl border-border/60 gap-0 p-6">
+                <Card class="rounded-3xl border-white gap-0 p-6">
                     <div class="mb-3 flex items-center gap-2">
                         <Check class="size-4 text-moss" />
                         <h3 class="text-lg font-semibold">Resolve</h3>
@@ -55,7 +55,7 @@
                     <Textarea
                         v-model="resolveForm.resolution_note"
                         rows="3"
-                        class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
+                        class="rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                         placeholder="Deleted offending post, warned user..."
                         required
                     />
@@ -67,7 +67,7 @@
             </form>
 
             <form @submit.prevent="dismiss">
-                <Card class="rounded-3xl border-border/60 gap-0 p-6">
+                <Card class="rounded-3xl border-white gap-0 p-6">
                     <div class="mb-3 flex items-center gap-2">
                         <X class="size-4 text-muted-foreground" />
                         <h3 class="text-lg font-semibold">Dismiss</h3>
@@ -76,7 +76,7 @@
                     <Textarea
                         v-model="dismissForm.resolution_note"
                         rows="3"
-                        class="rounded-2xl bg-secondary/60 border-border/60 shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
+                        class="rounded-2xl bg-secondary/60 border-white shadow-none focus-visible:ring-0 focus-visible:bg-secondary"
                         placeholder="Duplicate report..."
                     />
                     <Button type="submit" variant="outline" class="mt-3 rounded-full" :disabled="dismissForm.processing">
@@ -86,7 +86,7 @@
             </form>
         </section>
 
-        <Card v-else class="rounded-3xl border-border/60 gap-0 p-6">
+        <Card v-else class="rounded-3xl border-white gap-0 p-6">
             <div class="text-xs uppercase tracking-wide text-muted-foreground">Resolution</div>
             <div class="mt-2 text-sm">{{ report.resolution_note || '—' }}</div>
             <div class="mt-2 text-xs text-muted-foreground">

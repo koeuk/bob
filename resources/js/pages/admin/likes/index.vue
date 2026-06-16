@@ -22,18 +22,18 @@
 
     <AdminLayout title="Likes & Reactions">
         <div class="flex gap-3">
-            <Card class="rounded-3xl border-border/60 gap-0 px-5 py-3">
+            <Card class="rounded-3xl border-white gap-0 px-5 py-3">
                 <div class="text-[11px] uppercase tracking-wide text-muted-foreground">Total</div>
                 <div class="font-sans text-2xl font-semibold">{{ counts.all }}</div>
             </Card>
-            <Card class="rounded-3xl border-border/60 gap-0 bg-rust/5 px-5 py-3">
+            <Card class="rounded-3xl border-white gap-0 bg-rust/5 px-5 py-3">
                 <div class="text-[11px] uppercase tracking-wide text-rust">Today</div>
                 <div class="font-sans text-2xl font-semibold text-rust">{{ counts.today }}</div>
             </Card>
         </div>
 
-        <div class="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
-            <div class="grid grid-cols-[2rem_1.2fr_0.8fr_1fr_2fr_8rem_2.5rem] items-center gap-3 border-b border-border/60 px-6 py-3 text-[11px] uppercase tracking-wide text-muted-foreground">
+        <div class="overflow-hidden rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card">
+            <div class="grid grid-cols-[2rem_1.2fr_0.8fr_1fr_2fr_8rem_2.5rem] items-center gap-3 border-b border-white px-6 py-3 text-[11px] uppercase tracking-wide text-muted-foreground">
                 <span></span>
                 <span>User</span>
                 <span>Type</span>
@@ -81,7 +81,7 @@
                 No reactions yet.
             </div>
 
-            <div v-if="likes.data.length && likes.links.length > 3" class="flex items-center justify-between border-t border-border/60 px-6 py-4 text-xs text-muted-foreground">
+            <div v-if="likes.data.length && likes.links.length > 3" class="flex items-center justify-between border-t border-white px-6 py-4 text-xs text-muted-foreground">
                 <span>Showing {{ likes.from }}–{{ likes.to }} of {{ likes.total }}</span>
                 <div class="flex items-center gap-1">
                     <Link
