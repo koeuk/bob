@@ -22,11 +22,11 @@
 
     <AdminLayout title="Likes & Reactions">
         <div class="flex gap-3">
-            <Card class="rounded-3xl border-white gap-0 px-5 py-3">
+            <Card class="rounded-3xl border-white gap-0 px-8 py-4 w-40">
                 <div class="text-[11px] uppercase tracking-wide text-muted-foreground">Total</div>
                 <div class="font-sans text-2xl font-semibold">{{ counts.all }}</div>
             </Card>
-            <Card class="rounded-3xl border-white gap-0 bg-rust/5 px-5 py-3">
+            <Card class="rounded-3xl border-white gap-0 bg-rust/5 px-8 py-4 w-40">
                 <div class="text-[11px] uppercase tracking-wide text-rust">Today</div>
                 <div class="font-sans text-2xl font-semibold text-rust">{{ counts.today }}</div>
             </Card>
