@@ -32,7 +32,7 @@ class NotificationsController extends Controller
         $notifications->getCollection()->transform(function ($n) use ($frStatuses) {
             if (($n->data['type'] ?? '') === 'friend_request') {
                 $status = $frStatuses->get($n->data['friend_request_id'] ?? '');
-                $n->data = array_merge($n->data, ['friend_request_status' => $status ?? 'pending']);
+                $n->data = array_merge($n->data, ['friend_request_status' => $status ?? 'cancelled']);
             }
             return $n;
         });

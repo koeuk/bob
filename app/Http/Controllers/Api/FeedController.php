@@ -92,7 +92,7 @@ class FeedController extends Controller
                     $q->where('sender_id', $userId)->whereIn('receiver_id', $authorIds);
                 })->orWhere(function ($q) use ($userId, $authorIds) {
                     $q->where('receiver_id', $userId)->whereIn('sender_id', $authorIds);
-                })->get();
+                })->whereIn('status', ['pending', 'accepted'])->get();
 
                 foreach ($friendRequests as $fr) {
                     if ($fr->sender_id === $userId) {
