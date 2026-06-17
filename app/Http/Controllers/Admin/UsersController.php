@@ -19,9 +19,9 @@ class UsersController extends Controller
     public function index(Request $request): Response
     {
         $users = QueryBuilder::for(User::class)
-            ->select(['id', 'uuid', 'name', 'email', 'avatar', 'role', 'created_at', 'email_verified_at'])
+            ->select(['id', 'uuid', 'name', 'email', 'avatar', 'created_at', 'email_verified_at'])
             ->withCount(['posts', 'comments'])
-            ->with(['bans' => fn ($q) => $q->active()])
+            ->with(['roles', 'bans' => fn ($q) => $q->active()])
             ->allowedFilters(...[
                 AllowedFilter::callback('search', function ($q, $value) {
                     $q->where(function ($inner) use ($value) {
@@ -29,7 +29,9 @@ class UsersController extends Controller
                             ->orWhere('email', 'like', "%{$value}%");
                     });
                 }),
-                AllowedFilter::exact('role'),
+                AllowedFilter::callback('role', function ($q, $value) {
+                    $q->whereHas('roles', fn ($r) => $r->where('name', $value));
+                }),
                 AllowedFilter::callback('banned', function ($q, $value) {
                     if ($value) {
                         $q->whereHas('bans', fn ($b) => $b->active());
@@ -40,6 +42,8 @@ class UsersController extends Controller
             ->defaultSort('-created_at')
             ->paginate($request->integer('per_page', 25))
             ->withQueryString();
+
+        $users->getCollection()->each->append('role');
 
         return Inertia::render('admin/users/index', [
             'users' => $users,
@@ -72,7 +76,6 @@ class UsersController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => $data['password'],
-            'role' => $data['role'],
         ];
 
         if ($request->hasFile('avatar')) {
@@ -80,8 +83,9 @@ class UsersController extends Controller
         }
 
         $user = User::create($attrs);
+        $user->assignRole($data['role']);
 
-        ActivityLog::record('user.create', $user, null, $user->only(['name', 'email', 'role']));
+        ActivityLog::record('user.create', $user, null, ['name' => $user->name, 'email' => $user->email, 'role' => $data['role']]);
 
         return redirect()->route('admin.users.show', $user)->with('status', 'User created.');
     }
@@ -89,8 +93,10 @@ class UsersController extends Controller
     public function show(User $user): Response
     {
         $user->load([
+            'roles',
             'bans' => fn ($q) => $q->with('bannedBy:id,uuid,name')->latest(),
         ])->loadCount(['posts', 'comments', 'reportsFiled']);
+        $user->append('role');
 
         $reportsAgainst = Report::where('reportable_type', User::class)
             ->where('reportable_id', $user->id)
@@ -120,7 +126,7 @@ class UsersController extends Controller
     public function edit(User $user): Response
     {
         return Inertia::render('admin/users/edit', [
-            'user' => $user,
+            'user' => $user->load('roles')->append('role'),
         ]);
     }
 
@@ -213,7 +219,7 @@ class UsersController extends Controller
         ]);
 
         $before = ['role' => $user->role];
-        $user->update(['role' => $data['role']]);
+        $user->syncRoles([$data['role']]);
 
         ActivityLog::record('user.role_assign', $user, $before, ['role' => $data['role']]);
 

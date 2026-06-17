@@ -41,9 +41,10 @@ class AuthController extends Controller
         ]);
 
         $user = User::create($data);
+        $user->assignRole('user');
         $token = $user->createToken('api')->plainTextToken;
 
-        return response()->json(['user' => $user, 'token' => $token], 201);
+        return response()->json(['user' => $user->append('role'), 'token' => $token], 201);
     }
 
     /**
@@ -82,7 +83,7 @@ class AuthController extends Controller
 
         $token = $user->createToken('api')->plainTextToken;
 
-        return response()->json(['user' => $user, 'token' => $token]);
+        return response()->json(['user' => $user->append('role'), 'token' => $token]);
     }
 
     /**
@@ -111,7 +112,7 @@ class AuthController extends Controller
      */
     public function me(Request $request): JsonResponse
     {
-        return response()->json($request->user());
+        return response()->json($request->user()->append('role'));
     }
 
     /**
@@ -151,7 +152,7 @@ class AuthController extends Controller
 
         $user->update($data);
 
-        return response()->json($user->fresh());
+        return response()->json($user->fresh()->append('role'));
     }
 
     /**

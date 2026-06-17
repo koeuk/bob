@@ -39,9 +39,9 @@ class UsersController extends Controller
     public function index(Request $request): JsonResponse
     {
         $users = QueryBuilder::for(User::class)
-            ->select(['id', 'uuid', 'name', 'email', 'role', 'created_at', 'email_verified_at'])
+            ->select(['id', 'uuid', 'name', 'email', 'created_at', 'email_verified_at'])
             ->withCount(['posts', 'comments'])
-            ->with(['bans' => fn ($q) => $q->active()])
+            ->with(['roles', 'bans' => fn ($q) => $q->active()])
             ->allowedFilters(...[
                 AllowedFilter::callback('search', function ($q, $value) {
                     $q->where(function ($inner) use ($value) {
@@ -49,7 +49,9 @@ class UsersController extends Controller
                             ->orWhere('email', 'like', "%{$value}%");
                     });
                 }),
-                AllowedFilter::exact('role'),
+                AllowedFilter::callback('role', function ($q, $value) {
+                    $q->whereHas('roles', fn ($r) => $r->where('name', $value));
+                }),
                 AllowedFilter::callback('banned', function ($q, $value) {
                     if ($value) {
                         $q->whereHas('bans', fn ($b) => $b->active());
@@ -60,6 +62,8 @@ class UsersController extends Controller
             ->defaultSort('-created_at')
             ->paginate($request->integer('per_page', 25))
             ->withQueryString();
+
+        $users->getCollection()->each->append('role');
 
         return response()->json($users);
     }
@@ -90,11 +94,15 @@ class UsersController extends Controller
             abort(403, 'Only super admins can create admin-level users.');
         }
 
+        $role = $data['role'];
+        unset($data['role']);
+
         $user = User::create($data);
+        $user->assignRole($role);
 
-        ActivityLog::record('user.create', $user, null, $user->only(['name', 'email', 'role']));
+        ActivityLog::record('user.create', $user, null, ['name' => $user->name, 'email' => $user->email, 'role' => $role]);
 
-        return response()->json($user, 201);
+        return response()->json($user->append('role'), 201);
     }
 
     /**
@@ -113,8 +121,10 @@ class UsersController extends Controller
     public function show(User $user): JsonResponse
     {
         $user->load([
+            'roles',
             'bans' => fn ($q) => $q->with('bannedBy:id,uuid,name')->latest(),
         ])->loadCount(['posts', 'comments', 'reportsFiled']);
+        $user->append('role');
 
         $reportsAgainst = Report::where('reportable_type', User::class)
             ->where('reportable_id', $user->id)
@@ -261,10 +271,10 @@ class UsersController extends Controller
         ]);
 
         $before = ['role' => $user->role];
-        $user->update(['role' => $data['role']]);
+        $user->syncRoles([$data['role']]);
 
         ActivityLog::record('user.role_assign', $user, $before, ['role' => $data['role']]);
 
-        return response()->json($user->fresh());
+        return response()->json($user->load('roles')->append('role'));
     }
 }

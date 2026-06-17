@@ -19,7 +19,7 @@ class CheckRole
             return redirect()->route('login');
         }
 
-        if (! in_array($user->role, $roles, true)) {
+        if (! $user->hasAnyRole($roles)) {
             abort(403, 'Required role: '.implode('|', $roles));
         }
 

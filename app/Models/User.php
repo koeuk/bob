@@ -11,11 +11,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, HasUuids, Notifiable, TwoFactorAuthenticatable;
+    use HasApiTokens, HasFactory, HasRoles, HasUuids, Notifiable, TwoFactorAuthenticatable;
 
     protected $fillable = [
         'name',
@@ -24,7 +25,6 @@ class User extends Authenticatable
         'cover',
         'last_active_at',
         'password',
-        'role',
     ];
 
     public function uniqueIds(): array
@@ -109,24 +109,33 @@ class User extends Authenticatable
         return $this->belongsToMany(Conversation::class, 'conversation_user');
     }
 
-    public function hasRole(string|array $roles): bool
+    /**
+     * Backward-compatible single-role accessor.
+     *
+     * The role system is backed by spatie/laravel-permission (a user can hold
+     * one role here), but the API/frontend still expect a flat `user.role`
+     * string. This exposes the user's role name. NOTE: not in $appends to avoid
+     * an N+1 when serializing many users (e.g. post authors in the feed) —
+     * controllers that need it eager-load `roles` and ->append('role').
+     */
+    public function getRoleAttribute(): ?string
     {
-        return in_array($this->role, (array) $roles, true);
+        return $this->getRoleNames()->first();
     }
 
     public function isSuperAdmin(): bool
     {
-        return $this->role === 'super_admin';
+        return $this->hasRole('super_admin');
     }
 
     public function isAdmin(): bool
     {
-        return in_array($this->role, ['admin', 'super_admin'], true);
+        return $this->hasAnyRole(['admin', 'super_admin']);
     }
 
     public function isModerator(): bool
     {
-        return in_array($this->role, ['moderator', 'admin', 'super_admin'], true);
+        return $this->hasAnyRole(['moderator', 'admin', 'super_admin']);
     }
 
     public function isBanned(): bool
