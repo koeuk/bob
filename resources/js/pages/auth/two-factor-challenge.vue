@@ -9,6 +9,29 @@
                     <InputError :message="form.errors.code" />
                 </div>
             </template>
+            <template v-else>
+                <div class="grid gap-2">
+                    <Label for="recovery_code">Recovery code</Label>
+                    <Input id="recovery_code" v-model="form.recovery_code" required autofocus autocomplete="one-time-code" />
+                    <InputError :message="form.errors.recovery_code" />
+                </div>
+            </template>
+
+            <Button type="submit" class="w-full" :disabled="form.processing">
+                <Spinner v-if="form.processing" />
+                Continue
+            </Button>
+
+            <button
+                type="button"
+                class="text-center text-xs font-medium text-muted-foreground hover:text-moss transition-colors duration-150"
+                @click="toggleRecovery"
+            >
+                {{ useRecovery ? 'Use authentication code' : 'Use a recovery code' }}
+            </button>
+        </form>
+    </AuthLayout>
+</template>
 
 <script setup>
 import InputError from '@/components/input-error.vue';
@@ -23,6 +46,12 @@ import { ref } from 'vue';
 const useRecovery = ref(false);
 
 const form = useForm({ code: '', recovery_code: '' });
+
+function toggleRecovery() {
+    useRecovery.value = !useRecovery.value;
+    form.reset('code', 'recovery_code');
+    form.clearErrors();
+}
 
 function submit() {
     form.post('/two-factor-challenge');

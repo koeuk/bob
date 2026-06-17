@@ -43,12 +43,43 @@
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton tooltip="Back to app" as-child>
-                            <Link href="/dashboard">
-                                <ArrowLeft />
-                                <span>Back to app</span>
-                            </Link>
-                        </SidebarMenuButton>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger as-child>
+                                <SidebarMenuButton size="lg" tooltip="Account" class="data-[state=open]:bg-sidebar-accent">
+                                    <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground text-xs font-semibold">
+                                        {{ initials }}
+                                    </span>
+                                    <div class="grid flex-1 text-left text-sm leading-tight">
+                                        <span class="truncate font-medium">{{ user?.name }}</span>
+                                        <span class="truncate text-[11px] text-sidebar-foreground/60">{{ user?.email }}</span>
+                                    </div>
+                                    <ChevronsUpDown class="ml-auto size-4" />
+                                </SidebarMenuButton>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent side="top" align="start" class="w-56">
+                                <DropdownMenuItem as-child>
+                                    <Link href="/dashboard" class="block w-full" prefetch>
+                                        <LayoutGrid class="mr-2 size-4" /> App
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem as-child>
+                                    <Link href="/admin/dashboard" class="block w-full" prefetch>
+                                        <Shield class="mr-2 size-4" /> Admin
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem as-child>
+                                    <Link
+                                        href="/logout"
+                                        method="post"
+                                        as="button"
+                                        class="block w-full text-destructive"
+                                    >
+                                        <LogOut class="mr-2 size-4" /> Log out
+                                    </Link>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>
@@ -146,6 +177,8 @@
 import AppearanceDropdown from '@/components/appearance-dropdown.vue';
 import DropdownMenu from '@/components/ui/DropdownMenu.vue';
 import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vue';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem.vue';
+import DropdownMenuSeparator from '@/components/ui/DropdownMenuSeparator.vue';
 import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vue';
 import UserMenuContent from '@/components/user-menu-content.vue';
 import {
@@ -156,8 +189,9 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Link, usePage } from '@inertiajs/vue3';
 import {
-    ActivitySquare, ArrowLeft, ChevronDown, FileText, Flag, Gauge, Heart,
-    MessageSquare, Newspaper, Settings as SettingsIcon, ShieldBan, Users,
+    ActivitySquare, ChevronDown, ChevronsUpDown, FileText, Flag, Gauge, Heart,
+    LayoutGrid, LogOut, MessageSquare, Newspaper, Settings as SettingsIcon,
+    Shield, ShieldBan, Users,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 

@@ -72,15 +72,43 @@
                     </Link>
                 </nav>
                 <div class="px-2">
-                    <Link
-                        href="/logout"
-                        method="post"
-                        as="button"
-                        class="inline-flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-all duration-150 hover:bg-destructive/8 hover:text-destructive"
-                    >
-                        <LogOut class="size-4 shrink-0" />
-                        <span>Log out</span>
-                    </Link>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger
+                            class="inline-flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-all duration-150 hover:bg-secondary"
+                        >
+                            <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-forest text-paper text-xs font-semibold">
+                                {{ initials }}
+                            </span>
+                            <span class="min-w-0 flex-1">
+                                <span class="block truncate text-sm font-medium leading-tight">{{ user?.name }}</span>
+                                <span class="block truncate text-[11px] leading-tight text-muted-foreground">{{ user?.email }}</span>
+                            </span>
+                            <ChevronsUpDown class="size-4 shrink-0 text-muted-foreground" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent side="top" align="start" class="w-52">
+                            <DropdownMenuItem as-child>
+                                <Link href="/dashboard" class="block w-full" prefetch>
+                                    <LayoutGrid class="mr-2 size-4" /> App
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem v-if="isModerator" as-child>
+                                <Link href="/admin/dashboard" class="block w-full" prefetch>
+                                    <Shield class="mr-2 size-4" /> Admin
+                                </Link>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem as-child>
+                                <Link
+                                    href="/logout"
+                                    method="post"
+                                    as="button"
+                                    class="block w-full text-destructive"
+                                >
+                                    <LogOut class="mr-2 size-4" /> Log out
+                                </Link>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </aside>
 
@@ -110,10 +138,12 @@
 import AppearanceDropdown from '@/components/appearance-dropdown.vue';
 import DropdownMenu from '@/components/ui/DropdownMenu.vue';
 import DropdownMenuContent from '@/components/ui/DropdownMenuContent.vue';
+import DropdownMenuItem from '@/components/ui/DropdownMenuItem.vue';
+import DropdownMenuSeparator from '@/components/ui/DropdownMenuSeparator.vue';
 import DropdownMenuTrigger from '@/components/ui/DropdownMenuTrigger.vue';
 import UserMenuContent from '@/components/user-menu-content.vue';
 import { Link, usePage } from '@inertiajs/vue3';
-import { ChevronDown, Compass, Flag, LayoutGrid, LogOut, Newspaper, Settings as SettingsIcon } from 'lucide-vue-next';
+import { ChevronDown, ChevronsUpDown, Compass, Flag, LayoutGrid, LogOut, Newspaper, Settings as SettingsIcon, Shield } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 defineProps({ breadcrumbs: { type: Array, default: () => [] } });
