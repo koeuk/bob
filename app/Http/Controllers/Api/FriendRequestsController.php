@@ -90,8 +90,10 @@ class FriendRequestsController extends Controller
         $user = $request->user();
 
         $friendRequest = FriendRequest::where('id', $id)
-            ->where('sender_id', $user->id)
-            ->where('status', 'pending')
+            ->where(function ($q) use ($user) {
+                $q->where('sender_id', $user->id)
+                  ->orWhere('receiver_id', $user->id);
+            })
             ->firstOrFail();
 
         $friendRequest->delete();
