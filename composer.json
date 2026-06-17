@@ -16,6 +16,7 @@
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^2.10.1",
         "laravel/wayfinder": "^0.1.9",
+        "spatie/laravel-permission": "^8.0",
         "spatie/laravel-query-builder": "^7.2"
     },
     "require-dev": {
