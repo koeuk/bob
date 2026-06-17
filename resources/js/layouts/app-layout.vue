@@ -4,7 +4,7 @@
         <header class="sticky top-0 z-30 border-b border-border/50 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
             <div class="mx-auto flex items-center justify-between gap-4 px-4 py-3 sm:px-6">
                 <!-- Logo -->
-                <div class="flex-1">
+                <div>
                     <Link href="/dashboard" class="group flex shrink-0 items-center gap-2.5 w-fit">
                         <span class="flex size-9 items-center justify-center rounded-xl bg-forest text-paper shadow-sm shadow-forest/30 transition-transform duration-200 group-hover:scale-105">
                             <span class="font-serif text-xl leading-none">b</span>
@@ -13,20 +13,8 @@
                     </Link>
                 </div>
 
-                <!-- App / Admin switcher (centered) -->
-                <div v-if="isModerator" class="flex items-center rounded-xl border border-border/50 bg-card/70 p-1 shadow-sm">
-                    <Link
-                        href="/dashboard"
-                        class="rounded-lg px-5 py-2 text-sm font-semibold bg-moss text-paper shadow-sm transition-all duration-150"
-                    >App</Link>
-                    <Link
-                        href="/admin/dashboard"
-                        class="rounded-lg px-5 py-2 text-sm font-medium text-muted-foreground hover:text-ink transition-colors duration-150"
-                    >Admin</Link>
-                </div>
-
                 <!-- Right actions -->
-                <div class="flex flex-1 items-center justify-end gap-2">
+                <div class="flex items-center justify-end gap-2">
                     <AppearanceDropdown />
                     <DropdownMenu>
                         <DropdownMenuTrigger
