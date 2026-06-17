@@ -42,10 +42,12 @@ class CommentsController extends Controller
                 'preview' => mb_strlen($p->body) > 80 ? mb_substr($p->body, 0, 80).'…' : $p->body,
             ]);
 
-        $authors = User::select('id', 'uuid', 'name', 'email', 'role')
+        $authors = User::select('id', 'uuid', 'name', 'email')
+            ->with('roles')
             ->orderBy('name')
             ->limit(500)
-            ->get();
+            ->get()
+            ->each->append('role');
 
         return Inertia::render('admin/comments/index', [
             'comments' => $comments,

@@ -14,25 +14,31 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
+
+        foreach (['user', 'moderator', 'admin', 'super_admin'] as $role) {
+            \Spatie\Permission\Models\Role::findOrCreate($role, 'web');
+        }
+
         $superAdmin = User::firstOrCreate(
             ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Super Admin',
                 'password' => '12345678',
-                'role' => 'super_admin',
                 'email_verified_at' => now(),
             ],
         );
+        $superAdmin->syncRoles(['super_admin']);
 
         $admin = User::firstOrCreate(
             ['email' => 'mod@gmail.com'],
             [
                 'name' => 'Mod User',
                 'password' => '12345678',
-                'role' => 'moderator',
                 'email_verified_at' => now(),
             ],
         );
+        $admin->syncRoles(['moderator']);
 
         User::firstOrCreate(
             ['email' => 'test@gmail.com'],
@@ -41,17 +47,16 @@ class DatabaseSeeder extends Seeder
                 'password' => '12345678',
                 'email_verified_at' => now(),
             ],
-        );
+        )->syncRoles(['user']);
 
         User::firstOrCreate(
             ['email' => 'name@gmail.com'],
             [
                 'name' => 'Name',
                 'password' => '12345678',
-                'role' => 'super_admin',
                 'email_verified_at' => now(),
             ],
-        );
+        )->syncRoles(['super_admin']);
 
         if (app()->environment('local', 'testing') && User::count() < 30) {
             $users = User::factory(25)->create();

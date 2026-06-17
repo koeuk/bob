@@ -44,7 +44,6 @@ class UserFactory extends Factory
             'email' => fake()->unique()->userName() . '@gmail.com',
             'email_verified_at' => now(),
             'password' => static::$password ??= '12345678',
-            'role' => 'user',
             'remember_token' => Str::random(10),
             'two_factor_secret' => Str::random(10),
             'two_factor_recovery_codes' => Str::random(10),
@@ -52,19 +51,28 @@ class UserFactory extends Factory
         ];
     }
 
+    /**
+     * Every user gets the base `user` role after creation; role states
+     * (below) replace it via syncRoles.
+     */
+    public function configure(): static
+    {
+        return $this->afterCreating(fn ($user) => $user->assignRole('user'));
+    }
+
     public function superAdmin(): static
     {
-        return $this->state(fn () => ['role' => 'super_admin']);
+        return $this->afterCreating(fn ($user) => $user->syncRoles(['super_admin']));
     }
 
     public function admin(): static
     {
-        return $this->state(fn () => ['role' => 'admin']);
+        return $this->afterCreating(fn ($user) => $user->syncRoles(['admin']));
     }
 
     public function moderator(): static
     {
-        return $this->state(fn () => ['role' => 'moderator']);
+        return $this->afterCreating(fn ($user) => $user->syncRoles(['moderator']));
     }
 
     /**
