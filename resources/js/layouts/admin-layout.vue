@@ -32,7 +32,7 @@
                                     :is-active="isActive(item.href)"
                                     :tooltip="item.label"
                                     as-child
-                                    class="group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:[&>svg]:size-5"
+                                    class="group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:[&>svg]:size-5 group-data-[collapsible=icon]:[&>span:last-child]:hidden"
                                 >
                                     <Link :href="item.href">
                                         <component :is="item.icon" />

@@ -20,6 +20,7 @@ import {
 } from 'radix-vue';
 
 const props = defineProps({
+    side: String,
     align: String,
     sideOffset: { type: Number, default: 4 },
     class: String,
