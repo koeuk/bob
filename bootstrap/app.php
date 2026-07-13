@@ -17,6 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Railway (and most PaaS) terminate TLS at a proxy and forward plain
+        // HTTP to the app. Trust the proxy so Laravel honours X-Forwarded-Proto
+        // and generates https:// URLs instead of insecure (blocked) http:// ones.
+        $middleware->trustProxies(at: '*');
+
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
         $middleware->web(append: [
