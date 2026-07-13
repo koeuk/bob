@@ -129,7 +129,7 @@
                 <span></span>
             </div>
 
-            <ul class="divide-y divide-border/60">
+            <ul class="divide-y divide-border/60 stagger-rows">
                 <li
                     v-for="u in users.data"
                     :key="u.uuid"

@@ -45,7 +45,7 @@
         </div>
 
         <Card class="rounded-3xl border-white gap-0 overflow-hidden">
-            <ul v-if="bans.data.length" class="divide-y divide-border/60">
+            <ul v-if="bans.data.length" class="divide-y divide-border/60 stagger-rows">
                 <li
                     v-for="b in bans.data"
                     :key="b.uuid"

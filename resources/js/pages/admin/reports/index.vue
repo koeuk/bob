@@ -32,7 +32,7 @@
 
         <!-- Queue -->
         <Card class="rounded-3xl border-white gap-0 overflow-hidden">
-            <ul v-if="reports.data.length" class="divide-y divide-border/60">
+            <ul v-if="reports.data.length" class="divide-y divide-border/60 stagger-rows">
                 <li
                     v-for="r in reports.data"
                     :key="r.uuid"

@@ -43,7 +43,7 @@
         </Card>
 
         <div class="overflow-hidden rounded-3xl border-2 border-white dark:border-white/10 shadow-sm bg-card">
-            <ul v-if="comments.data.length" class="divide-y divide-border/60">
+            <ul v-if="comments.data.length" class="divide-y divide-border/60 stagger-rows">
                 <li v-for="c in comments.data" :key="c.uuid" class="flex items-start gap-4 px-6 py-4">
                     <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary text-[11px] font-semibold">
                         {{ initials(c.user?.name) }}

@@ -119,7 +119,7 @@
                     </div>
                 </CardHeader>
                 <CardContent class="px-6 pb-6 pt-4">
-                    <ul v-if="recentReports.length" class="divide-y divide-border/60">
+                    <ul v-if="recentReports.length" class="divide-y divide-border/60 stagger-rows">
                         <li v-for="r in recentReports" :key="r.uuid" class="flex items-start gap-3 py-3">
                             <span class="mt-0.5 inline-flex size-8 items-center justify-center rounded-xl bg-moss/10 text-moss">
                                 <Flag class="size-4" />
@@ -162,7 +162,7 @@
                     </div>
                 </CardHeader>
                 <CardContent class="px-6 pb-6 pt-4">
-                    <ul v-if="recentActivity.length" class="divide-y divide-border/60">
+                    <ul v-if="recentActivity.length" class="divide-y divide-border/60 stagger-rows">
                         <li v-for="a in recentActivity" :key="a.uuid" class="flex items-start gap-3 py-3">
                             <span class="mt-0.5 inline-flex size-8 items-center justify-center rounded-xl bg-secondary text-ink">
                                 <Hash class="size-4" />

@@ -283,6 +283,28 @@
     .stagger-children > * { animation: none; }
 }
 
+/* Row-level cascade — put on a list container (<ul>, table body, card grid)
+   to reveal each row/card in a quick sequence. Tighter steps than the
+   page-level stagger; caps after 10 so long lists don't drag. */
+.stagger-rows > * {
+    animation: bob-reveal 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.stagger-rows > *:nth-child(1)  { animation-delay:  40ms; }
+.stagger-rows > *:nth-child(2)  { animation-delay:  80ms; }
+.stagger-rows > *:nth-child(3)  { animation-delay: 120ms; }
+.stagger-rows > *:nth-child(4)  { animation-delay: 160ms; }
+.stagger-rows > *:nth-child(5)  { animation-delay: 200ms; }
+.stagger-rows > *:nth-child(6)  { animation-delay: 240ms; }
+.stagger-rows > *:nth-child(7)  { animation-delay: 280ms; }
+.stagger-rows > *:nth-child(8)  { animation-delay: 320ms; }
+.stagger-rows > *:nth-child(9)  { animation-delay: 360ms; }
+.stagger-rows > *:nth-child(10) { animation-delay: 400ms; }
+.stagger-rows > *:nth-child(n+11) { animation-delay: 440ms; }
+
+@media (prefers-reduced-motion: reduce) {
+    .stagger-rows > * { animation: none; }
+}
+
 /* ─── Card utilities ─────────────────────────────────────────────────── */
 
 @utility card-hover {

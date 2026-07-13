@@ -54,7 +54,7 @@
             </div>
         </Card>
 
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid gap-4 md:grid-cols-2 stagger-rows">
             <Link
                 v-for="p in posts.data"
                 :key="p.uuid"

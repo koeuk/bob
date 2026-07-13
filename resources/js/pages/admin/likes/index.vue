@@ -43,7 +43,7 @@
                 <span></span>
             </div>
 
-            <ul v-if="likes.data.length" class="divide-y divide-border/60">
+            <ul v-if="likes.data.length" class="divide-y divide-border/60 stagger-rows">
                 <li
                     v-for="l in likes.data"
                     :key="l.uuid"
