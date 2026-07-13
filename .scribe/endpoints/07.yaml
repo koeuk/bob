@@ -1,4 +1,4 @@
-name: 'Admin: Posts'
+name: 'Admin: Activity Logs'
 description: |-
 
   Requires `moderator`, `admin`, or `super_admin` role.
@@ -7,16 +7,16 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: api/admin/posts
+    uri: api/admin/activity-logs
     metadata:
       custom: []
-      groupName: 'Admin: Posts'
+      groupName: 'Admin: Activity Logs'
       groupDescription: |-
 
         Requires `moderator`, `admin`, or `super_admin` role.
       subgroup: ''
       subgroupDescription: ''
-      title: 'List posts'
+      title: 'List activity logs'
       description: ''
       authenticated: true
       deprecated: false
@@ -27,23 +27,45 @@ endpoints:
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
-      'filter[status]':
+      'filter[action]':
         custom: []
-        name: 'filter[status]'
-        description: 'Exact status. One of: `active`, `flagged`, `hidden`.'
+        name: 'filter[action]'
+        description: 'Partial match on action name.'
         required: false
-        example: flagged
+        example: user.ban
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
-      'filter[search]':
+      'filter[admin_uuid]':
         custom: []
-        name: 'filter[search]'
-        description: 'Partial match on post body.'
+        name: 'filter[admin_uuid]'
+        description: 'Filter by admin UUID.'
         required: false
-        example: hello
+        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      'filter[from]':
+        custom: []
+        name: 'filter[from]'
+        description: 'ISO 8601 start date (inclusive).'
+        required: false
+        example: '2026-05-01'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      'filter[to]':
+        custom: []
+        name: 'filter[to]'
+        description: 'ISO 8601 end date (inclusive).'
+        required: false
+        example: '2026-05-31'
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -52,7 +74,7 @@ endpoints:
       sort:
         custom: []
         name: sort
-        description: 'One of: `created_at`, `-created_at`, `status`.'
+        description: 'One of: `created_at`, `-created_at`.'
         required: false
         example: '-created_at'
         type: string
@@ -63,9 +85,9 @@ endpoints:
       per_page:
         custom: []
         name: per_page
-        description: 'Results per page (default 25).'
+        description: 'Results per page (default 50).'
         required: false
-        example: 25
+        example: 50
         type: integer
         enumValues: []
         exampleWasSpecified: true
@@ -83,10 +105,12 @@ endpoints:
         nullable: false
         deprecated: false
     cleanQueryParameters:
-      'filter[status]': flagged
-      'filter[search]': hello
+      'filter[action]': user.ban
+      'filter[admin_uuid]': 019e178b-4ffc-72ad-a045-31cb5d618db2
+      'filter[from]': '2026-05-01'
+      'filter[to]': '2026-05-31'
       sort: '-created_at'
-      per_page: 25
+      per_page: 50
       page: 1
     bodyParameters: []
     cleanBodyParameters: []
@@ -97,416 +121,9 @@ endpoints:
         status: 200
         content: |-
           {
-            "data": [{ "id": 1, "uuid": "...", "body": "...", "status": "active", "comments_count": 2, "likes_count": 3, "reports_count": 0 }],
-            "total": 83
+            "data": [{ "id": 1, "action": "user.ban", "target_type": "App\\Models\\User", "before": null, "after": {}, "admin": {} }],
+            "total": 50
           }
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - POST
-    uri: api/admin/posts
-    metadata:
-      custom: []
-      groupName: 'Admin: Posts'
-      groupDescription: |-
-
-        Requires `moderator`, `admin`, or `super_admin` role.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Create post'
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      body:
-        custom: []
-        name: body
-        description: 'Post content (max 5,000 chars).'
-        required: true
-        example: 'Admin-created post.'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      status:
-        custom: []
-        name: status
-        description: 'One of: `active`, `flagged`, `hidden`.'
-        required: true
-        example: active
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      user_uuid:
-        custom: []
-        name: user_uuid
-        description: 'UUID of the author. Defaults to the authenticated admin.'
-        required: false
-        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: true
-        deprecated: false
-    cleanBodyParameters:
-      body: 'Admin-created post.'
-      status: active
-      user_uuid: 019e178b-4ffc-72ad-a045-31cb5d618db2
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 201
-        content: '{ "id": 85, "uuid": "...", "body": "Admin-created post.", "status": "active" }'
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/admin/posts/{post_uuid}'
-    metadata:
-      custom: []
-      groupName: 'Admin: Posts'
-      groupDescription: |-
-
-        Requires `moderator`, `admin`, or `super_admin` role.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Get post'
-      description: 'Returns the post with its author, up to 50 comments, and all reports.'
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      post_uuid:
-        custom: []
-        name: post_uuid
-        description: ''
-        required: true
-        example: 019dc087-837e-70ef-9cb1-9162ca61d7bb
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      post:
-        custom: []
-        name: post
-        description: 'Post UUID.'
-        required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      post_uuid: 019dc087-837e-70ef-9cb1-9162ca61d7bb
-      post: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 200
-        content: '{ "id": 1, "body": "...", "status": "active", "likes_count": 3, "user": {}, "comments": [], "reports": [] }'
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - PATCH
-    uri: 'api/admin/posts/{post_uuid}'
-    metadata:
-      custom: []
-      groupName: 'Admin: Posts'
-      groupDescription: |-
-
-        Requires `moderator`, `admin`, or `super_admin` role.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Update post'
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      post_uuid:
-        custom: []
-        name: post_uuid
-        description: ''
-        required: true
-        example: 019dc087-837e-70ef-9cb1-9162ca61d7bb
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      post:
-        custom: []
-        name: post
-        description: 'Post UUID.'
-        required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      post_uuid: 019dc087-837e-70ef-9cb1-9162ca61d7bb
-      post: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      body:
-        custom: []
-        name: body
-        description: 'Post content (max 5,000 chars).'
-        required: false
-        example: 'Updated body.'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      status:
-        custom: []
-        name: status
-        description: 'One of: `active`, `flagged`, `hidden`.'
-        required: false
-        example: active
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      user_uuid:
-        custom: []
-        name: user_uuid
-        description: 'Reassign author UUID.'
-        required: false
-        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      reason:
-        custom: []
-        name: reason
-        description: 'Optional reason for the change (logged).'
-        required: false
-        example: 'Corrected spam.'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: true
-        deprecated: false
-    cleanBodyParameters:
-      body: 'Updated body.'
-      status: active
-      user_uuid: 019e178b-4ffc-72ad-a045-31cb5d618db2
-      reason: 'Corrected spam.'
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 200
-        content: '{ "id": 1, "body": "Updated body.", "status": "active" }'
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - DELETE
-    uri: 'api/admin/posts/{post_uuid}'
-    metadata:
-      custom: []
-      groupName: 'Admin: Posts'
-      groupDescription: |-
-
-        Requires `moderator`, `admin`, or `super_admin` role.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Delete post'
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      post_uuid:
-        custom: []
-        name: post_uuid
-        description: ''
-        required: true
-        example: 019dc087-837e-70ef-9cb1-9162ca61d7bb
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      post:
-        custom: []
-        name: post
-        description: 'Post UUID.'
-        required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      post_uuid: 019dc087-837e-70ef-9cb1-9162ca61d7bb
-      post: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 200
-        content: '{ "message": "Post deleted." }'
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - PATCH
-    uri: 'api/admin/posts/{post_uuid}/flag'
-    metadata:
-      custom: []
-      groupName: 'Admin: Posts'
-      groupDescription: |-
-
-        Requires `moderator`, `admin`, or `super_admin` role.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Flag post'
-      description: "Change a post's moderation status without editing its content."
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      post_uuid:
-        custom: []
-        name: post_uuid
-        description: ''
-        required: true
-        example: 019dc087-837e-70ef-9cb1-9162ca61d7bb
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      post:
-        custom: []
-        name: post
-        description: 'Post UUID.'
-        required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      post_uuid: 019dc087-837e-70ef-9cb1-9162ca61d7bb
-      post: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      status:
-        custom: []
-        name: status
-        description: 'One of: `active`, `flagged`, `hidden`.'
-        required: true
-        example: flagged
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanBodyParameters:
-      status: flagged
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 200
-        content: '{ "id": 1, "status": "flagged" }'
         headers: []
         description: ''
     responseFields: []

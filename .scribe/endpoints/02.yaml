@@ -1,41 +1,41 @@
-name: 'Feed & Posts'
+name: Endpoints
 description: ''
 endpoints:
   -
     custom: []
     httpMethods:
       - GET
-    uri: api/feed
+    uri: 'api/users/{user_uuid}'
     metadata:
       custom: []
-      groupName: 'Feed & Posts'
+      groupName: Endpoints
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: Feed
-      description: 'Paginated list of all active posts, newest first. Each post includes a `liked_by_me` flag.'
+      title: ''
+      description: ''
       authenticated: true
       deprecated: false
     headers:
       Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters:
-      page:
+    urlParameters:
+      user_uuid:
         custom: []
-        name: page
-        description: 'Page number.'
-        required: false
-        example: 1
-        type: integer
+        name: user_uuid
+        description: ''
+        required: true
+        example: 019f5c94-18dc-7253-af0a-5f0740308f9c
+        type: string
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
         nullable: false
         deprecated: false
-    cleanQueryParameters:
-      page: 1
+    cleanUrlParameters:
+      user_uuid: 019f5c94-18dc-7253-af0a-5f0740308f9c
+    queryParameters: []
+    cleanQueryParameters: []
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -43,20 +43,12 @@ endpoints:
       -
         custom: []
         status: 200
-        content: |-
-          {
-            "current_page": 1,
-            "data": [
-              {
-                "id": 1, "uuid": "...", "body": "Hello world", "status": "active",
-                "comments_count": 3, "likes_count": 5, "liked_by_me": false,
-                "user": { "id": 1, "uuid": "...", "name": "Jane Doe" }
-              }
-            ],
-            "last_page": 6, "per_page": 15, "total": 83
-          }
-        headers: []
-        description: ''
+        content: '{"user":{"uuid":"019f5c94-18dc-7253-af0a-5f0740308f9c","name":"Super Admin","avatar":null,"cover":null,"role":"super_admin","joined_at":"2026-07-13T17:43:57.000000Z","is_online":false},"posts":[],"friends":[],"friendship":null}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          vary: Origin
+        description: null
     responseFields: []
     auth:
       - headers
@@ -69,15 +61,15 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: api/posts/mine
+    uri: api/notifications
     metadata:
       custom: []
-      groupName: 'Feed & Posts'
+      groupName: Endpoints
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'My posts'
-      description: "Paginated list of the authenticated user's own posts, newest first."
+      title: ''
+      description: ''
       authenticated: true
       deprecated: false
     headers:
@@ -86,35 +78,21 @@ endpoints:
       Accept: application/json
     urlParameters: []
     cleanUrlParameters: []
-    queryParameters:
-      page:
-        custom: []
-        name: page
-        description: 'Page number.'
-        required: false
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanQueryParameters:
-      page: 1
+    queryParameters: []
+    cleanQueryParameters: []
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
     responses:
       -
         custom: []
-        status: 200
-        content: |-
-          {
-            "current_page": 1,
-            "data": [{ "id": 1, "uuid": "...", "body": "...", "status": "active", "comments_count": 2, "likes_count": 1 }],
-            "last_page": 1, "per_page": 20, "total": 14
-          }
-        headers: []
-        description: ''
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          vary: Origin
+        description: null
     responseFields: []
     auth:
       - headers
@@ -127,14 +105,96 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: api/posts
+    uri: api/notifications/read-all
     metadata:
       custom: []
-      groupName: 'Feed & Posts'
+      groupName: Endpoints
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Create post'
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/notifications/{id}/read'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the notification.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: architecto
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/friend-requests
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
       description: ''
       authenticated: true
       deprecated: false
@@ -147,174 +207,21 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      body:
+      receiver_uuid:
         custom: []
-        name: body
-        description: 'Post content (max 10,000 characters).'
+        name: receiver_uuid
+        description: 'Must match an existing stored value.'
         required: true
-        example: 'Hello everyone!'
+        example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
         type: string
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      body: 'Hello everyone!'
+      receiver_uuid: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
     fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 201
-        content: '{ "id": 84, "uuid": "...", "body": "Hello everyone!", "status": "active" }'
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - GET
-    uri: 'api/posts/{post_uuid}'
-    metadata:
-      custom: []
-      groupName: 'Feed & Posts'
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Get post'
-      description: 'Return a single post with all its comments. Hidden posts are only visible to their author.'
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      post_uuid:
-        custom: []
-        name: post_uuid
-        description: ''
-        required: true
-        example: 019dc087-837e-70ef-9cb1-9162ca61d7bb
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      post:
-        custom: []
-        name: post
-        description: 'The post UUID.'
-        required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      post_uuid: 019dc087-837e-70ef-9cb1-9162ca61d7bb
-      post: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 200
-        content: |-
-          {
-            "post": { "id": 1, "uuid": "...", "body": "...", "status": "active", "likes_count": 3, "liked_by_me": false },
-            "comments": [{ "id": 1, "body": "Nice post!", "liked_by_me": false, "user": { "name": "Bob" } }],
-            "is_author": false
-          }
-        headers: []
-        description: ''
-      -
-        custom: []
-        status: 404
-        content: '{ "message": "Not Found." }'
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - DELETE
-    uri: 'api/posts/{post_uuid}'
-    metadata:
-      custom: []
-      groupName: 'Feed & Posts'
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Delete post'
-      description: 'Soft-delete your own post.'
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      post_uuid:
-        custom: []
-        name: post_uuid
-        description: ''
-        required: true
-        example: 019dc087-837e-70ef-9cb1-9162ca61d7bb
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      post:
-        custom: []
-        name: post
-        description: 'The post UUID.'
-        required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      post_uuid: 019dc087-837e-70ef-9cb1-9162ca61d7bb
-      post: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 200
-        content: '{ "message": "Post deleted." }'
-        headers: []
-        description: ''
-      -
-        custom: []
-        status: 403
-        content: '{ "message": "This action is unauthorized." }'
-        headers: []
-        description: ''
+    responses: []
     responseFields: []
     auth:
       - headers
@@ -327,15 +234,15 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: 'api/posts/{post_uuid}/like'
+    uri: 'api/friend-requests/{id}/accept'
     metadata:
       custom: []
-      groupName: 'Feed & Posts'
+      groupName: Endpoints
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Toggle like on post'
-      description: 'Like or unlike a post. Returns the new liked state and updated count.'
+      title: ''
+      description: ''
       authenticated: true
       deprecated: false
     headers:
@@ -343,31 +250,148 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      post_uuid:
+      id:
         custom: []
-        name: post_uuid
-        description: ''
+        name: id
+        description: 'The ID of the friend request.'
         required: true
-        example: 019dc087-837e-70ef-9cb1-9162ca61d7bb
+        example: architecto
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      post:
+    cleanUrlParameters:
+      id: architecto
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/friend-requests/{id}/decline'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
         custom: []
-        name: post
-        description: 'The post UUID.'
+        name: id
+        description: 'The ID of the friend request.'
         required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        example: architecto
         type: string
         enumValues: []
-        exampleWasSpecified: true
+        exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      post_uuid: 019dc087-837e-70ef-9cb1-9162ca61d7bb
-      post: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+      id: architecto
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/friend-requests/{id}'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'The ID of the friend request.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: architecto
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/conversations
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -376,10 +400,233 @@ endpoints:
     responses:
       -
         custom: []
-        status: 200
-        content: '{ "liked": true, "likes_count": 6 }'
-        headers: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          vary: Origin
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/conversations/unread
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          vary: Origin
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/conversations
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      user_uuid:
+        custom: []
+        name: user_uuid
+        description: 'Must match an existing stored value.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      user_uuid: architecto
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/conversations/{conversation_uuid}/messages'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      conversation_uuid:
+        custom: []
+        name: conversation_uuid
         description: ''
+        required: true
+        example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      conversation_uuid: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          vary: Origin
+        description: null
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/conversations/{conversation_uuid}/messages'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: multipart/form-data
+      Accept: application/json
+    urlParameters:
+      conversation_uuid:
+        custom: []
+        name: conversation_uuid
+        description: ''
+        required: true
+        example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      conversation_uuid: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      body:
+        custom: []
+        name: body
+        description: 'Must not be greater than 2000 characters.'
+        required: false
+        example: b
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      images:
+        custom: []
+        name: images
+        description: 'Must be an image. Must not be greater than 5120 kilobytes.'
+        required: false
+        example:
+          - null
+        type: 'file[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      body: b
+    fileParameters:
+      images:
+        - null
+    responses: []
     responseFields: []
     auth:
       - headers

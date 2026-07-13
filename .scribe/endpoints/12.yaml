@@ -1,4 +1,4 @@
-name: 'Admin: Pages'
+name: 'Admin: Bans'
 description: |-
 
   Requires `moderator`, `admin`, or `super_admin` role.
@@ -7,16 +7,16 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: api/admin/pages
+    uri: api/admin/bans
     metadata:
       custom: []
-      groupName: 'Admin: Pages'
+      groupName: 'Admin: Bans'
       groupDescription: |-
 
         Requires `moderator`, `admin`, or `super_admin` role.
       subgroup: ''
       subgroupDescription: ''
-      title: 'List pages'
+      title: 'List bans'
       description: ''
       authenticated: true
       deprecated: false
@@ -27,35 +27,24 @@ endpoints:
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
-      'filter[status]':
+      'filter[search]':
         custom: []
-        name: 'filter[status]'
-        description: 'One of: `draft`, `published`.'
+        name: 'filter[search]'
+        description: "Search by banned user's name or email."
         required: false
-        example: published
+        example: jane
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
-      'filter[title]':
+      'filter[active]':
         custom: []
-        name: 'filter[title]'
-        description: 'Partial match on title.'
+        name: 'filter[active]'
+        description: 'Show only active bans.'
         required: false
-        example: about
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      'filter[slug]':
-        custom: []
-        name: 'filter[slug]'
-        description: 'Partial match on slug.'
-        required: false
-        example: about
-        type: string
+        example: true
+        type: boolean
         enumValues: []
         exampleWasSpecified: true
         nullable: false
@@ -63,9 +52,9 @@ endpoints:
       sort:
         custom: []
         name: sort
-        description: 'One of: `title`, `slug`, `updated_at`, `status`, `-updated_at`.'
+        description: 'One of: `created_at`, `-created_at`, `expires_at`.'
         required: false
-        example: '-updated_at'
+        example: '-created_at'
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -94,10 +83,9 @@ endpoints:
         nullable: false
         deprecated: false
     cleanQueryParameters:
-      'filter[status]': published
-      'filter[title]': about
-      'filter[slug]': about
-      sort: '-updated_at'
+      'filter[search]': jane
+      'filter[active]': true
+      sort: '-created_at'
       per_page: 25
       page: 1
     bodyParameters: []
@@ -109,8 +97,8 @@ endpoints:
         status: 200
         content: |-
           {
-            "data": [{ "id": 1, "uuid": "...", "slug": "about", "title": "About", "status": "published" }],
-            "total": 5
+            "data": { "data": [], "total": 7 },
+            "counts": { "all": 8, "active": 7 }
           }
         headers: []
         description: ''
@@ -126,17 +114,17 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: api/admin/pages
+    uri: api/admin/bans
     metadata:
       custom: []
-      groupName: 'Admin: Pages'
+      groupName: 'Admin: Bans'
       groupDescription: |-
 
         Requires `moderator`, `admin`, or `super_admin` role.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Create page'
-      description: ''
+      title: 'Create ban'
+      description: "Immediately revokes all of the target user's tokens."
       authenticated: true
       deprecated: false
     headers:
@@ -148,176 +136,49 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      slug:
+      user_uuid:
         custom: []
-        name: slug
-        description: 'Unique URL slug (max 255 chars).'
+        name: user_uuid
+        description: 'UUID of the user to ban.'
         required: true
-        example: about-us
+        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
-      title:
+      reason:
         custom: []
-        name: title
-        description: 'Page title (max 255 chars).'
+        name: reason
+        description: 'Reason for the ban (max 2,000 chars).'
         required: true
-        example: 'About Us'
+        example: 'Repeated violations.'
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
-      body:
+      expires_at:
         custom: []
-        name: body
-        description: 'Page content (HTML/Markdown).'
-        required: true
-        example: '<p>We are...</p>'
+        name: expires_at
+        description: 'ISO 8601 datetime for a temporary ban. Omit for permanent.'
+        required: false
+        example: '2026-12-31T23:59:59'
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      status:
-        custom: []
-        name: status
-        description: 'One of: `draft`, `published`.'
-        required: true
-        example: draft
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
+        nullable: true
         deprecated: false
     cleanBodyParameters:
-      slug: about-us
-      title: 'About Us'
-      body: '<p>We are...</p>'
-      status: draft
+      user_uuid: 019e178b-4ffc-72ad-a045-31cb5d618db2
+      reason: 'Repeated violations.'
+      expires_at: '2026-12-31T23:59:59'
     fileParameters: []
     responses:
       -
         custom: []
         status: 201
-        content: '{ "id": 6, "uuid": "...", "slug": "about-us", "title": "About Us", "status": "draft" }'
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - PATCH
-    uri: 'api/admin/pages/{page_uuid}'
-    metadata:
-      custom: []
-      groupName: 'Admin: Pages'
-      groupDescription: |-
-
-        Requires `moderator`, `admin`, or `super_admin` role.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Update page'
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      page_uuid:
-        custom: []
-        name: page_uuid
-        description: ''
-        required: true
-        example: 019e178c-c4f5-7251-af78-82e4ae28d271
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      page:
-        custom: []
-        name: page
-        description: 'Page UUID.'
-        required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      page_uuid: 019e178c-c4f5-7251-af78-82e4ae28d271
-      page: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      slug:
-        custom: []
-        name: slug
-        description: 'URL slug (must be unique).'
-        required: false
-        example: about-us
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      title:
-        custom: []
-        name: title
-        description: 'Page title.'
-        required: false
-        example: 'About Us'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      body:
-        custom: []
-        name: body
-        description: 'Page content.'
-        required: false
-        example: '<p>Updated content.</p>'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      status:
-        custom: []
-        name: status
-        description: 'One of: `draft`, `published`.'
-        required: false
-        example: published
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanBodyParameters:
-      slug: about-us
-      title: 'About Us'
-      body: '<p>Updated content.</p>'
-      status: published
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 200
-        content: '{ "id": 1, "slug": "about-us", "title": "About Us", "status": "published" }'
+        content: '{ "id": 10, "user_id": 23, "reason": "Repeated violations.", "expires_at": null }'
         headers: []
         description: ''
     responseFields: []
@@ -332,17 +193,17 @@ endpoints:
     custom: []
     httpMethods:
       - DELETE
-    uri: 'api/admin/pages/{page_uuid}'
+    uri: 'api/admin/bans/{ban_uuid}'
     metadata:
       custom: []
-      groupName: 'Admin: Pages'
+      groupName: 'Admin: Bans'
       groupDescription: |-
 
         Requires `moderator`, `admin`, or `super_admin` role.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Delete page'
-      description: ''
+      title: 'Lift ban'
+      description: 'Expires the ban immediately by setting `expires_at` to the past.'
       authenticated: true
       deprecated: false
     headers:
@@ -350,21 +211,21 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      page_uuid:
+      ban_uuid:
         custom: []
-        name: page_uuid
+        name: ban_uuid
         description: ''
         required: true
-        example: 019e178c-c4f5-7251-af78-82e4ae28d271
+        example: 019f5c94-2ed9-73c0-ad72-2a87432cf425
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      page:
+      ban:
         custom: []
-        name: page
-        description: 'Page UUID.'
+        name: ban
+        description: 'Ban UUID.'
         required: true
         example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
         type: string
@@ -373,8 +234,8 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      page_uuid: 019e178c-c4f5-7251-af78-82e4ae28d271
-      page: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+      ban_uuid: 019f5c94-2ed9-73c0-ad72-2a87432cf425
+      ban: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -384,7 +245,7 @@ endpoints:
       -
         custom: []
         status: 200
-        content: '{ "message": "Page deleted." }'
+        content: '{ "message": "Ban lifted." }'
         headers: []
         description: ''
     responseFields: []

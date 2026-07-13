@@ -1,22 +1,24 @@
-name: 'Admin: Comments'
+name: 'Admin: Users'
 description: |-
 
   Requires `moderator`, `admin`, or `super_admin` role.
+  Creating/updating/deleting users requires `admin+`. Role assignment requires `super_admin`.
 endpoints:
   -
     custom: []
     httpMethods:
       - GET
-    uri: api/admin/comments
+    uri: api/admin/users
     metadata:
       custom: []
-      groupName: 'Admin: Comments'
+      groupName: 'Admin: Users'
       groupDescription: |-
 
         Requires `moderator`, `admin`, or `super_admin` role.
+        Creating/updating/deleting users requires `admin+`. Role assignment requires `super_admin`.
       subgroup: ''
       subgroupDescription: ''
-      title: 'List comments'
+      title: 'List users'
       description: ''
       authenticated: true
       deprecated: false
@@ -30,21 +32,32 @@ endpoints:
       'filter[search]':
         custom: []
         name: 'filter[search]'
-        description: 'Partial match on comment body.'
+        description: 'Search by name or email.'
         required: false
-        example: great
+        example: jane
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
-      'filter[post_uuid]':
+      'filter[role]':
         custom: []
-        name: 'filter[post_uuid]'
-        description: 'Filter by post UUID.'
+        name: 'filter[role]'
+        description: 'Exact role.'
         required: false
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        example: moderator
         type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      'filter[banned]':
+        custom: []
+        name: 'filter[banned]'
+        description: 'Only show banned users.'
+        required: false
+        example: true
+        type: boolean
         enumValues: []
         exampleWasSpecified: true
         nullable: false
@@ -52,7 +65,7 @@ endpoints:
       sort:
         custom: []
         name: sort
-        description: 'One of: `created_at`, `-created_at`.'
+        description: 'Sort field (prefix `-` for descending). One of: `name`, `email`, `created_at`.'
         required: false
         example: '-created_at'
         type: string
@@ -63,9 +76,9 @@ endpoints:
       per_page:
         custom: []
         name: per_page
-        description: 'Results per page (default 30).'
+        description: 'Results per page (default 25).'
         required: false
-        example: 30
+        example: 25
         type: integer
         enumValues: []
         exampleWasSpecified: true
@@ -83,10 +96,11 @@ endpoints:
         nullable: false
         deprecated: false
     cleanQueryParameters:
-      'filter[search]': great
-      'filter[post_uuid]': 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+      'filter[search]': jane
+      'filter[role]': moderator
+      'filter[banned]': true
       sort: '-created_at'
-      per_page: 30
+      per_page: 25
       page: 1
     bodyParameters: []
     cleanBodyParameters: []
@@ -97,8 +111,9 @@ endpoints:
         status: 200
         content: |-
           {
-            "data": [{ "id": 1, "body": "...", "likes_count": 0, "reports_count": 0, "user": {}, "post": {} }],
-            "total": 210
+            "current_page": 1,
+            "data": [{ "id": 1, "uuid": "...", "name": "Jane", "email": "jane@example.com", "role": "user", "posts_count": 5 }],
+            "total": 44
           }
         headers: []
         description: ''
@@ -114,17 +129,18 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: api/admin/comments
+    uri: api/admin/users
     metadata:
       custom: []
-      groupName: 'Admin: Comments'
+      groupName: 'Admin: Users'
       groupDescription: |-
 
         Requires `moderator`, `admin`, or `super_admin` role.
+        Creating/updating/deleting users requires `admin+`. Role assignment requires `super_admin`.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Create comment'
-      description: ''
+      title: 'Create user'
+      description: 'Requires `admin+`. Creating `admin`/`super_admin` roles requires `super_admin`.'
       authenticated: true
       deprecated: false
     headers:
@@ -136,61 +152,140 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      post_uuid:
+      name:
         custom: []
-        name: post_uuid
-        description: 'UUID of the post to comment on.'
+        name: name
+        description: ''
         required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        example: 'Jane Doe'
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
-      body:
+      email:
         custom: []
-        name: body
-        description: 'Comment text (max 2,000 chars).'
+        name: email
+        description: ''
         required: true
-        example: 'Admin comment.'
+        example: jane@example.com
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
-      parent_uuid:
+      password:
         custom: []
-        name: parent_uuid
-        description: 'UUID of parent comment for replies.'
-        required: false
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        name: password
+        description: 'Minimum 8 characters.'
+        required: true
+        example: secret123
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
-      user_uuid:
+      role:
         custom: []
-        name: user_uuid
-        description: 'Author UUID. Defaults to the authenticated admin.'
-        required: false
-        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
+        name: role
+        description: 'One of: `user`, `moderator`, `admin`, `super_admin`.'
+        required: true
+        example: user
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
-      post_uuid: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-      body: 'Admin comment.'
-      parent_uuid: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-      user_uuid: 019e178b-4ffc-72ad-a045-31cb5d618db2
+      name: 'Jane Doe'
+      email: jane@example.com
+      password: secret123
+      role: user
     fileParameters: []
     responses:
       -
         custom: []
         status: 201
-        content: '{ "id": 300, "body": "Admin comment.", "post_id": 1, "user_id": 2 }'
+        content: '{ "id": 50, "uuid": "...", "name": "Jane Doe", "email": "jane@example.com", "role": "user" }'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 403
+        content: '{ "message": "Only super admins can create admin-level users." }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/admin/users/{user_uuid}'
+    metadata:
+      custom: []
+      groupName: 'Admin: Users'
+      groupDescription: |-
+
+        Requires `moderator`, `admin`, or `super_admin` role.
+        Creating/updating/deleting users requires `admin+`. Role assignment requires `super_admin`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get user'
+      description: 'Returns the user with their bans, report counts, and recent activity.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      user_uuid:
+        custom: []
+        name: user_uuid
+        description: ''
+        required: true
+        example: 019f5c94-18dc-7253-af0a-5f0740308f9c
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      user:
+        custom: []
+        name: user
+        description: 'User UUID.'
+        required: true
+        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      user_uuid: 019f5c94-18dc-7253-af0a-5f0740308f9c
+      user: 019e178b-4ffc-72ad-a045-31cb5d618db2
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "user": { "id": 23, "uuid": "...", "name": "...", "role": "user", "posts_count": 14, "comments_count": 17 },
+            "reports_against": [],
+            "activity": []
+          }
         headers: []
         description: ''
     responseFields: []
@@ -205,17 +300,18 @@ endpoints:
     custom: []
     httpMethods:
       - PATCH
-    uri: 'api/admin/comments/{comment_uuid}'
+    uri: 'api/admin/users/{user_uuid}'
     metadata:
       custom: []
-      groupName: 'Admin: Comments'
+      groupName: 'Admin: Users'
       groupDescription: |-
 
         Requires `moderator`, `admin`, or `super_admin` role.
+        Creating/updating/deleting users requires `admin+`. Role assignment requires `super_admin`.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Update comment'
-      description: ''
+      title: 'Update user'
+      description: 'Requires `admin+`. Can only update `name` and `email`.'
       authenticated: true
       deprecated: false
     headers:
@@ -223,65 +319,65 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      comment_uuid:
+      user_uuid:
         custom: []
-        name: comment_uuid
+        name: user_uuid
         description: ''
         required: true
-        example: 019dc09f-da0e-7282-a78f-1b47ed2c947f
+        example: 019f5c94-18dc-7253-af0a-5f0740308f9c
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      comment:
+      user:
         custom: []
-        name: comment
-        description: 'Comment UUID.'
+        name: user
+        description: 'User UUID.'
         required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      comment_uuid: 019dc09f-da0e-7282-a78f-1b47ed2c947f
-      comment: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+      user_uuid: 019f5c94-18dc-7253-af0a-5f0740308f9c
+      user: 019e178b-4ffc-72ad-a045-31cb5d618db2
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      body:
+      name:
         custom: []
-        name: body
-        description: 'Updated comment text (max 2,000 chars).'
-        required: true
-        example: 'Edited comment.'
+        name: name
+        description: 'Display name.'
+        required: false
+        example: 'Jane Doe'
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
-      reason:
+      email:
         custom: []
-        name: reason
-        description: 'Optional reason (logged).'
+        name: email
+        description: 'Email address.'
         required: false
-        example: 'Removed offensive language.'
+        example: jane@example.com
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
-      body: 'Edited comment.'
-      reason: 'Removed offensive language.'
+      name: 'Jane Doe'
+      email: jane@example.com
     fileParameters: []
     responses:
       -
         custom: []
         status: 200
-        content: '{ "id": 1, "body": "Edited comment." }'
+        content: '{ "id": 23, "name": "Jane Doe", "email": "jane@example.com" }'
         headers: []
         description: ''
     responseFields: []
@@ -296,17 +392,18 @@ endpoints:
     custom: []
     httpMethods:
       - DELETE
-    uri: 'api/admin/comments/{comment_uuid}'
+    uri: 'api/admin/users/{user_uuid}'
     metadata:
       custom: []
-      groupName: 'Admin: Comments'
+      groupName: 'Admin: Users'
       groupDescription: |-
 
         Requires `moderator`, `admin`, or `super_admin` role.
+        Creating/updating/deleting users requires `admin+`. Role assignment requires `super_admin`.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Delete comment'
-      description: ''
+      title: 'Delete user'
+      description: 'Requires `admin+`. Deleting a `super_admin` requires `super_admin`.'
       authenticated: true
       deprecated: false
     headers:
@@ -314,31 +411,31 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      comment_uuid:
+      user_uuid:
         custom: []
-        name: comment_uuid
+        name: user_uuid
         description: ''
         required: true
-        example: 019dc09f-da0e-7282-a78f-1b47ed2c947f
+        example: 019f5c94-18dc-7253-af0a-5f0740308f9c
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      comment:
+      user:
         custom: []
-        name: comment
-        description: 'Comment UUID.'
+        name: user
+        description: 'User UUID.'
         required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      comment_uuid: 019dc09f-da0e-7282-a78f-1b47ed2c947f
-      comment: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+      user_uuid: 019f5c94-18dc-7253-af0a-5f0740308f9c
+      user: 019e178b-4ffc-72ad-a045-31cb5d618db2
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -348,7 +445,259 @@ endpoints:
       -
         custom: []
         status: 200
-        content: '{ "message": "Comment deleted." }'
+        content: '{ "message": "User deleted." }'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 403
+        content: '{ "message": "Cannot delete super admin." }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/admin/users/{user_uuid}/ban'
+    metadata:
+      custom: []
+      groupName: 'Admin: Users'
+      groupDescription: |-
+
+        Requires `moderator`, `admin`, or `super_admin` role.
+        Creating/updating/deleting users requires `admin+`. Role assignment requires `super_admin`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Ban user'
+      description: "Creates a ban and immediately revokes all of the user's tokens."
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      user_uuid:
+        custom: []
+        name: user_uuid
+        description: ''
+        required: true
+        example: 019f5c94-18dc-7253-af0a-5f0740308f9c
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      user:
+        custom: []
+        name: user
+        description: 'User UUID.'
+        required: true
+        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      user_uuid: 019f5c94-18dc-7253-af0a-5f0740308f9c
+      user: 019e178b-4ffc-72ad-a045-31cb5d618db2
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      reason:
+        custom: []
+        name: reason
+        description: 'Reason for the ban (max 2,000 chars).'
+        required: true
+        example: 'Repeated spam.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      expires_at:
+        custom: []
+        name: expires_at
+        description: 'ISO 8601 datetime for temporary ban. Leave null for permanent.'
+        required: false
+        example: '2026-12-31T23:59:59'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      reason: 'Repeated spam.'
+      expires_at: '2026-12-31T23:59:59'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 201
+        content: '{ "id": 10, "uuid": "...", "user_id": 23, "reason": "Repeated spam.", "expires_at": null }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/admin/users/{user_uuid}/unban'
+    metadata:
+      custom: []
+      groupName: 'Admin: Users'
+      groupDescription: |-
+
+        Requires `moderator`, `admin`, or `super_admin` role.
+        Creating/updating/deleting users requires `admin+`. Role assignment requires `super_admin`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Unban user'
+      description: 'Expires all active bans immediately.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      user_uuid:
+        custom: []
+        name: user_uuid
+        description: ''
+        required: true
+        example: 019f5c94-18dc-7253-af0a-5f0740308f9c
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      user:
+        custom: []
+        name: user
+        description: 'User UUID.'
+        required: true
+        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      user_uuid: 019f5c94-18dc-7253-af0a-5f0740308f9c
+      user: 019e178b-4ffc-72ad-a045-31cb5d618db2
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{ "message": "User unbanned." }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/admin/users/{user_uuid}/role'
+    metadata:
+      custom: []
+      groupName: 'Admin: Users'
+      groupDescription: |-
+
+        Requires `moderator`, `admin`, or `super_admin` role.
+        Creating/updating/deleting users requires `admin+`. Role assignment requires `super_admin`.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Assign role'
+      description: 'Requires `super_admin`.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      user_uuid:
+        custom: []
+        name: user_uuid
+        description: ''
+        required: true
+        example: 019f5c94-18dc-7253-af0a-5f0740308f9c
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      user:
+        custom: []
+        name: user
+        description: 'User UUID.'
+        required: true
+        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      user_uuid: 019f5c94-18dc-7253-af0a-5f0740308f9c
+      user: 019e178b-4ffc-72ad-a045-31cb5d618db2
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      role:
+        custom: []
+        name: role
+        description: 'One of: `user`, `moderator`, `admin`, `super_admin`.'
+        required: true
+        example: moderator
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      role: moderator
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{ "id": 23, "role": "moderator" }'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 403
+        content: '{ "message": "Only super admins can change roles." }'
         headers: []
         description: ''
     responseFields: []

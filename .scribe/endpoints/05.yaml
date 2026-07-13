@@ -1,23 +1,77 @@
-name: 'Admin: Dashboard'
-description: |-
-
-  Requires `moderator`, `admin`, or `super_admin` role.
+name: Reports
+description: ''
 endpoints:
   -
     custom: []
     httpMethods:
       - GET
-    uri: api/admin/dashboard
+    uri: api/reports/mine
     metadata:
       custom: []
-      groupName: 'Admin: Dashboard'
-      groupDescription: |-
-
-        Requires `moderator`, `admin`, or `super_admin` role.
+      groupName: Reports
+      groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Admin dashboard stats'
-      description: 'System-wide stats for the last 30 days, daily signup/post series, recent reports and activity logs.'
+      title: 'My reports'
+      description: 'Paginated list of reports filed by the authenticated user.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      page:
+        custom: []
+        name: page
+        description: 'Page number.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      page: 1
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "current_page": 1,
+            "data": [{ "id": 1, "reason": "Spam", "status": "pending", "reportable_type": "App\\Models\\Post" }],
+            "total": 5
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/reports
+    metadata:
+      custom: []
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'File a report'
+      description: 'Report a post, comment, or user. Returns 409 if you already have a pending report on the same target.'
       authenticated: true
       deprecated: false
     headers:
@@ -28,24 +82,56 @@ endpoints:
     cleanUrlParameters: []
     queryParameters: []
     cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
+    bodyParameters:
+      type:
+        custom: []
+        name: type
+        description: 'One of: `post`, `comment`, `user`.'
+        required: true
+        example: post
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      target_uuid:
+        custom: []
+        name: target_uuid
+        description: 'UUID of the content being reported.'
+        required: true
+        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      reason:
+        custom: []
+        name: reason
+        description: 'Description of the issue (max 2,000 characters).'
+        required: true
+        example: 'This post contains spam.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      type: post
+      target_uuid: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+      reason: 'This post contains spam.'
     fileParameters: []
     responses:
       -
         custom: []
-        status: 200
-        content: |-
-          {
-            "stats": {
-              "users_total": 44, "users_today": 0, "users_active_5m": 1,
-              "posts_total": 83, "posts_today": 1, "comments_total": 210,
-              "reports_pending": 11, "bans_active": 7
-            },
-            "series": { "signups": [], "posts": [] },
-            "recent_reports": [],
-            "recent_activity": []
-          }
+        status: 201
+        content: '{ "id": 1, "reason": "This post contains spam.", "status": "pending" }'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 409
+        content: '{ "message": "You already reported this. A moderator will review it." }'
         headers: []
         description: ''
     responseFields: []
