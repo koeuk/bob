@@ -1,0 +1,191 @@
+name: 'Admin: Likes'
+description: |-
+
+  Requires `moderator`, `admin`, or `super_admin` role.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/admin/likes
+    metadata:
+      custom: []
+      groupName: 'Admin: Likes'
+      groupDescription: |-
+
+        Requires `moderator`, `admin`, or `super_admin` role.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'List likes'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      'filter[type]':
+        custom: []
+        name: 'filter[type]'
+        description: 'Exact type.'
+        required: false
+        example: like
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      'filter[target]':
+        custom: []
+        name: 'filter[target]'
+        description: 'Likeable type class.'
+        required: false
+        example: App\Models\Post
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      'filter[user_uuid]':
+        custom: []
+        name: 'filter[user_uuid]'
+        description: 'UUID of the user who liked.'
+        required: false
+        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      sort:
+        custom: []
+        name: sort
+        description: 'One of: `created_at`, `-created_at`, `type`.'
+        required: false
+        example: '-created_at'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Results per page (default 50).'
+        required: false
+        example: 50
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      'filter[type]': like
+      'filter[target]': App\Models\Post
+      'filter[user_uuid]': 019e178b-4ffc-72ad-a045-31cb5d618db2
+      sort: '-created_at'
+      per_page: 50
+      page: 1
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": { "data": [], "total": 0 },
+            "counts": { "all": 0, "today": 0 }
+          }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/admin/likes/{like_uuid}'
+    metadata:
+      custom: []
+      groupName: 'Admin: Likes'
+      groupDescription: |-
+
+        Requires `moderator`, `admin`, or `super_admin` role.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Delete like'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      like_uuid:
+        custom: []
+        name: like_uuid
+        description: ''
+        required: true
+        example: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      like:
+        custom: []
+        name: like
+        description: 'Like UUID.'
+        required: true
+        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      like_uuid: 6ff8f7f6-1eb3-3525-be4a-3932c805afed
+      like: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{ "message": "Like removed." }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null

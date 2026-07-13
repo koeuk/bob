@@ -1,4 +1,4 @@
-name: 'Admin: Comments'
+name: 'Admin: Activity Logs'
 description: |-
 
   Requires `moderator`, `admin`, or `super_admin` role.
@@ -7,16 +7,16 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: api/admin/comments
+    uri: api/admin/activity-logs
     metadata:
       custom: []
-      groupName: 'Admin: Comments'
+      groupName: 'Admin: Activity Logs'
       groupDescription: |-
 
         Requires `moderator`, `admin`, or `super_admin` role.
       subgroup: ''
       subgroupDescription: ''
-      title: 'List comments'
+      title: 'List activity logs'
       description: ''
       authenticated: true
       deprecated: false
@@ -27,23 +27,45 @@ endpoints:
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
-      'filter[search]':
+      'filter[action]':
         custom: []
-        name: 'filter[search]'
-        description: 'Partial match on comment body.'
+        name: 'filter[action]'
+        description: 'Partial match on action name.'
         required: false
-        example: great
+        example: user.ban
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
-      'filter[post_uuid]':
+      'filter[admin_uuid]':
         custom: []
-        name: 'filter[post_uuid]'
-        description: 'Filter by post UUID.'
+        name: 'filter[admin_uuid]'
+        description: 'Filter by admin UUID.'
         required: false
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      'filter[from]':
+        custom: []
+        name: 'filter[from]'
+        description: 'ISO 8601 start date (inclusive).'
+        required: false
+        example: '2026-05-01'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      'filter[to]':
+        custom: []
+        name: 'filter[to]'
+        description: 'ISO 8601 end date (inclusive).'
+        required: false
+        example: '2026-05-31'
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -63,9 +85,9 @@ endpoints:
       per_page:
         custom: []
         name: per_page
-        description: 'Results per page (default 30).'
+        description: 'Results per page (default 50).'
         required: false
-        example: 30
+        example: 50
         type: integer
         enumValues: []
         exampleWasSpecified: true
@@ -83,10 +105,12 @@ endpoints:
         nullable: false
         deprecated: false
     cleanQueryParameters:
-      'filter[search]': great
-      'filter[post_uuid]': 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+      'filter[action]': user.ban
+      'filter[admin_uuid]': 019e178b-4ffc-72ad-a045-31cb5d618db2
+      'filter[from]': '2026-05-01'
+      'filter[to]': '2026-05-31'
       sort: '-created_at'
-      per_page: 30
+      per_page: 50
       page: 1
     bodyParameters: []
     cleanBodyParameters: []
@@ -97,258 +121,9 @@ endpoints:
         status: 200
         content: |-
           {
-            "data": [{ "id": 1, "body": "...", "likes_count": 0, "reports_count": 0, "user": {}, "post": {} }],
-            "total": 210
+            "data": [{ "id": 1, "action": "user.ban", "target_type": "App\\Models\\User", "before": null, "after": {}, "admin": {} }],
+            "total": 50
           }
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - POST
-    uri: api/admin/comments
-    metadata:
-      custom: []
-      groupName: 'Admin: Comments'
-      groupDescription: |-
-
-        Requires `moderator`, `admin`, or `super_admin` role.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Create comment'
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      post_uuid:
-        custom: []
-        name: post_uuid
-        description: 'UUID of the post to comment on.'
-        required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      body:
-        custom: []
-        name: body
-        description: 'Comment text (max 2,000 chars).'
-        required: true
-        example: 'Admin comment.'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      parent_uuid:
-        custom: []
-        name: parent_uuid
-        description: 'UUID of parent comment for replies.'
-        required: false
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: true
-        deprecated: false
-      user_uuid:
-        custom: []
-        name: user_uuid
-        description: 'Author UUID. Defaults to the authenticated admin.'
-        required: false
-        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: true
-        deprecated: false
-    cleanBodyParameters:
-      post_uuid: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-      body: 'Admin comment.'
-      parent_uuid: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-      user_uuid: 019e178b-4ffc-72ad-a045-31cb5d618db2
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 201
-        content: '{ "id": 300, "body": "Admin comment.", "post_id": 1, "user_id": 2 }'
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - PATCH
-    uri: 'api/admin/comments/{comment_uuid}'
-    metadata:
-      custom: []
-      groupName: 'Admin: Comments'
-      groupDescription: |-
-
-        Requires `moderator`, `admin`, or `super_admin` role.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Update comment'
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      comment_uuid:
-        custom: []
-        name: comment_uuid
-        description: ''
-        required: true
-        example: 019f5c94-2d49-727a-ae74-40f44dd3072e
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      comment:
-        custom: []
-        name: comment
-        description: 'Comment UUID.'
-        required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      comment_uuid: 019f5c94-2d49-727a-ae74-40f44dd3072e
-      comment: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      body:
-        custom: []
-        name: body
-        description: 'Updated comment text (max 2,000 chars).'
-        required: true
-        example: 'Edited comment.'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      reason:
-        custom: []
-        name: reason
-        description: 'Optional reason (logged).'
-        required: false
-        example: 'Removed offensive language.'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: true
-        deprecated: false
-    cleanBodyParameters:
-      body: 'Edited comment.'
-      reason: 'Removed offensive language.'
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 200
-        content: '{ "id": 1, "body": "Edited comment." }'
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - DELETE
-    uri: 'api/admin/comments/{comment_uuid}'
-    metadata:
-      custom: []
-      groupName: 'Admin: Comments'
-      groupDescription: |-
-
-        Requires `moderator`, `admin`, or `super_admin` role.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Delete comment'
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      comment_uuid:
-        custom: []
-        name: comment_uuid
-        description: ''
-        required: true
-        example: 019f5c94-2d49-727a-ae74-40f44dd3072e
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      comment:
-        custom: []
-        name: comment
-        description: 'Comment UUID.'
-        required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      comment_uuid: 019f5c94-2d49-727a-ae74-40f44dd3072e
-      comment: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 200
-        content: '{ "message": "Comment deleted." }'
         headers: []
         description: ''
     responseFields: []

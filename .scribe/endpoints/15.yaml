@@ -1,23 +1,23 @@
-name: 'Admin: Settings'
+name: 'Admin: Bans'
 description: |-
 
-  Requires `admin` or `super_admin` role.
+  Requires `moderator`, `admin`, or `super_admin` role.
 endpoints:
   -
     custom: []
     httpMethods:
       - GET
-    uri: api/admin/settings
+    uri: api/admin/bans
     metadata:
       custom: []
-      groupName: 'Admin: Settings'
+      groupName: 'Admin: Bans'
       groupDescription: |-
 
-        Requires `admin` or `super_admin` role.
+        Requires `moderator`, `admin`, or `super_admin` role.
       subgroup: ''
       subgroupDescription: ''
-      title: 'List settings'
-      description: 'Returns all settings grouped by their `group` key.'
+      title: 'List bans'
+      description: ''
       authenticated: true
       deprecated: false
     headers:
@@ -26,8 +26,68 @@ endpoints:
       Accept: application/json
     urlParameters: []
     cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
+    queryParameters:
+      'filter[search]':
+        custom: []
+        name: 'filter[search]'
+        description: "Search by banned user's name or email."
+        required: false
+        example: jane
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      'filter[active]':
+        custom: []
+        name: 'filter[active]'
+        description: 'Show only active bans.'
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      sort:
+        custom: []
+        name: sort
+        description: 'One of: `created_at`, `-created_at`, `expires_at`.'
+        required: false
+        example: '-created_at'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Results per page (default 25).'
+        required: false
+        example: 25
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      'filter[search]': jane
+      'filter[active]': true
+      sort: '-created_at'
+      per_page: 25
+      page: 1
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -37,7 +97,8 @@ endpoints:
         status: 200
         content: |-
           {
-            "general": [{ "id": 1, "key": "site_name", "value": "Bob", "group": "general" }]
+            "data": { "data": [], "total": 7 },
+            "counts": { "all": 8, "active": 7 }
           }
         headers: []
         description: ''
@@ -52,18 +113,18 @@ endpoints:
   -
     custom: []
     httpMethods:
-      - PATCH
-    uri: api/admin/settings
+      - POST
+    uri: api/admin/bans
     metadata:
       custom: []
-      groupName: 'Admin: Settings'
+      groupName: 'Admin: Bans'
       groupDescription: |-
 
-        Requires `admin` or `super_admin` role.
+        Requires `moderator`, `admin`, or `super_admin` role.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Update settings'
-      description: 'Upserts one or more settings. Requires `admin+`.'
+      title: 'Create ban'
+      description: "Immediately revokes all of the target user's tokens."
       authenticated: true
       deprecated: false
     headers:
@@ -75,66 +136,116 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      settings:
+      user_uuid:
         custom: []
-        name: settings
-        description: 'Array of setting objects.'
+        name: user_uuid
+        description: 'UUID of the user to ban.'
         required: true
-        example:
-          - architecto
-        type: 'string[]'
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      'settings[].key':
-        custom: []
-        name: 'settings[].key'
-        description: 'Setting key.'
-        required: true
-        example: site_name
+        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
-      'settings[].value':
+      reason:
         custom: []
-        name: 'settings[].value'
-        description: 'New value.'
-        required: false
-        example: Bob
-        type: mixed
+        name: reason
+        description: 'Reason for the ban (max 2,000 chars).'
+        required: true
+        example: 'Repeated violations.'
+        type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
-      'settings[].group':
+      expires_at:
         custom: []
-        name: 'settings[].group'
-        description: 'Group name (default: `general`).'
+        name: expires_at
+        description: 'ISO 8601 datetime for a temporary ban. Omit for permanent.'
         required: false
-        example: general
+        example: '2026-12-31T23:59:59'
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: true
         deprecated: false
     cleanBodyParameters:
-      settings:
-        - architecto
+      user_uuid: 019e178b-4ffc-72ad-a045-31cb5d618db2
+      reason: 'Repeated violations.'
+      expires_at: '2026-12-31T23:59:59'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 201
+        content: '{ "id": 10, "user_id": 23, "reason": "Repeated violations.", "expires_at": null }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/admin/bans/{ban_uuid}'
+    metadata:
+      custom: []
+      groupName: 'Admin: Bans'
+      groupDescription: |-
+
+        Requires `moderator`, `admin`, or `super_admin` role.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Lift ban'
+      description: 'Expires the ban immediately by setting `expires_at` to the past.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      ban_uuid:
+        custom: []
+        name: ban_uuid
+        description: ''
+        required: true
+        example: 019f5c94-2ed9-73c0-ad72-2a87432cf425
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      ban:
+        custom: []
+        name: ban
+        description: 'Ban UUID.'
+        required: true
+        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      ban_uuid: 019f5c94-2ed9-73c0-ad72-2a87432cf425
+      ban: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
     fileParameters: []
     responses:
       -
         custom: []
         status: 200
-        content: '[{ "key": "site_name", "value": "Bob", "group": "general" }]'
-        headers: []
-        description: ''
-      -
-        custom: []
-        status: 403
-        content: '{ "message": "Only admins can update settings." }'
+        content: '{ "message": "Ban lifted." }'
         headers: []
         description: ''
     responseFields: []

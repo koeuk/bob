@@ -16,10 +16,9 @@ endpoints:
       subgroupDescription: ''
       title: Feed
       description: 'Paginated list of all active posts, newest first. Each post includes a `liked_by_me` flag.'
-      authenticated: true
+      authenticated: false
       deprecated: false
     headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters: []
@@ -60,10 +59,7 @@ endpoints:
         headers: []
         description: ''
     responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    auth: []
     controller: null
     method: null
     route: null
@@ -124,10 +120,9 @@ endpoints:
       subgroupDescription: ''
       title: 'Get post'
       description: 'Return a single post with all its comments. Hidden posts are only visible to their author.'
-      authenticated: true
+      authenticated: false
       deprecated: false
     headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
       Content-Type: application/json
       Accept: application/json
     urlParameters:
@@ -180,10 +175,7 @@ endpoints:
         headers: []
         description: ''
     responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    auth: []
     controller: null
     method: null
     route: null
@@ -250,7 +242,7 @@ endpoints:
         name: visibility
         description: ''
         required: false
-        example: private
+        example: public
         type: string
         enumValues:
           - public
@@ -272,7 +264,7 @@ endpoints:
     cleanBodyParameters:
       body: 'Hello everyone!'
       feeling: 'n'
-      visibility: private
+      visibility: public
       shared_post_id: 16
     fileParameters:
       images:
@@ -529,7 +521,7 @@ endpoints:
         name: type
         description: ''
         required: false
-        example: haha
+        example: love
         type: string
         enumValues:
           - like
@@ -542,7 +534,7 @@ endpoints:
         nullable: true
         deprecated: false
     cleanBodyParameters:
-      type: haha
+      type: love
     fileParameters: []
     responses:
       -

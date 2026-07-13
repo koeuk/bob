@@ -1,23 +1,19 @@
-name: 'Admin: Activity Logs'
-description: |-
-
-  Requires `moderator`, `admin`, or `super_admin` role.
+name: Reports
+description: ''
 endpoints:
   -
     custom: []
     httpMethods:
       - GET
-    uri: api/admin/activity-logs
+    uri: api/reports/mine
     metadata:
       custom: []
-      groupName: 'Admin: Activity Logs'
-      groupDescription: |-
-
-        Requires `moderator`, `admin`, or `super_admin` role.
+      groupName: Reports
+      groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'List activity logs'
-      description: ''
+      title: 'My reports'
+      description: 'Paginated list of reports filed by the authenticated user.'
       authenticated: true
       deprecated: false
     headers:
@@ -27,72 +23,6 @@ endpoints:
     urlParameters: []
     cleanUrlParameters: []
     queryParameters:
-      'filter[action]':
-        custom: []
-        name: 'filter[action]'
-        description: 'Partial match on action name.'
-        required: false
-        example: user.ban
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      'filter[admin_uuid]':
-        custom: []
-        name: 'filter[admin_uuid]'
-        description: 'Filter by admin UUID.'
-        required: false
-        example: 019e178b-4ffc-72ad-a045-31cb5d618db2
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      'filter[from]':
-        custom: []
-        name: 'filter[from]'
-        description: 'ISO 8601 start date (inclusive).'
-        required: false
-        example: '2026-05-01'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      'filter[to]':
-        custom: []
-        name: 'filter[to]'
-        description: 'ISO 8601 end date (inclusive).'
-        required: false
-        example: '2026-05-31'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      sort:
-        custom: []
-        name: sort
-        description: 'One of: `created_at`, `-created_at`.'
-        required: false
-        example: '-created_at'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      per_page:
-        custom: []
-        name: per_page
-        description: 'Results per page (default 50).'
-        required: false
-        example: 50
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
       page:
         custom: []
         name: page
@@ -105,12 +35,6 @@ endpoints:
         nullable: false
         deprecated: false
     cleanQueryParameters:
-      'filter[action]': user.ban
-      'filter[admin_uuid]': 019e178b-4ffc-72ad-a045-31cb5d618db2
-      'filter[from]': '2026-05-01'
-      'filter[to]': '2026-05-31'
-      sort: '-created_at'
-      per_page: 50
       page: 1
     bodyParameters: []
     cleanBodyParameters: []
@@ -121,9 +45,93 @@ endpoints:
         status: 200
         content: |-
           {
-            "data": [{ "id": 1, "action": "user.ban", "target_type": "App\\Models\\User", "before": null, "after": {}, "admin": {} }],
-            "total": 50
+            "current_page": 1,
+            "data": [{ "id": 1, "reason": "Spam", "status": "pending", "reportable_type": "App\\Models\\Post" }],
+            "total": 5
           }
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/reports
+    metadata:
+      custom: []
+      groupName: Reports
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'File a report'
+      description: 'Report a post, comment, or user. Returns 409 if you already have a pending report on the same target.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      type:
+        custom: []
+        name: type
+        description: 'One of: `post`, `comment`, `user`.'
+        required: true
+        example: post
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      target_uuid:
+        custom: []
+        name: target_uuid
+        description: 'UUID of the content being reported.'
+        required: true
+        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      reason:
+        custom: []
+        name: reason
+        description: 'Description of the issue (max 2,000 characters).'
+        required: true
+        example: 'This post contains spam.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      type: post
+      target_uuid: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+      reason: 'This post contains spam.'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 201
+        content: '{ "id": 1, "reason": "This post contains spam.", "status": "pending" }'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 409
+        content: '{ "message": "You already reported this. A moderator will review it." }'
         headers: []
         description: ''
     responseFields: []

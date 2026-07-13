@@ -1,19 +1,19 @@
-name: Reports
+name: Notifications
 description: ''
 endpoints:
   -
     custom: []
     httpMethods:
       - GET
-    uri: api/reports/mine
+    uri: api/notifications
     metadata:
       custom: []
-      groupName: Reports
+      groupName: Notifications
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'My reports'
-      description: 'Paginated list of reports filed by the authenticated user.'
+      title: ''
+      description: ''
       authenticated: true
       deprecated: false
     headers:
@@ -22,35 +22,21 @@ endpoints:
       Accept: application/json
     urlParameters: []
     cleanUrlParameters: []
-    queryParameters:
-      page:
-        custom: []
-        name: page
-        description: 'Page number.'
-        required: false
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanQueryParameters:
-      page: 1
+    queryParameters: []
+    cleanQueryParameters: []
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
     responses:
       -
         custom: []
-        status: 200
-        content: |-
-          {
-            "current_page": 1,
-            "data": [{ "id": 1, "reason": "Spam", "status": "pending", "reportable_type": "App\\Models\\Post" }],
-            "total": 5
-          }
-        headers: []
-        description: ''
+        status: 401
+        content: '{"message":"Unauthenticated."}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          vary: Origin
+        description: null
     responseFields: []
     auth:
       - headers
@@ -63,15 +49,15 @@ endpoints:
     custom: []
     httpMethods:
       - POST
-    uri: api/reports
+    uri: api/notifications/read-all
     metadata:
       custom: []
-      groupName: Reports
+      groupName: Notifications
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'File a report'
-      description: 'Report a post, comment, or user. Returns 409 if you already have a pending report on the same target.'
+      title: ''
+      description: ''
       authenticated: true
       deprecated: false
     headers:
@@ -82,58 +68,57 @@ endpoints:
     cleanUrlParameters: []
     queryParameters: []
     cleanQueryParameters: []
-    bodyParameters:
-      type:
-        custom: []
-        name: type
-        description: 'One of: `post`, `comment`, `user`.'
-        required: true
-        example: post
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      target_uuid:
-        custom: []
-        name: target_uuid
-        description: 'UUID of the content being reported.'
-        required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      reason:
-        custom: []
-        name: reason
-        description: 'Description of the issue (max 2,000 characters).'
-        required: true
-        example: 'This post contains spam.'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanBodyParameters:
-      type: post
-      target_uuid: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-      reason: 'This post contains spam.'
+    bodyParameters: []
+    cleanBodyParameters: []
     fileParameters: []
-    responses:
-      -
+    responses: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/notifications/{id}/read'
+    metadata:
+      custom: []
+      groupName: Notifications
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
         custom: []
-        status: 201
-        content: '{ "id": 1, "reason": "This post contains spam.", "status": "pending" }'
-        headers: []
-        description: ''
-      -
-        custom: []
-        status: 409
-        content: '{ "message": "You already reported this. A moderator will review it." }'
-        headers: []
-        description: ''
+        name: id
+        description: 'The ID of the notification.'
+        required: true
+        example: architecto
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: architecto
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
     responseFields: []
     auth:
       - headers

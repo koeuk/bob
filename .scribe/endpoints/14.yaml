@@ -1,4 +1,4 @@
-name: 'Admin: Pages'
+name: 'Admin: Reports'
 description: |-
 
   Requires `moderator`, `admin`, or `super_admin` role.
@@ -7,16 +7,16 @@ endpoints:
     custom: []
     httpMethods:
       - GET
-    uri: api/admin/pages
+    uri: api/admin/reports
     metadata:
       custom: []
-      groupName: 'Admin: Pages'
+      groupName: 'Admin: Reports'
       groupDescription: |-
 
         Requires `moderator`, `admin`, or `super_admin` role.
       subgroup: ''
       subgroupDescription: ''
-      title: 'List pages'
+      title: 'List reports'
       description: ''
       authenticated: true
       deprecated: false
@@ -30,31 +30,20 @@ endpoints:
       'filter[status]':
         custom: []
         name: 'filter[status]'
-        description: 'One of: `draft`, `published`.'
+        description: 'One of: `pending`, `reviewed`, `resolved`, `dismissed`.'
         required: false
-        example: published
+        example: pending
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         deprecated: false
-      'filter[title]':
+      'filter[type]':
         custom: []
-        name: 'filter[title]'
-        description: 'Partial match on title.'
+        name: 'filter[type]'
+        description: 'Reportable type. One of: `App\Models\Post`, `App\Models\Comment`, `App\Models\User`.'
         required: false
-        example: about
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      'filter[slug]':
-        custom: []
-        name: 'filter[slug]'
-        description: 'Partial match on slug.'
-        required: false
-        example: about
+        example: App\Models\Post
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -63,9 +52,9 @@ endpoints:
       sort:
         custom: []
         name: sort
-        description: 'One of: `title`, `slug`, `updated_at`, `status`, `-updated_at`.'
+        description: 'One of: `created_at`, `-created_at`, `status`.'
         required: false
-        example: '-updated_at'
+        example: '-created_at'
         type: string
         enumValues: []
         exampleWasSpecified: true
@@ -94,10 +83,9 @@ endpoints:
         nullable: false
         deprecated: false
     cleanQueryParameters:
-      'filter[status]': published
-      'filter[title]': about
-      'filter[slug]': about
-      sort: '-updated_at'
+      'filter[status]': pending
+      'filter[type]': App\Models\Post
+      sort: '-created_at'
       per_page: 25
       page: 1
     bodyParameters: []
@@ -109,8 +97,8 @@ endpoints:
         status: 200
         content: |-
           {
-            "data": [{ "id": 1, "uuid": "...", "slug": "about", "title": "About", "status": "published" }],
-            "total": 5
+            "data": { "data": [], "total": 11 },
+            "counts": { "pending": 11, "reviewed": 0, "resolved": 0, "dismissed": 0 }
           }
         headers: []
         description: ''
@@ -125,108 +113,17 @@ endpoints:
   -
     custom: []
     httpMethods:
-      - POST
-    uri: api/admin/pages
+      - GET
+    uri: 'api/admin/reports/{report_uuid}'
     metadata:
       custom: []
-      groupName: 'Admin: Pages'
+      groupName: 'Admin: Reports'
       groupDescription: |-
 
         Requires `moderator`, `admin`, or `super_admin` role.
       subgroup: ''
       subgroupDescription: ''
-      title: 'Create page'
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      slug:
-        custom: []
-        name: slug
-        description: 'Unique URL slug (max 255 chars).'
-        required: true
-        example: about-us
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      title:
-        custom: []
-        name: title
-        description: 'Page title (max 255 chars).'
-        required: true
-        example: 'About Us'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      body:
-        custom: []
-        name: body
-        description: 'Page content (HTML/Markdown).'
-        required: true
-        example: '<p>We are...</p>'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      status:
-        custom: []
-        name: status
-        description: 'One of: `draft`, `published`.'
-        required: true
-        example: draft
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanBodyParameters:
-      slug: about-us
-      title: 'About Us'
-      body: '<p>We are...</p>'
-      status: draft
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 201
-        content: '{ "id": 6, "uuid": "...", "slug": "about-us", "title": "About Us", "status": "draft" }'
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - PATCH
-    uri: 'api/admin/pages/{page_uuid}'
-    metadata:
-      custom: []
-      groupName: 'Admin: Pages'
-      groupDescription: |-
-
-        Requires `moderator`, `admin`, or `super_admin` role.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Update page'
+      title: 'Get report'
       description: ''
       authenticated: true
       deprecated: false
@@ -235,21 +132,21 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      page_uuid:
+      report_uuid:
         custom: []
-        name: page_uuid
+        name: report_uuid
         description: ''
         required: true
-        example: 019f5c94-2f05-7123-a1af-966620f361b0
+        example: 019f5c94-2ec9-72b2-a8d9-893c1e00b91e
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
-      page:
+      report:
         custom: []
-        name: page
-        description: 'Page UUID.'
+        name: report
+        description: 'Report UUID.'
         required: true
         example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
         type: string
@@ -258,123 +155,8 @@ endpoints:
         nullable: false
         deprecated: false
     cleanUrlParameters:
-      page_uuid: 019f5c94-2f05-7123-a1af-966620f361b0
-      page: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters:
-      slug:
-        custom: []
-        name: slug
-        description: 'URL slug (must be unique).'
-        required: false
-        example: about-us
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      title:
-        custom: []
-        name: title
-        description: 'Page title.'
-        required: false
-        example: 'About Us'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      body:
-        custom: []
-        name: body
-        description: 'Page content.'
-        required: false
-        example: '<p>Updated content.</p>'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-      status:
-        custom: []
-        name: status
-        description: 'One of: `draft`, `published`.'
-        required: false
-        example: published
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanBodyParameters:
-      slug: about-us
-      title: 'About Us'
-      body: '<p>Updated content.</p>'
-      status: published
-    fileParameters: []
-    responses:
-      -
-        custom: []
-        status: 200
-        content: '{ "id": 1, "slug": "about-us", "title": "About Us", "status": "published" }'
-        headers: []
-        description: ''
-    responseFields: []
-    auth:
-      - headers
-      - Authorization
-      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
-    controller: null
-    method: null
-    route: null
-  -
-    custom: []
-    httpMethods:
-      - DELETE
-    uri: 'api/admin/pages/{page_uuid}'
-    metadata:
-      custom: []
-      groupName: 'Admin: Pages'
-      groupDescription: |-
-
-        Requires `moderator`, `admin`, or `super_admin` role.
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Delete page'
-      description: ''
-      authenticated: true
-      deprecated: false
-    headers:
-      Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      page_uuid:
-        custom: []
-        name: page_uuid
-        description: ''
-        required: true
-        example: 019f5c94-2f05-7123-a1af-966620f361b0
-        type: string
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-      page:
-        custom: []
-        name: page
-        description: 'Page UUID.'
-        required: true
-        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        deprecated: false
-    cleanUrlParameters:
-      page_uuid: 019f5c94-2f05-7123-a1af-966620f361b0
-      page: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+      report_uuid: 019f5c94-2ec9-72b2-a8d9-893c1e00b91e
+      report: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -384,7 +166,232 @@ endpoints:
       -
         custom: []
         status: 200
-        content: '{ "message": "Page deleted." }'
+        content: '{ "id": 1, "reason": "Hate speech", "status": "pending", "reporter": {}, "reportable": {} }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/admin/reports/{report_uuid}/review'
+    metadata:
+      custom: []
+      groupName: 'Admin: Reports'
+      groupDescription: |-
+
+        Requires `moderator`, `admin`, or `super_admin` role.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Mark as reviewed'
+      description: 'Sets status to `reviewed` and records the reviewing moderator.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      report_uuid:
+        custom: []
+        name: report_uuid
+        description: ''
+        required: true
+        example: 019f5c94-2ec9-72b2-a8d9-893c1e00b91e
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      report:
+        custom: []
+        name: report
+        description: 'Report UUID.'
+        required: true
+        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      report_uuid: 019f5c94-2ec9-72b2-a8d9-893c1e00b91e
+      report: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{ "id": 1, "status": "reviewed", "reviewed_by": 2, "reviewed_at": "2026-05-11T00:00:00Z" }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/admin/reports/{report_uuid}/resolve'
+    metadata:
+      custom: []
+      groupName: 'Admin: Reports'
+      groupDescription: |-
+
+        Requires `moderator`, `admin`, or `super_admin` role.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Resolve report'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      report_uuid:
+        custom: []
+        name: report_uuid
+        description: ''
+        required: true
+        example: 019f5c94-2ec9-72b2-a8d9-893c1e00b91e
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      report:
+        custom: []
+        name: report
+        description: 'Report UUID.'
+        required: true
+        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      report_uuid: 019f5c94-2ec9-72b2-a8d9-893c1e00b91e
+      report: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      resolution_note:
+        custom: []
+        name: resolution_note
+        description: 'Explanation of how it was resolved (max 2,000 chars).'
+        required: true
+        example: 'Content removed, user warned.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      resolution_note: 'Content removed, user warned.'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{ "id": 1, "status": "resolved", "resolution_note": "Content removed, user warned." }'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3|oJRSRcneakcIHQF41AJ2webflZGHu2BdpdsaO4jpe1874682'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: 'api/admin/reports/{report_uuid}/dismiss'
+    metadata:
+      custom: []
+      groupName: 'Admin: Reports'
+      groupDescription: |-
+
+        Requires `moderator`, `admin`, or `super_admin` role.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Dismiss report'
+      description: ''
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      report_uuid:
+        custom: []
+        name: report_uuid
+        description: ''
+        required: true
+        example: 019f5c94-2ec9-72b2-a8d9-893c1e00b91e
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      report:
+        custom: []
+        name: report
+        description: 'Report UUID.'
+        required: true
+        example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      report_uuid: 019f5c94-2ec9-72b2-a8d9-893c1e00b91e
+      report: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      resolution_note:
+        custom: []
+        name: resolution_note
+        description: 'Optional explanation (max 2,000 chars).'
+        required: false
+        example: 'No violation found.'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      resolution_note: 'No violation found.'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{ "id": 1, "status": "dismissed" }'
         headers: []
         description: ''
     responseFields: []
