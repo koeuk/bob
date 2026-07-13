@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->uuid('uuid')->unique();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('banned_by')->constrained('users');
+            $table->foreignId('banned_by')->nullable()->constrained('users')->nullOnDelete();
             $table->text('reason');
             $table->timestamp('expires_at')->nullable();
             $table->timestamps();

@@ -39,8 +39,6 @@ return new class extends Migration
                     ]);
                 }
             }
-
-            Schema::table('users', fn (Blueprint $table) => $table->dropColumn('role'));
         }
     }
 

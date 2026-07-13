@@ -16,7 +16,8 @@ return new class extends Migration
             $table->uuid('uuid')->unique();
             $table->foreignId('conversation_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->text('body');
+            $table->text('body')->nullable();
+            $table->json('images')->nullable();
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
 

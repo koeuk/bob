@@ -11,7 +11,12 @@ return new class extends Migration {
             $table->id();
             $table->uuid('uuid')->unique();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->text('body');
+            $table->text('body')->nullable();
+            $table->string('image')->nullable();
+            $table->string('feeling')->nullable();
+            $table->json('images')->nullable();
+            $table->enum('visibility', ['public', 'private'])->default('public');
+            $table->foreignId('shared_post_id')->nullable()->constrained('posts')->nullOnDelete();
             $table->enum('status', ['active', 'flagged', 'hidden'])->default('active');
             $table->timestamps();
             $table->softDeletes();
