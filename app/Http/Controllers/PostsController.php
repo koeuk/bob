@@ -28,7 +28,7 @@ class PostsController extends Controller
 
     public function show(Request $request, Post $post): Response
     {
-        abort_if($post->status === 'hidden' && $post->user_id !== $request->user()->id, 404);
+        abort_unless($post->isVisibleTo($request->user()), 404);
 
         $post->load(['user:id,uuid,name']);
         $post->loadCount(['likes']);
@@ -92,7 +92,7 @@ class PostsController extends Controller
 
     public function like(Request $request, Post $post): RedirectResponse
     {
-        abort_if($post->status === 'hidden', 404);
+        abort_unless($post->isVisibleTo($request->user()), 404);
 
         $user = $request->user();
         $existing = Like::where('user_id', $user->id)

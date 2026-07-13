@@ -9,6 +9,7 @@ use App\Models\Report;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -22,7 +23,7 @@ class UsersController extends Controller
             ->select(['id', 'uuid', 'name', 'email', 'avatar', 'created_at', 'email_verified_at'])
             ->withCount(['posts', 'comments'])
             ->with(['roles', 'bans' => fn ($q) => $q->active()])
-            ->allowedFilters(...[
+            ->allowedFilters([
                 AllowedFilter::callback('search', function ($q, $value) {
                     $q->where(function ($inner) use ($value) {
                         $inner->where('name', 'like', "%{$value}%")
@@ -38,7 +39,7 @@ class UsersController extends Controller
                     }
                 }),
             ])
-            ->allowedSorts(...['name', 'email', 'created_at'])
+            ->allowedSorts(['name', 'email', 'created_at'])
             ->defaultSort('-created_at')
             ->paginate($request->integer('per_page', 25))
             ->withQueryString();
@@ -151,11 +152,11 @@ class UsersController extends Controller
 
         if ($request->hasFile('avatar')) {
             if ($user->avatar) {
-                \Storage::disk('public')->delete($user->avatar);
+                Storage::disk('public')->delete($user->avatar);
             }
             $attrs['avatar'] = $request->file('avatar')->store('avatars', 'public');
         } elseif ($request->input('remove_avatar') && $user->avatar) {
-            \Storage::disk('public')->delete($user->avatar);
+            Storage::disk('public')->delete($user->avatar);
             $attrs['avatar'] = null;
         }
 

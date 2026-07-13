@@ -18,15 +18,11 @@ class PostsController extends Controller
     /**
      * My posts
      *
-     * Paginated list of the authenticated user's own posts, newest first.
+     * Full list of the authenticated user's own posts, newest first (not paginated).
      *
-     * @queryParam page int Page number. Example: 1
-     *
-     * @response 200 {
-     *   "current_page": 1,
-     *   "data": [{ "id": 1, "uuid": "...", "body": "...", "status": "active", "comments_count": 2, "likes_count": 1 }],
-     *   "last_page": 1, "per_page": 20, "total": 14
-     * }
+     * @response 200 [
+     *   { "id": 1, "uuid": "...", "body": "...", "status": "active", "comments_count": 2, "likes_count": 1 }
+     * ]
      */
     public function mine(Request $request): JsonResponse
     {
@@ -274,7 +270,7 @@ class PostsController extends Controller
      */
     public function like(Request $request, Post $post): JsonResponse
     {
-        abort_if($post->status === 'hidden', 404);
+        abort_unless($post->isVisibleTo($request->user()), 404);
 
         $request->validate([
             'type' => ['nullable', 'string', 'in:like,love,haha,wow,sad,angry'],
@@ -317,6 +313,7 @@ class PostsController extends Controller
 
         return response()->json([
             'my_reaction' => $myReaction,
+            'liked' => $myReaction !== null,
             'likes_count' => $post->likes()->count(),
         ]);
     }

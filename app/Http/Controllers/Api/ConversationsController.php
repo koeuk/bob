@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
+use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -114,7 +115,7 @@ class ConversationsController extends Controller
     {
         $user = $request->user();
 
-        $count = \App\Models\Message::whereHas('conversation.participants', function ($q) use ($user) {
+        $count = Message::whereHas('conversation.participants', function ($q) use ($user) {
             $q->where('users.id', $user->id);
         })
         ->where('user_id', '!=', $user->id)

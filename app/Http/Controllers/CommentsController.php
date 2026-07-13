@@ -33,10 +33,7 @@ class CommentsController extends Controller
 
     public function destroy(Request $request, Comment $comment): RedirectResponse
     {
-        abort_unless(
-            $comment->user_id === $request->user()->id || $request->user()->isModerator(),
-            403,
-        );
+        $this->authorize('delete', $comment);
 
         $comment->delete();
 
