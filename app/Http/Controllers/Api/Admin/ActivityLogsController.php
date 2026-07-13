@@ -36,7 +36,7 @@ class ActivityLogsController extends Controller
     {
         $logs = QueryBuilder::for(ActivityLog::class)
             ->with('admin:id,uuid,name')
-            ->allowedFilters([
+            ->allowedFilters(...[
                 AllowedFilter::partial('action'),
                 AllowedFilter::callback('admin_uuid', function ($q, $value) {
                     $q->whereHas('admin', fn ($a) => $a->where('uuid', $value));
@@ -44,7 +44,7 @@ class ActivityLogsController extends Controller
                 AllowedFilter::callback('from', fn ($q, $v) => $q->where('created_at', '>=', $v)),
                 AllowedFilter::callback('to', fn ($q, $v) => $q->where('created_at', '<=', $v)),
             ])
-            ->allowedSorts(['created_at'])
+            ->allowedSorts(...['created_at'])
             ->defaultSort('-created_at')
             ->paginate($request->integer('per_page', 50))
             ->withQueryString();

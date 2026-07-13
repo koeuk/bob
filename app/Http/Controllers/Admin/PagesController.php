@@ -18,12 +18,12 @@ class PagesController extends Controller
     {
         $pages = QueryBuilder::for(Page::class)
             ->with('updatedBy:id,uuid,name')
-            ->allowedFilters([
+            ->allowedFilters(...[
                 AllowedFilter::exact('status'),
                 AllowedFilter::partial('title'),
                 AllowedFilter::partial('slug'),
             ])
-            ->allowedSorts(['title', 'slug', 'updated_at', 'status'])
+            ->allowedSorts(...['title', 'slug', 'updated_at', 'status'])
             ->defaultSort('-updated_at')
             ->paginate($request->integer('per_page', 25))
             ->withQueryString();

@@ -64,6 +64,7 @@ class PostsController extends Controller
      *
      * Return a single post with all its comments. Hidden posts are only visible to their author.
      *
+     * @unauthenticated
      * @urlParam post string required The post UUID. Example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
      *
      * @response 200 {

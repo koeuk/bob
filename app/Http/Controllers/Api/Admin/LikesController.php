@@ -36,14 +36,14 @@ class LikesController extends Controller
     {
         $likes = QueryBuilder::for(Like::class)
             ->with(['user:id,uuid,name', 'likeable'])
-            ->allowedFilters([
+            ->allowedFilters(...[
                 AllowedFilter::exact('type'),
                 AllowedFilter::exact('target', 'likeable_type'),
                 AllowedFilter::callback('user_uuid', function ($q, $value) {
                     $q->whereHas('user', fn ($u) => $u->where('uuid', $value));
                 }),
             ])
-            ->allowedSorts(['created_at', 'type'])
+            ->allowedSorts(...['created_at', 'type'])
             ->defaultSort('-created_at')
             ->paginate($request->integer('per_page', 50))
             ->withQueryString();

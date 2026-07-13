@@ -18,11 +18,11 @@ class ReportsController extends Controller
     {
         $reports = QueryBuilder::for(Report::class)
             ->with(['reporter:id,uuid,name', 'reviewer:id,uuid,name', 'reportable'])
-            ->allowedFilters([
+            ->allowedFilters(...[
                 AllowedFilter::exact('status'),
                 AllowedFilter::exact('type', 'reportable_type'),
             ])
-            ->allowedSorts(['created_at', 'status'])
+            ->allowedSorts(...['created_at', 'status'])
             ->defaultSort('-created_at')
             ->paginate($request->integer('per_page', 25))
             ->withQueryString();

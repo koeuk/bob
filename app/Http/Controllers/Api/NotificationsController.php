@@ -7,6 +7,9 @@ use App\Models\FriendRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * @group Notifications
+ */
 class NotificationsController extends Controller
 {
     public function index(Request $request): JsonResponse

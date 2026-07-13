@@ -10,8 +10,20 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * @group Users
+ */
 class UsersController extends Controller
 {
+    /**
+     * Get user profile
+     *
+     * Public profile for a user, including their posts. Viewer-specific fields
+     * (e.g. friendship status) are included when a bearer token is provided.
+     *
+     * @unauthenticated
+     * @urlParam user string required The user UUID. Example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
+     */
     public function show(Request $request, User $user): JsonResponse
     {
         $viewer = $request->user('sanctum');

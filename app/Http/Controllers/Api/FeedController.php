@@ -19,6 +19,7 @@ class FeedController extends Controller
      *
      * Paginated list of all active posts, newest first. Each post includes a `liked_by_me` flag.
      *
+     * @unauthenticated
      * @queryParam page int Page number. Example: 1
      *
      * @response 200 {

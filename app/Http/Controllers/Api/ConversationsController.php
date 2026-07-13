@@ -9,6 +9,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @group Conversations & Messages
+ */
 class ConversationsController extends Controller
 {
     public function index(Request $request)

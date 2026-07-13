@@ -19,7 +19,7 @@ class BansController extends Controller
     {
         $bans = QueryBuilder::for(Ban::class)
             ->with(['user:id,uuid,name,email', 'bannedBy:id,uuid,name'])
-            ->allowedFilters([
+            ->allowedFilters(...[
                 AllowedFilter::callback('search', function ($q, $value) {
                     $q->whereHas('user', function ($u) use ($value) {
                         $u->where('name', 'like', "%{$value}%")
@@ -32,7 +32,7 @@ class BansController extends Controller
                     }
                 }),
             ])
-            ->allowedSorts(['created_at', 'expires_at'])
+            ->allowedSorts(...['created_at', 'expires_at'])
             ->defaultSort('-created_at')
             ->paginate($request->integer('per_page', 25))
             ->withQueryString();

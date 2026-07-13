@@ -10,6 +10,9 @@ use App\Notifications\FriendRequestReceived;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * @group Friend Requests
+ */
 class FriendRequestsController extends Controller
 {
     public function store(Request $request): JsonResponse

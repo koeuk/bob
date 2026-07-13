@@ -21,13 +21,13 @@ class CommentsController extends Controller
         $comments = QueryBuilder::for(Comment::class)
             ->with(['user:id,uuid,name', 'post:id,uuid,body'])
             ->withCount(['likes', 'reports'])
-            ->allowedFilters([
+            ->allowedFilters(...[
                 AllowedFilter::partial('search', 'body'),
                 AllowedFilter::callback('post_uuid', function ($q, $value) {
                     $q->whereHas('post', fn ($p) => $p->where('uuid', $value));
                 }),
             ])
-            ->allowedSorts(['created_at'])
+            ->allowedSorts(...['created_at'])
             ->defaultSort('-created_at')
             ->paginate($request->integer('per_page', 30))
             ->withQueryString();
