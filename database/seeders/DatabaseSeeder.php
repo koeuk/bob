@@ -20,45 +20,49 @@ class DatabaseSeeder extends Seeder
             \Spatie\Permission\Models\Role::findOrCreate($role, 'web');
         }
 
+        // Primary super-admin — created in every environment. Credentials come
+        // from env vars so production can use a strong, secret password; the
+        // defaults keep local development frictionless.
         $superAdmin = User::firstOrCreate(
-            ['email' => 'admin@gmail.com'],
+            ['email' => env('ADMIN_EMAIL', 'admin@gmail.com')],
             [
-                'name' => 'Super Admin',
-                'password' => '12345678',
+                'name' => env('ADMIN_NAME', 'Super Admin'),
+                'password' => env('ADMIN_PASSWORD', '12345678'),
                 'email_verified_at' => now(),
             ],
         );
         $superAdmin->syncRoles(['super_admin']);
 
-        $admin = User::firstOrCreate(
-            ['email' => 'mod@gmail.com'],
-            [
-                'name' => 'Mod User',
-                'password' => '12345678',
-                'email_verified_at' => now(),
-            ],
-        );
-        $admin->syncRoles(['moderator']);
-
-        User::firstOrCreate(
-            ['email' => 'test@gmail.com'],
-            [
-                'name' => 'Test User',
-                'password' => '12345678',
-                'email_verified_at' => now(),
-            ],
-        )->syncRoles(['user']);
-
-        User::firstOrCreate(
-            ['email' => 'name@gmail.com'],
-            [
-                'name' => 'Name',
-                'password' => '12345678',
-                'email_verified_at' => now(),
-            ],
-        )->syncRoles(['super_admin']);
-
         if (app()->environment('local', 'testing') && User::count() < 30) {
+            // Extra fixed dev accounts — never created outside local/testing.
+            $admin = User::firstOrCreate(
+                ['email' => 'mod@gmail.com'],
+                [
+                    'name' => 'Mod User',
+                    'password' => '12345678',
+                    'email_verified_at' => now(),
+                ],
+            );
+            $admin->syncRoles(['moderator']);
+
+            User::firstOrCreate(
+                ['email' => 'test@gmail.com'],
+                [
+                    'name' => 'Test User',
+                    'password' => '12345678',
+                    'email_verified_at' => now(),
+                ],
+            )->syncRoles(['user']);
+
+            User::firstOrCreate(
+                ['email' => 'name@gmail.com'],
+                [
+                    'name' => 'Name',
+                    'password' => '12345678',
+                    'email_verified_at' => now(),
+                ],
+            )->syncRoles(['super_admin']);
+
             $users = User::factory(25)->create();
 
             $posts = Post::factory(60)
