@@ -2,7 +2,7 @@
     <Head title="Reports" />
     <AdminLayout title="Reports">
         <!-- Tabs -->
-        <div class="relative flex items-center rounded-full border-2 border-white dark:border-white/10 shadow-sm bg-card p-1.5 shadow-sm w-fit">
+        <div class="relative flex items-center rounded-full border-2 border-white dark:border-white/10 shadow-sm bg-card p-1 shadow-sm w-fit">
             <!-- Sliding indicator -->
             <div
                 class="absolute rounded-full bg-moss transition-all duration-300 ease-in-out"

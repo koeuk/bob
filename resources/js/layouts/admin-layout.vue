@@ -119,7 +119,7 @@
             </header>
 
             <!-- Page content -->
-            <div class="flex flex-1 flex-col gap-6 p-6 animate-reveal">
+            <div class="flex flex-1 flex-col gap-6 p-6 stagger-children">
                 <div v-if="title">
                     <h1 class="font-sans text-3xl font-semibold tracking-tight sm:text-4xl">{{ title }}</h1>
                 </div>
