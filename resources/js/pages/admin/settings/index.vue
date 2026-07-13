@@ -18,8 +18,8 @@
                 <div class="flex flex-col gap-6 sm:flex-row sm:items-start">
                     <!-- Logo -->
                     <div class="flex flex-col items-center gap-3">
-                        <div class="flex size-24 items-center justify-center overflow-hidden rounded-3xl border-2 border-white bg-secondary shadow-sm dark:border-white/10">
-                            <img v-if="logoPreview" :src="logoPreview" alt="App logo" class="size-full object-contain" />
+                        <div class="flex size-24 items-center justify-center overflow-hidden rounded-3xl border-2 border-white bg-secondary shadow-sm ring-1 ring-black/5 dark:border-white/10 dark:ring-white/10">
+                            <img v-if="logoPreview" :src="logoPreview" alt="App logo" class="size-full object-cover" />
                             <span v-else class="font-serif text-4xl leading-none text-forest">{{ initial }}</span>
                         </div>
                         <div class="flex items-center gap-2">

@@ -7,8 +7,8 @@
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" as-child class="data-[slot=sidebar-menu-button]:!p-1.5">
                             <Link href="/admin/dashboard">
-                                <span class="flex size-8 items-center justify-center overflow-hidden rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm shrink-0">
-                                    <img v-if="appLogo" :src="appLogo" alt="" class="size-full object-contain" />
+                                <span class="flex size-8 items-center justify-center overflow-hidden rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm shrink-0 ring-1 ring-black/5 dark:ring-white/10">
+                                    <img v-if="appLogo" :src="appLogo" alt="" class="size-full object-cover" />
                                     <span v-else class="font-serif text-lg leading-none">{{ appName.slice(0, 1).toLowerCase() }}</span>
                                 </span>
                                 <div class="grid flex-1 text-left text-sm leading-tight">
