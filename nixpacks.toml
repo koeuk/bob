@@ -1,0 +1,26 @@
+# Nixpacks build config — PHP backend only.
+#
+# The Vite/Vue frontend is built LOCALLY and committed under public/build,
+# so Railway does not run `npm ci`/`npm run build` (which OOM-killed the
+# build, exit 137, on the limited build memory). Rebuild the frontend with
+# `npm run build` locally and commit public/build whenever the UI changes.
+
+[phases.setup]
+# NB: composer lives under php83Packages, there is no top-level "composer" pkg.
+nixPkgs = ["php83", "php83Packages.composer"]
+
+[phases.install]
+cmds = [
+  "composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist",
+]
+
+[phases.build]
+cmds = [
+  # view:cache is env-independent, safe to bake at build time.
+  "php artisan view:cache",
+]
+
+[start]
+# Cache config/routes and migrate at RUNTIME, where env vars (APP_KEY, DB_*)
+# actually exist. Caching config at build time would bake in empty values.
+cmd = "php artisan config:cache && php artisan route:cache && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"

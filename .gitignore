@@ -1,7 +1,8 @@
 /.phpunit.cache
 /bootstrap/ssr
 /node_modules
-/public/build
+# /public/build is committed so Railway doesn't have to run the (OOM-prone)
+# frontend build. Rebuild locally with `npm run build` and commit the result.
 /public/hot
 /public/storage
 /resources/js/actions
