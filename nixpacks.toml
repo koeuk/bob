@@ -1,13 +1,25 @@
+# Nixpacks build config — Laravel (PHP) backend + Inertia/Vue (Vite) frontend.
+# The image must compile the Vite assets too, since public/build is gitignored.
+
 [phases.setup]
-nixPkgs = ["php83", "composer"]
+# NB: composer lives under php83Packages, there is no top-level "composer" pkg.
+nixPkgs = ["php83", "php83Packages.composer", "nodejs_20"]
+
+[phases.install]
+cmds = [
+  "composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist",
+  # --include=dev: Vite + plugins are devDependencies and are needed to build.
+  "npm ci --include=dev",
+]
 
 [phases.build]
 cmds = [
-  "composer install --no-dev --optimize-autoloader",
-  "php artisan config:cache",
-  "php artisan route:cache",
-  "php artisan view:cache"
+  "npm run build",
+  # view:cache is env-independent, safe to bake at build time.
+  "php artisan view:cache",
 ]
 
 [start]
-cmd = "php artisan serve --host=0.0.0.0 --port=$PORT"
+# Cache config/routes and migrate at RUNTIME, where env vars (APP_KEY, DB_*)
+# actually exist. Caching config at build time would bake in empty values.
+cmd = "php artisan config:cache && php artisan route:cache && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"
