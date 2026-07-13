@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 class Setting extends Model
 {
@@ -50,5 +51,25 @@ class Setting extends Model
             ['key' => $key],
             ['value' => $value, 'group' => $group, 'updated_by' => auth()->id()],
         );
+    }
+
+    /**
+     * App branding (name + logo URL), resolved in a single query.
+     * Falls back to config('app.name') when no custom name is set.
+     *
+     * @return array{name: string, logo: ?string, logo_path: ?string}
+     */
+    public static function branding(): array
+    {
+        $rows = self::whereIn('key', ['app_name', 'app_logo'])->get()->keyBy('key');
+
+        $name = $rows->get('app_name')?->value;
+        $path = $rows->get('app_logo')?->value;
+
+        return [
+            'name' => $name ?: config('app.name'),
+            'logo' => $path ? Storage::url($path) : null,
+            'logo_path' => $path ?: null,
+        ];
     }
 }

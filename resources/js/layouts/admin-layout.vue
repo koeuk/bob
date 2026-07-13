@@ -7,12 +7,13 @@
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" as-child class="data-[slot=sidebar-menu-button]:!p-1.5">
                             <Link href="/admin/dashboard">
-                                <span class="flex size-8 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm shrink-0">
-                                    <span class="font-serif text-lg leading-none">b</span>
+                                <span class="flex size-8 items-center justify-center overflow-hidden rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm shrink-0">
+                                    <img v-if="appLogo" :src="appLogo" alt="" class="size-full object-contain" />
+                                    <span v-else class="font-serif text-lg leading-none">{{ appName.slice(0, 1).toLowerCase() }}</span>
                                 </span>
                                 <div class="grid flex-1 text-left text-sm leading-tight">
                                     <span class="font-semibold tracking-tight text-sidebar-foreground">
-                                        bob<span class="opacity-50">/</span>admin
+                                        {{ appName }}<span class="opacity-50">/</span>admin
                                     </span>
                                 </div>
                             </Link>
@@ -27,7 +28,12 @@
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem v-for="item in sideNav" :key="item.label">
-                                <SidebarMenuButton :is-active="isActive(item.href)" :tooltip="item.label" as-child>
+                                <SidebarMenuButton
+                                    :is-active="isActive(item.href)"
+                                    :tooltip="item.label"
+                                    as-child
+                                    class="group-data-[collapsible=icon]:size-11! group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:[&>svg]:size-5"
+                                >
                                     <Link :href="item.href">
                                         <component :is="item.icon" />
                                         <span>{{ item.label }}</span>
@@ -184,6 +190,9 @@ defineProps({ title: { type: String, default: '' } });
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
+const branding = computed(() => page.props.branding ?? {});
+const appName = computed(() => branding.value.name || 'bob');
+const appLogo = computed(() => branding.value.logo || null);
 const initials = computed(() => {
     const name = user.value?.name ?? '';
     return name.split(' ').filter(Boolean).slice(0, 2).map((p) => p[0]).join('').toUpperCase() || 'A';

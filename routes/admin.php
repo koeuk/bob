@@ -68,6 +68,7 @@ Route::middleware(['auth', 'verified', 'role:moderator,admin,super_admin'])
         Route::middleware('role:super_admin,admin')->group(function () {
             Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
             Route::patch('settings', [SettingsController::class, 'update'])->name('settings.update');
+            Route::post('settings/branding', [SettingsController::class, 'updateBranding'])->name('settings.branding');
         });
 
         Route::get('activity-logs', [ActivityLogsController::class, 'index'])->name('activity-logs.index');

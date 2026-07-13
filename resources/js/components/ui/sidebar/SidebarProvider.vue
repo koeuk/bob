@@ -11,7 +11,7 @@ const props = withDefaults(defineProps<{
   open?: boolean
   class?: HTMLAttributes["class"]
 }>(), {
-  defaultOpen: !defaultDocument?.cookie.includes(`${SIDEBAR_COOKIE_NAME}=false`),
+  defaultOpen: undefined,
   open: undefined,
 })
 
@@ -22,8 +22,13 @@ const emits = defineEmits<{
 const isMobile = useMediaQuery("(max-width: 768px)")
 const openMobile = ref(false)
 
+// Read the persisted collapsed state from the cookie on every mount so the
+// sidebar keeps its state across (non-persistent) page navigations.
+const initialOpen = props.defaultOpen
+  ?? !defaultDocument?.cookie.includes(`${SIDEBAR_COOKIE_NAME}=false`)
+
 const open = useVModel(props, "open", emits, {
-  defaultValue: props.defaultOpen ?? false,
+  defaultValue: initialOpen,
   passive: (props.open === undefined) as false,
 }) as Ref<boolean>
 
