@@ -25,6 +25,7 @@ class User extends Authenticatable
         'cover',
         'last_active_at',
         'password',
+        'role',
     ];
 
     public function uniqueIds(): array
@@ -110,17 +111,16 @@ class User extends Authenticatable
     }
 
     /**
-     * Backward-compatible single-role accessor.
+     * Flat single-role accessor.
      *
-     * The role system is backed by spatie/laravel-permission (a user can hold
-     * one role here), but the API/frontend still expect a flat `user.role`
-     * string. This exposes the user's role name. NOTE: not in $appends to avoid
-     * an N+1 when serializing many users (e.g. post authors in the feed) —
-     * controllers that need it eager-load `roles` and ->append('role').
+     * The `users.role` column is a denormalized mirror of the user's spatie
+     * role (spatie remains the source of truth for permissions). Prefer the
+     * stored column value; fall back to the spatie role name if the column has
+     * not been populated yet, so reads never break.
      */
     public function getRoleAttribute(): ?string
     {
-        return $this->getRoleNames()->first();
+        return $this->attributes['role'] ?? $this->getRoleNames()->first();
     }
 
     public function isSuperAdmin(): bool

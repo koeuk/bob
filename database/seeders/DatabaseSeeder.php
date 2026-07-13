@@ -28,6 +28,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => env('ADMIN_NAME', 'Super Admin'),
                 'password' => env('ADMIN_PASSWORD', '12345678'),
+                'role' => 'super_admin',
                 'email_verified_at' => now(),
             ],
         );
@@ -40,6 +41,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'name' => 'Mod User',
                     'password' => '12345678',
+                    'role' => 'moderator',
                     'email_verified_at' => now(),
                 ],
             );
@@ -50,6 +52,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'name' => 'Test User',
                     'password' => '12345678',
+                    'role' => 'user',
                     'email_verified_at' => now(),
                 ],
             )->syncRoles(['user']);
@@ -59,6 +62,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'name' => 'Name',
                     'password' => '12345678',
+                    'role' => 'super_admin',
                     'email_verified_at' => now(),
                 ],
             )->syncRoles(['super_admin']);
