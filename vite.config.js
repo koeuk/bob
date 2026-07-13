@@ -20,4 +20,14 @@ export default defineConfig({
         }),
         tailwindcss(),
     ],
+    build: {
+        rollupOptions: {
+            // Suppress harmless "/* #__PURE__ */ annotation" warnings emitted
+            // by bundled deps (e.g. @vueuse/core) under Rollup 4 / Vite 7.
+            onwarn(warning, defaultHandler) {
+                if (warning.message?.includes('#__PURE__')) return;
+                defaultHandler(warning);
+            },
+        },
+    },
 });
