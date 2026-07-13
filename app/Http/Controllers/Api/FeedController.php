@@ -58,7 +58,8 @@ class FeedController extends Controller
             ->withCount(['comments', 'likes', 'shares'])
             ->orderByRaw('RAND(' . $seed . ')')
             ->paginate(15)
-            ->withQueryString();
+            ->withQueryString()
+            ->appends(['seed' => $seed]);
 
         $ids = collect($posts->items())->pluck('id')->all();
         $myLikes = $userId

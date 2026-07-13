@@ -166,6 +166,18 @@ class PostsController extends Controller
         ]);
 
         $sharedPostId = $data['shared_post_id'] ?? null;
+
+        // Only public, active posts may be shared — otherwise sharing a private
+        // or moderator-hidden post would leak its content to everyone.
+        if ($sharedPostId) {
+            $shared = Post::find($sharedPostId);
+            abort_if(
+                ! $shared || $shared->visibility !== 'public' || $shared->status !== 'active',
+                422,
+                'This post cannot be shared.'
+            );
+        }
+
         abort_if(
             empty(trim($data['body'] ?? '')) && empty($request->file('images')) && !$sharedPostId,
             422

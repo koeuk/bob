@@ -18,6 +18,7 @@ class UsersController extends Controller
 
         $posts = $user->posts()
             ->where('visibility', 'public')
+            ->where('status', 'active')
             ->with(['user:id,uuid,name,avatar', 'sharedPost.user:id,uuid,name,avatar'])
             ->withCount(['comments', 'likes', 'shares'])
             ->latest()

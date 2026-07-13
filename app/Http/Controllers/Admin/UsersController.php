@@ -132,6 +132,8 @@ class UsersController extends Controller
 
     public function update(Request $request, User $user): RedirectResponse
     {
+        abort_unless($request->user()->outranks($user), 403, 'You cannot manage a user with equal or higher privileges.');
+
         $data = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
             'email' => ['sometimes', 'email', 'max:255', 'unique:users,email,'.$user->id],
@@ -152,9 +154,7 @@ class UsersController extends Controller
                 \Storage::disk('public')->delete($user->avatar);
             }
             $attrs['avatar'] = $request->file('avatar')->store('avatars', 'public');
-        }
-
-        if ($request->input('remove_avatar') && $user->avatar) {
+        } elseif ($request->input('remove_avatar') && $user->avatar) {
             \Storage::disk('public')->delete($user->avatar);
             $attrs['avatar'] = null;
         }
@@ -168,9 +168,7 @@ class UsersController extends Controller
 
     public function destroy(User $user): RedirectResponse
     {
-        if ($user->isSuperAdmin() && ! request()->user()->isSuperAdmin()) {
-            abort(403, 'Cannot delete super admin.');
-        }
+        abort_unless(request()->user()->outranks($user), 403, 'You cannot manage a user with equal or higher privileges.');
 
         ActivityLog::record('user.delete', $user, $user->only(['name', 'email', 'role']));
         $user->delete();
@@ -180,6 +178,8 @@ class UsersController extends Controller
 
     public function ban(Request $request, User $user): RedirectResponse
     {
+        abort_unless($request->user()->outranks($user), 403, 'You cannot ban a user with equal or higher privileges.');
+
         $data = $request->validate([
             'reason' => ['required', 'string', 'max:2000'],
             'expires_at' => ['nullable', 'date', 'after:now'],

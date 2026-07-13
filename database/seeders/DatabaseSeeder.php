@@ -26,12 +26,19 @@ class DatabaseSeeder extends Seeder
         // Primary super-admin — created in every environment. Credentials come
         // from env vars so production can use a strong, secret password; the
         // defaults keep local development frictionless.
+        // Refuse to seed a weak default password on production.
+        if (app()->environment('production') && ! env('ADMIN_PASSWORD')) {
+            throw new \RuntimeException(
+                'Refusing to seed the super-admin with the default password in production. '
+                .'Set the ADMIN_PASSWORD (and ADMIN_EMAIL) environment variables first.'
+            );
+        }
+
         $superAdmin = User::firstOrCreate(
             ['email' => env('ADMIN_EMAIL', 'admin@gmail.com')],
             [
                 'name' => env('ADMIN_NAME', 'Super Admin'),
                 'password' => env('ADMIN_PASSWORD', '12345678'),
-                'role' => 'super_admin',
                 'email_verified_at' => now(),
             ],
         );
@@ -44,7 +51,6 @@ class DatabaseSeeder extends Seeder
                 [
                     'name' => 'Mod User',
                     'password' => '12345678',
-                    'role' => 'moderator',
                     'email_verified_at' => now(),
                 ],
             );
@@ -55,7 +61,6 @@ class DatabaseSeeder extends Seeder
                 [
                     'name' => 'Test User',
                     'password' => '12345678',
-                    'role' => 'user',
                     'email_verified_at' => now(),
                 ],
             )->syncRoles(['user']);
@@ -65,7 +70,6 @@ class DatabaseSeeder extends Seeder
                 [
                     'name' => 'Name',
                     'password' => '12345678',
-                    'role' => 'super_admin',
                     'email_verified_at' => now(),
                 ],
             )->syncRoles(['super_admin']);

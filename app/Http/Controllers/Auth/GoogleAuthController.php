@@ -24,6 +24,18 @@ class GoogleAuthController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
 
+            // Only trust Google logins whose email Google itself has verified.
+            // Without this, an account with an attacker-controlled but unverified
+            // email matching an existing user would link to (take over) that user.
+            $emailVerified = filter_var(
+                data_get($googleUser->user, 'email_verified', false),
+                FILTER_VALIDATE_BOOLEAN
+            );
+
+            if (! $googleUser->getEmail() || ! $emailVerified) {
+                return redirect()->away($frontendUrl.'/auth/google/callback?error='.urlencode('Your Google email is not verified.'));
+            }
+
             $user = User::firstOrCreate(
                 ['email' => $googleUser->getEmail()],
                 [

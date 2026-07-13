@@ -25,7 +25,6 @@ class User extends Authenticatable
         'cover',
         'last_active_at',
         'password',
-        'role',
     ];
 
     public function uniqueIds(): array
@@ -136,6 +135,34 @@ class User extends Authenticatable
     public function isModerator(): bool
     {
         return $this->hasAnyRole(['moderator', 'admin', 'super_admin']);
+    }
+
+    /**
+     * Numeric privilege level derived from the role hierarchy.
+     * super_admin(3) > admin(2) > moderator(1) > user(0).
+     */
+    public function roleRank(): int
+    {
+        return match (true) {
+            $this->isSuperAdmin() => 3,
+            $this->hasRole('admin') => 2,
+            $this->hasRole('moderator') => 1,
+            default => 0,
+        };
+    }
+
+    /**
+     * Whether this user may manage (edit/ban/delete) the given target.
+     * A super_admin may manage anyone; otherwise the actor must strictly
+     * outrank the target, so staff can never act on peers or higher roles.
+     */
+    public function outranks(User $other): bool
+    {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        return $this->roleRank() > $other->roleRank();
     }
 
     public function isBanned(): bool

@@ -70,50 +70,67 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware('role:moderator,admin,super_admin')
         ->prefix('admin')
         ->group(function () {
-            Route::get('dashboard', [Admin\DashboardController::class, 'index']);
+            Route::middleware('permission:admin.access')->group(function () {
+                Route::get('dashboard', [Admin\DashboardController::class, 'index']);
+                Route::get('activity-logs', [Admin\ActivityLogsController::class, 'index']);
+            });
 
-            Route::get('users', [Admin\UsersController::class, 'index']);
-            Route::post('users', [Admin\UsersController::class, 'store']);
-            Route::get('users/{user:uuid}', [Admin\UsersController::class, 'show']);
-            Route::patch('users/{user:uuid}', [Admin\UsersController::class, 'update']);
-            Route::delete('users/{user:uuid}', [Admin\UsersController::class, 'destroy']);
-            Route::post('users/{user:uuid}/ban', [Admin\UsersController::class, 'ban']);
-            Route::post('users/{user:uuid}/unban', [Admin\UsersController::class, 'unban']);
-            Route::post('users/{user:uuid}/role', [Admin\UsersController::class, 'assignRole']);
+            Route::middleware('permission:users.manage')->group(function () {
+                Route::get('users', [Admin\UsersController::class, 'index']);
+                Route::post('users', [Admin\UsersController::class, 'store']);
+                Route::get('users/{user:uuid}', [Admin\UsersController::class, 'show']);
+                Route::patch('users/{user:uuid}', [Admin\UsersController::class, 'update']);
+                Route::delete('users/{user:uuid}', [Admin\UsersController::class, 'destroy']);
+                Route::post('users/{user:uuid}/ban', [Admin\UsersController::class, 'ban']);
+                Route::post('users/{user:uuid}/unban', [Admin\UsersController::class, 'unban']);
+                Route::post('users/{user:uuid}/role', [Admin\UsersController::class, 'assignRole']);
+            });
 
-            Route::get('posts', [Admin\PostsController::class, 'index']);
-            Route::post('posts', [Admin\PostsController::class, 'store']);
-            Route::get('posts/{post:uuid}', [Admin\PostsController::class, 'show']);
-            Route::patch('posts/{post:uuid}', [Admin\PostsController::class, 'update']);
-            Route::delete('posts/{post:uuid}', [Admin\PostsController::class, 'destroy']);
-            Route::patch('posts/{post:uuid}/flag', [Admin\PostsController::class, 'flag']);
+            Route::middleware('permission:posts.manage')->group(function () {
+                Route::get('posts', [Admin\PostsController::class, 'index']);
+                Route::post('posts', [Admin\PostsController::class, 'store']);
+                Route::get('posts/{post:uuid}', [Admin\PostsController::class, 'show']);
+                Route::patch('posts/{post:uuid}', [Admin\PostsController::class, 'update']);
+                Route::delete('posts/{post:uuid}', [Admin\PostsController::class, 'destroy']);
+                Route::patch('posts/{post:uuid}/flag', [Admin\PostsController::class, 'flag']);
+            });
 
-            Route::get('comments', [Admin\CommentsController::class, 'index']);
-            Route::post('comments', [Admin\CommentsController::class, 'store']);
-            Route::patch('comments/{comment:uuid}', [Admin\CommentsController::class, 'update']);
-            Route::delete('comments/{comment:uuid}', [Admin\CommentsController::class, 'destroy']);
+            Route::middleware('permission:comments.manage')->group(function () {
+                Route::get('comments', [Admin\CommentsController::class, 'index']);
+                Route::post('comments', [Admin\CommentsController::class, 'store']);
+                Route::patch('comments/{comment:uuid}', [Admin\CommentsController::class, 'update']);
+                Route::delete('comments/{comment:uuid}', [Admin\CommentsController::class, 'destroy']);
+            });
 
-            Route::get('reports', [Admin\ReportsController::class, 'index']);
-            Route::get('reports/{report:uuid}', [Admin\ReportsController::class, 'show']);
-            Route::post('reports/{report:uuid}/review', [Admin\ReportsController::class, 'review']);
-            Route::post('reports/{report:uuid}/resolve', [Admin\ReportsController::class, 'resolve']);
-            Route::post('reports/{report:uuid}/dismiss', [Admin\ReportsController::class, 'dismiss']);
+            Route::middleware('permission:reports.moderate')->group(function () {
+                Route::get('reports', [Admin\ReportsController::class, 'index']);
+                Route::get('reports/{report:uuid}', [Admin\ReportsController::class, 'show']);
+                Route::post('reports/{report:uuid}/review', [Admin\ReportsController::class, 'review']);
+                Route::post('reports/{report:uuid}/resolve', [Admin\ReportsController::class, 'resolve']);
+                Route::post('reports/{report:uuid}/dismiss', [Admin\ReportsController::class, 'dismiss']);
+            });
 
-            Route::get('bans', [Admin\BansController::class, 'index']);
-            Route::post('bans', [Admin\BansController::class, 'store']);
-            Route::delete('bans/{ban:uuid}', [Admin\BansController::class, 'destroy']);
+            Route::middleware('permission:bans.manage')->group(function () {
+                Route::get('bans', [Admin\BansController::class, 'index']);
+                Route::post('bans', [Admin\BansController::class, 'store']);
+                Route::delete('bans/{ban:uuid}', [Admin\BansController::class, 'destroy']);
+            });
 
-            Route::get('likes', [Admin\LikesController::class, 'index']);
-            Route::delete('likes/{like:uuid}', [Admin\LikesController::class, 'destroy']);
+            Route::middleware('permission:likes.manage')->group(function () {
+                Route::get('likes', [Admin\LikesController::class, 'index']);
+                Route::delete('likes/{like:uuid}', [Admin\LikesController::class, 'destroy']);
+            });
 
-            Route::get('pages', [Admin\PagesController::class, 'index']);
-            Route::post('pages', [Admin\PagesController::class, 'store']);
-            Route::patch('pages/{page:uuid}', [Admin\PagesController::class, 'update']);
-            Route::delete('pages/{page:uuid}', [Admin\PagesController::class, 'destroy']);
+            Route::middleware('permission:pages.manage')->group(function () {
+                Route::get('pages', [Admin\PagesController::class, 'index']);
+                Route::post('pages', [Admin\PagesController::class, 'store']);
+                Route::patch('pages/{page:uuid}', [Admin\PagesController::class, 'update']);
+                Route::delete('pages/{page:uuid}', [Admin\PagesController::class, 'destroy']);
+            });
 
-            Route::get('settings', [Admin\SettingsController::class, 'index']);
-            Route::patch('settings', [Admin\SettingsController::class, 'update']);
-
-            Route::get('activity-logs', [Admin\ActivityLogsController::class, 'index']);
+            Route::middleware('permission:settings.manage')->group(function () {
+                Route::get('settings', [Admin\SettingsController::class, 'index']);
+                Route::patch('settings', [Admin\SettingsController::class, 'update']);
+            });
         });
 });

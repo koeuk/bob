@@ -33,6 +33,8 @@ class ConversationsController extends Controller
         $user = $request->user();
         $other = User::where('uuid', $request->user_uuid)->firstOrFail();
 
+        abort_if($other->id === $user->id, 422, 'You cannot start a conversation with yourself.');
+
         $myConvIds = DB::table('conversation_user')
             ->where('user_id', $user->id)
             ->pluck('conversation_id');

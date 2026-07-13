@@ -23,21 +23,17 @@ class UserPolicy
 
     public function update(User $user, User $target): bool
     {
-        return $user->isAdmin() || $user->id === $target->id;
+        return $user->id === $target->id || $user->outranks($target);
     }
 
     public function delete(User $user, User $target): bool
     {
-        if ($target->isSuperAdmin()) {
-            return $user->isSuperAdmin();
-        }
-
-        return $user->isAdmin();
+        return $user->outranks($target);
     }
 
     public function ban(User $user, User $target): bool
     {
-        return $user->isModerator() && ! $target->isAdmin();
+        return $user->isModerator() && $user->outranks($target);
     }
 
     public function assignRole(User $user): bool
