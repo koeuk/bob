@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
             \Spatie\Permission\Models\Role::findOrCreate($role, 'web');
         }
 
+        // Define permissions and assign them to each role.
+        $this->call(RolePermissionSeeder::class);
+
         // Primary super-admin — created in every environment. Credentials come
         // from env vars so production can use a strong, secret password; the
         // defaults keep local development frictionless.
