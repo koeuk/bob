@@ -14,13 +14,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        app(\Spatie\Permission\PermissionRegistrar::class)->forgetCachedPermissions();
-
-        foreach (['user', 'moderator', 'admin', 'super_admin'] as $role) {
-            \Spatie\Permission\Models\Role::findOrCreate($role, 'web');
-        }
-
-        // Define permissions and assign them to each role.
+        // Creates the four roles, the permissions, and assigns them.
         $this->call(RolePermissionSeeder::class);
 
         // Primary super-admin — created in every environment. Credentials come

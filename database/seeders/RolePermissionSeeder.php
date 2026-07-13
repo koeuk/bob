@@ -47,6 +47,7 @@ class RolePermissionSeeder extends Seeder
         // via Gate::before, but we grant it explicitly for consistency.
         $all = self::PERMISSIONS;
 
+        $this->sync('user', []);
         $this->sync('moderator', $moderator);
         $this->sync('admin', $all);
         $this->sync('super_admin', $all);

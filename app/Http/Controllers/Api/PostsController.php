@@ -80,10 +80,10 @@ class PostsController extends Controller
      */
     public function show(Request $request, Post $post): JsonResponse
     {
-        $userId = $request->user('sanctum')?->id;
+        $viewer = $request->user('sanctum');
+        $userId = $viewer?->id;
 
-        abort_if($post->status === 'hidden' && $post->user_id !== ($userId ?? -1), 404);
-        abort_if($post->visibility === 'private' && $post->user_id !== ($userId ?? -1), 404);
+        abort_unless($post->isVisibleTo($viewer), 404);
 
         $post->load(['user:id,uuid,name,avatar', 'sharedPost.user:id,uuid,name,avatar']);
         $post->loadCount(['likes', 'comments', 'shares']);
@@ -162,7 +162,7 @@ class PostsController extends Controller
             'images.*'       => ['image', 'max:5120'],
             'feeling'        => ['nullable', 'string', 'max:50'],
             'visibility'     => ['nullable', 'in:public,private'],
-            'shared_post_id' => ['nullable', 'integer', 'exists:posts,id'],
+            'shared_post_id' => ['nullable', 'integer'],
         ]);
 
         $sharedPostId = $data['shared_post_id'] ?? null;

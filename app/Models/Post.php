@@ -40,6 +40,19 @@ class Post extends Model
         'images' => 'array',
     ];
 
+    /**
+     * Whether the given user may view this post.
+     * Hidden posts and private posts are only visible to their author.
+     */
+    public function isVisibleTo(?User $user): bool
+    {
+        if ($this->user_id === $user?->id) {
+            return true;
+        }
+
+        return $this->status !== 'hidden' && $this->visibility !== 'private';
+    }
+
     private function normalizeStorageUrl(?string $value): ?string
     {
         if (! $value) return null;

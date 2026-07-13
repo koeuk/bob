@@ -36,6 +36,11 @@ class UserPolicy
         return $user->isModerator() && $user->outranks($target);
     }
 
+    public function unban(User $user, User $target): bool
+    {
+        return $user->isModerator() && $user->outranks($target);
+    }
+
     public function assignRole(User $user): bool
     {
         return $user->isSuperAdmin();

@@ -7,27 +7,19 @@ use App\Models\Like;
 use App\Models\Post;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CommentsController extends Controller
 {
     public function store(Request $request, Post $post): RedirectResponse
     {
-        abort_if($post->status === 'hidden', 404);
-        abort_if($post->visibility === 'private' && $post->user_id !== $request->user()->id, 404);
+        abort_unless($post->isVisibleTo($request->user()), 404);
 
         $data = $request->validate([
             'body' => ['required', 'string', 'max:5000'],
-            'parent_id' => ['nullable', 'integer', 'exists:comments,id'],
+            // Scoped existence check: the parent must be a comment on this post.
+            'parent_id' => ['nullable', 'integer', Rule::exists('comments', 'id')->where('post_id', $post->id)],
         ]);
-
-        // A reply's parent must belong to this same post.
-        if (! empty($data['parent_id'])) {
-            abort_unless(
-                Comment::where('id', $data['parent_id'])->where('post_id', $post->id)->exists(),
-                422,
-                'The parent comment does not belong to this post.'
-            );
-        }
 
         Comment::create([
             'user_id' => $request->user()->id,

@@ -164,7 +164,7 @@ class UsersController extends Controller
      */
     public function update(Request $request, User $user): JsonResponse
     {
-        abort_unless($request->user()->outranks($user), 403, 'You cannot manage a user with equal or higher privileges.');
+        $this->authorize('update', $user);
 
         $data = $request->validate([
             'name' => ['sometimes', 'string', 'max:255'],
@@ -191,7 +191,7 @@ class UsersController extends Controller
      */
     public function destroy(Request $request, User $user): JsonResponse
     {
-        abort_unless($request->user()->outranks($user), 403, 'You cannot manage a user with equal or higher privileges.');
+        $this->authorize('delete', $user);
 
         ActivityLog::record('user.delete', $user, $user->only(['name', 'email', 'role']));
         $user->delete();
@@ -212,7 +212,7 @@ class UsersController extends Controller
      */
     public function ban(Request $request, User $user): JsonResponse
     {
-        abort_unless($request->user()->outranks($user), 403, 'You cannot ban a user with equal or higher privileges.');
+        $this->authorize('ban', $user);
 
         $data = $request->validate([
             'reason' => ['required', 'string', 'max:2000'],
@@ -242,8 +242,10 @@ class UsersController extends Controller
      *
      * @response 200 { "message": "User unbanned." }
      */
-    public function unban(User $user): JsonResponse
+    public function unban(Request $request, User $user): JsonResponse
     {
+        $this->authorize('unban', $user);
+
         $user->bans()->active()->update(['expires_at' => now()->subSecond()]);
 
         ActivityLog::record('user.unban', $user);

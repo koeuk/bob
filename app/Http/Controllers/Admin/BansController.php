@@ -68,7 +68,7 @@ class BansController extends Controller
 
         $user = User::where('uuid', $data['user_uuid'])->firstOrFail();
 
-        abort_unless($request->user()->outranks($user), 403, 'You cannot ban a user with equal or higher privileges.');
+        $this->authorize('ban', $user);
 
         $ban = Ban::create([
             'user_id' => $user->id,
