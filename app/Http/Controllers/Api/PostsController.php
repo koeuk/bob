@@ -9,7 +9,6 @@ use App\Models\Post;
 use App\Notifications\PostLiked;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * @group Feed & Posts

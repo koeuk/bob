@@ -221,7 +221,11 @@
 
 @keyframes bob-reveal {
     from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
+    /* Settle to `none` (not translateY(0)): with animation-fill-mode both, a
+       lingering transform would create a stacking context on every animated
+       row/card and clip absolutely-positioned dropdown menus behind sibling
+       rows, making their items unclickable. */
+    to   { opacity: 1; transform: none; }
 }
 
 @keyframes bob-slide-in {
