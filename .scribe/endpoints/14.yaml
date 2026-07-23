@@ -382,7 +382,7 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
       resolution_note: 'No violation found.'

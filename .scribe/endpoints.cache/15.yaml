@@ -169,7 +169,7 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
       user_uuid: 019e178b-4ffc-72ad-a045-31cb5d618db2
@@ -181,6 +181,12 @@ endpoints:
         custom: []
         status: 201
         content: '{ "id": 10, "user_id": 23, "reason": "Repeated violations.", "expires_at": null }'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 403
+        content: '{ "message": "This action is unauthorized." }'
         headers: []
         description: ''
     responseFields: []

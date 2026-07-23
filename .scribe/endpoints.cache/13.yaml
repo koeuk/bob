@@ -169,7 +169,7 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
       user_uuid:
         custom: []
@@ -180,7 +180,7 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
       post_uuid: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
@@ -273,7 +273,7 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
       body: 'Edited comment.'

@@ -1187,8 +1187,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --form "name=Jane Doe"\
     --form "email=jane@example.com"\
-    --form "avatar=@/tmp/phpov3rtn7cv5vl1CLglbE" \
-    --form "cover=@/tmp/phpnr037vukhbgs9KuuBPJ" </code></pre></div>
+    --form "avatar=@/tmp/php1vbpept7jmt6bO6OtMP" \
+    --form "cover=@/tmp/phph4o5b3di00vl7Ky1NgK" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -1237,11 +1237,11 @@ $response = $client-&gt;patch(
             ],
             [
                 'name' =&gt; 'avatar',
-                'contents' =&gt; fopen('/tmp/phpov3rtn7cv5vl1CLglbE', 'r')
+                'contents' =&gt; fopen('/tmp/php1vbpept7jmt6bO6OtMP', 'r')
             ],
             [
                 'name' =&gt; 'cover',
-                'contents' =&gt; fopen('/tmp/phpnr037vukhbgs9KuuBPJ', 'r')
+                'contents' =&gt; fopen('/tmp/phph4o5b3di00vl7Ky1NgK', 'r')
             ],
         ],
     ]
@@ -1382,7 +1382,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be an image. Must not be greater than 4096 kilobytes. Example: <code>/tmp/phpov3rtn7cv5vl1CLglbE</code></p>
+<p>Must be an image. Must not be greater than 4096 kilobytes. Example: <code>/tmp/php1vbpept7jmt6bO6OtMP</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>cover</code></b>&nbsp;&nbsp;
@@ -1394,7 +1394,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be an image. Must not be greater than 8192 kilobytes. Example: <code>/tmp/phpnr037vukhbgs9KuuBPJ</code></p>
+<p>Must be an image. Must not be greater than 8192 kilobytes. Example: <code>/tmp/phph4o5b3di00vl7Ky1NgK</code></p>
         </div>
         </form>
 
@@ -1418,8 +1418,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --form "name=Jane Doe"\
     --form "email=jane@example.com"\
-    --form "avatar=@/tmp/phpd32lc8qj583selxnmGc" \
-    --form "cover=@/tmp/php3t737qi7av8n3JuEHtN" </code></pre></div>
+    --form "avatar=@/tmp/phpcnop1b3cp8ge2eIoSZm" \
+    --form "cover=@/tmp/phpuqm4bdkqg3ss5rd4O8w" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -1468,11 +1468,11 @@ $response = $client-&gt;post(
             ],
             [
                 'name' =&gt; 'avatar',
-                'contents' =&gt; fopen('/tmp/phpd32lc8qj583selxnmGc', 'r')
+                'contents' =&gt; fopen('/tmp/phpcnop1b3cp8ge2eIoSZm', 'r')
             ],
             [
                 'name' =&gt; 'cover',
-                'contents' =&gt; fopen('/tmp/php3t737qi7av8n3JuEHtN', 'r')
+                'contents' =&gt; fopen('/tmp/phpuqm4bdkqg3ss5rd4O8w', 'r')
             ],
         ],
     ]
@@ -1613,7 +1613,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be an image. Must not be greater than 4096 kilobytes. Example: <code>/tmp/phpd32lc8qj583selxnmGc</code></p>
+<p>Must be an image. Must not be greater than 4096 kilobytes. Example: <code>/tmp/phpcnop1b3cp8ge2eIoSZm</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>cover</code></b>&nbsp;&nbsp;
@@ -1625,7 +1625,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be an image. Must not be greater than 8192 kilobytes. Example: <code>/tmp/php3t737qi7av8n3JuEHtN</code></p>
+<p>Must be an image. Must not be greater than 8192 kilobytes. Example: <code>/tmp/phpuqm4bdkqg3ss5rd4O8w</code></p>
         </div>
         </form>
 
@@ -2561,7 +2561,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "feeling=n"\
     --form "visibility=private"\
     --form "shared_post_id=16"\
-    --form "images[]=@/tmp/phpu1tblaj3e0cs1mIedfK" </code></pre></div>
+    --form "images[]=@/tmp/php8dbaq8jls47qfHJeEpJ" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -2619,7 +2619,7 @@ $response = $client-&gt;post(
             ],
             [
                 'name' =&gt; 'images[]',
-                'contents' =&gt; fopen('/tmp/phpu1tblaj3e0cs1mIedfK', 'r')
+                'contents' =&gt; fopen('/tmp/php8dbaq8jls47qfHJeEpJ', 'r')
             ],
         ],
     ]
@@ -2814,8 +2814,8 @@ Must be one of:
     --form "body=b"\
     --form "keep_images[]=architecto"\
     --form "feeling=n"\
-    --form "visibility=public"\
-    --form "new_images[]=@/tmp/php1eerp24sqnti9QyzMKM" </code></pre></div>
+    --form "visibility=private"\
+    --form "new_images[]=@/tmp/phpj05tbif2eq066cqo5Op" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -2833,7 +2833,7 @@ const body = new FormData();
 body.append('body', 'b');
 body.append('keep_images[]', 'architecto');
 body.append('feeling', 'n');
-body.append('visibility', 'public');
+body.append('visibility', 'private');
 body.append('new_images[]', document.querySelector('input[name="new_images[]"]').files[0]);
 
 fetch(url, {
@@ -2869,11 +2869,11 @@ $response = $client-&gt;post(
             ],
             [
                 'name' =&gt; 'visibility',
-                'contents' =&gt; 'public'
+                'contents' =&gt; 'private'
             ],
             [
                 'name' =&gt; 'new_images[]',
-                'contents' =&gt; fopen('/tmp/php1eerp24sqnti9QyzMKM', 'r')
+                'contents' =&gt; fopen('/tmp/phpj05tbif2eq066cqo5Op', 'r')
             ],
         ],
     ]
@@ -3041,10 +3041,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="visibility"                data-endpoint="POSTapi-posts--post_uuid-"
-               value="public"
+               value="private"
                data-component="body">
     <br>
-<p>Example: <code>public</code></p>
+<p>Example: <code>private</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>public</code></li> <li><code>private</code></li></ul>
         </div>
@@ -3255,7 +3255,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"type\": \"like\"
+    \"type\": \"love\"
 }"
 </code></pre></div>
 
@@ -3272,7 +3272,7 @@ const headers = {
 };
 
 let body = {
-    "type": "like"
+    "type": "love"
 };
 
 fetch(url, {
@@ -3294,7 +3294,7 @@ $response = $client-&gt;post(
             'Accept' =&gt; 'application/json',
         ],
         'json' =&gt; [
-            'type' =&gt; 'like',
+            'type' =&gt; 'love',
         ],
     ]
 );
@@ -3431,10 +3431,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="type"                data-endpoint="POSTapi-posts--post_uuid--like"
-               value="like"
+               value="love"
                data-component="body">
     <br>
-<p>Example: <code>like</code></p>
+<p>Example: <code>love</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>like</code></li> <li><code>love</code></li> <li><code>haha</code></li> <li><code>wow</code></li> <li><code>sad</code></li> <li><code>angry</code></li></ul>
         </div>
@@ -3879,7 +3879,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --data "{
-    \"type\": \"haha\"
+    \"type\": \"wow\"
 }"
 </code></pre></div>
 
@@ -3896,7 +3896,7 @@ const headers = {
 };
 
 let body = {
-    "type": "haha"
+    "type": "wow"
 };
 
 fetch(url, {
@@ -3918,7 +3918,7 @@ $response = $client-&gt;post(
             'Accept' =&gt; 'application/json',
         ],
         'json' =&gt; [
-            'type' =&gt; 'haha',
+            'type' =&gt; 'wow',
         ],
     ]
 );
@@ -4055,10 +4055,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="type"                data-endpoint="POSTapi-comments--comment_uuid--like"
-               value="haha"
+               value="wow"
                data-component="body">
     <br>
-<p>Example: <code>haha</code></p>
+<p>Example: <code>wow</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>like</code></li> <li><code>love</code></li> <li><code>haha</code></li> <li><code>wow</code></li> <li><code>sad</code></li> <li><code>angry</code></li></ul>
         </div>
@@ -5110,7 +5110,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "email=jane@example.com"\
     --form "password=secret123"\
     --form "role=user"\
-    --form "avatar=@/tmp/phpadh0p4gj2kh5bCwbVD7" </code></pre></div>
+    --form "avatar=@/tmp/phpm45haoogbiuj6XGHpsx" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -5168,7 +5168,7 @@ $response = $client-&gt;post(
             ],
             [
                 'name' =&gt; 'avatar',
-                'contents' =&gt; fopen('/tmp/phpadh0p4gj2kh5bCwbVD7', 'r')
+                'contents' =&gt; fopen('/tmp/phpm45haoogbiuj6XGHpsx', 'r')
             ],
         ],
     ]
@@ -5344,7 +5344,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Optional avatar image (max 2MB). Example: <code>/tmp/phpadh0p4gj2kh5bCwbVD7</code></p>
+<p>Optional avatar image (max 2MB). Example: <code>/tmp/phpm45haoogbiuj6XGHpsx</code></p>
         </div>
         </form>
 
@@ -5556,7 +5556,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "email=jane@example.com"\
     --form "password=secret123"\
     --form "remove_avatar="\
-    --form "avatar=@/tmp/phpmtvotpfih3ti5wN4EBn" </code></pre></div>
+    --form "avatar=@/tmp/php8fp8lffdg3qbbopwV4Q" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -5614,7 +5614,7 @@ $response = $client-&gt;patch(
             ],
             [
                 'name' =&gt; 'avatar',
-                'contents' =&gt; fopen('/tmp/phpmtvotpfih3ti5wN4EBn', 'r')
+                'contents' =&gt; fopen('/tmp/php8fp8lffdg3qbbopwV4Q', 'r')
             ],
         ],
     ]
@@ -5792,7 +5792,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Replacement avatar image (max 2MB). Example: <code>/tmp/phpmtvotpfih3ti5wN4EBn</code></p>
+<p>Replacement avatar image (max 2MB). Example: <code>/tmp/php8fp8lffdg3qbbopwV4Q</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>remove_avatar</code></b>&nbsp;&nbsp;
@@ -7680,7 +7680,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <small class="badge badge-darkred">requires authentication</small>
 </p>
 
-<p>Change a post's moderation status without editing its content.</p>
+<p>Sets the moderation status without touching the body.</p>
 
 <span id="example-requests-PATCHapi-admin-posts--post_uuid--flag">
 <blockquote>Example request:</blockquote>
@@ -10084,6 +10084,15 @@ print_r(json_decode((string) $body));</code></pre></div>
     &quot;expires_at&quot;: null
 }</code>
  </pre>
+            <blockquote>
+            <p>Example response (403):</p>
+        </blockquote>
+                <pre>
+
+<code class="language-json" style="max-height: 300px;">{
+    &quot;message&quot;: &quot;This action is unauthorized.&quot;
+}</code>
+ </pre>
     </span>
 <span id="execution-results-POSTapi-admin-bans" hidden>
     <blockquote>Received response<span
@@ -10906,12 +10915,12 @@ print_r(json_decode((string) $body));</code></pre></div>
         {
             &quot;id&quot;: 1,
             &quot;uuid&quot;: &quot;...&quot;,
-            &quot;slug&quot;: &quot;about&quot;,
-            &quot;title&quot;: &quot;About&quot;,
+            &quot;slug&quot;: &quot;about-us&quot;,
+            &quot;title&quot;: &quot;About Us&quot;,
             &quot;status&quot;: &quot;published&quot;
         }
     ],
-    &quot;total&quot;: 5
+    &quot;total&quot;: 6
 }</code>
  </pre>
     </span>
@@ -12214,7 +12223,7 @@ print_r(json_decode((string) $body));</code></pre></div>
             &quot;admin&quot;: {}
         }
     ],
-    &quot;total&quot;: 50
+    &quot;total&quot;: 120
 }</code>
  </pre>
     </span>
@@ -13068,7 +13077,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Content-Type: multipart/form-data" \
     --header "Accept: application/json" \
     --form "body=b"\
-    --form "images[]=@/tmp/phpcqklo6cuincv1NSbH2Z" </code></pre></div>
+    --form "images[]=@/tmp/phppc7ka4or7ecb1HCMwgB" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13111,7 +13120,7 @@ $response = $client-&gt;post(
             ],
             [
                 'name' =&gt; 'images[]',
-                'contents' =&gt; fopen('/tmp/phpcqklo6cuincv1NSbH2Z', 'r')
+                'contents' =&gt; fopen('/tmp/phppc7ka4or7ecb1HCMwgB', 'r')
             ],
         ],
     ]

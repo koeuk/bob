@@ -111,8 +111,8 @@ endpoints:
         status: 200
         content: |-
           {
-            "data": [{ "id": 1, "uuid": "...", "slug": "about", "title": "About", "status": "published" }],
-            "total": 5
+            "data": [{ "id": 1, "uuid": "...", "slug": "about-us", "title": "About Us", "status": "published" }],
+            "total": 6
           }
         headers: []
         description: ''

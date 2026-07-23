@@ -167,7 +167,7 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
       body: 'Admin-created post.'
@@ -348,7 +348,7 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
       body: 'Updated body.'
@@ -452,7 +452,7 @@ endpoints:
       subgroup: ''
       subgroupDescription: ''
       title: 'Flag post'
-      description: "Change a post's moderation status without editing its content."
+      description: 'Sets the moderation status without touching the body.'
       authenticated: true
       deprecated: false
     headers:

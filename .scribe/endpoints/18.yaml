@@ -107,7 +107,7 @@ endpoints:
         type: mixed
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
       'settings[].group':
         custom: []
@@ -118,7 +118,7 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
       settings:

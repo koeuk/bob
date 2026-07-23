@@ -53,7 +53,47 @@ against a dedicated **MySQL** database.
 If `php8.4-sqlite3` is ever installed, prefer the faster in-memory sqlite —
 see the commented block in `phpunit.xml`.
 
-## Phase 1 · Dedup controller logic — 🚧 IN PROGRESS (step 1/5 done)
+## Phase 1 · Dedup controller logic — ✅ DONE
+
+All five steps landed, each as its own commit. Every admin business rule now
+lives in exactly one Action under `app/Actions/`, with the controllers reduced
+to request parsing and response formatting.
+
+| Step | Domain | Controllers before → after |
+|------|--------|---------------------------|
+| 1 | Users | 515 → 317 |
+| 2 | Reports | 244 → 166 |
+| 3 | Comments | 243 → ~150 |
+| 4 | Bans / Pages / Likes / Settings / ActivityLogs | 792 → ~480 |
+| 5 | Posts (admin) | 312 → ~200 |
+
+Coverage grew from 41 to 70 passing tests.
+
+### Bugs and drifts found while extracting
+
+- **Authorization gap (security).** The JSON bans endpoint never called
+  `authorize('ban')`, so an admin could ban a user they do not outrank —
+  a super admin, for instance. The gate now lives inside `Bans\IssueBan`,
+  so every surface gets it. Covered by a regression test.
+- **Settings guard** was enforced on the API but not the Inertia panel;
+  `SaveSettings::assertAllowed()` now applies to both.
+- **Avatar deletion never worked.** The old file was removed using
+  `$user->avatar`, which the model accessor rewrites into a `/storage/...`
+  URL, so it never matched a disk path — every replacement orphaned a file.
+  Now uses `getRawOriginal('avatar')`.
+- **API/panel feature drift** (unified to the superset): the JSON API did not
+  select `avatar`, and could not upload an avatar or set a password.
+
+### Not duplication — feature drift (left alone deliberately)
+
+`App\Http\Controllers\PostsController` (Inertia, 117 LOC) and
+`Api\PostsController` (321 LOC) are *not* copies. The Inertia one is an older,
+much simpler implementation: no images, no feelings, no visibility, no
+sharing, no reaction types, no `update`, and it does not send `PostLiked`
+notifications. Bringing it to parity — or retiring the Inertia user-facing
+app now that the React SPA exists — is a product decision, not a refactor.
+**Flagged for a decision before Phase 5.**
+
 
 **Step 1 · Users — ✅ DONE.** 8 Actions under `app/Actions/Users/`. Controllers
 went 515 → 317 LOC and the logic now lives once. Two drifts found and unified

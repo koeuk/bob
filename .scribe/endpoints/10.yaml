@@ -122,7 +122,7 @@ endpoints:
         content: |-
           {
             "data": [{ "id": 1, "action": "user.ban", "target_type": "App\\Models\\User", "before": null, "after": {}, "admin": {} }],
-            "total": 50
+            "total": 120
           }
         headers: []
         description: ''
