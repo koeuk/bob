@@ -77,8 +77,40 @@ class PruneOrphanedUploads extends Command
             return self::SUCCESS;
         }
 
-        $disk->delete($orphans->all());
-        $this->info(sprintf('Deleted %d file(s), freeing %s.', $orphans->count(), $this->humanBytes($bytes)));
+        // Delete individually and re-check: a bulk delete reports success even
+        // when the file survives (e.g. a root-owned directory the current user
+        // cannot write to), which would give false confidence.
+        $deleted = 0;
+        $freed = 0;
+        $failed = [];
+
+        foreach ($orphans as $file) {
+            $size = $disk->size($file);
+            $disk->delete($file);
+
+            if ($disk->exists($file)) {
+                $failed[] = $file;
+
+                continue;
+            }
+
+            $deleted++;
+            $freed += $size;
+        }
+
+        $this->info(sprintf('Deleted %d file(s), freeing %s.', $deleted, $this->humanBytes($freed)));
+
+        if ($failed !== []) {
+            $this->newLine();
+            $this->error(sprintf('%d file(s) could NOT be deleted:', count($failed)));
+            foreach ($failed as $file) {
+                $this->line("  {$file}");
+            }
+            $this->comment('Usually a permissions problem — check the owner of the containing directory:');
+            $this->comment('  ls -la storage/app/public && sudo chown -R $USER storage/app/public');
+
+            return self::FAILURE;
+        }
 
         return self::SUCCESS;
     }
