@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Actions\Comments\CreateComment;
+use App\Actions\Comments\DeleteComment;
+use App\Actions\Comments\ListComments;
+use App\Actions\Comments\UpdateComment;
 use App\Http\Controllers\Controller;
-use App\Models\ActivityLog;
 use App\Models\Comment;
-use App\Models\Post;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
 
 /**
  * @group Admin: Comments
@@ -33,23 +32,9 @@ class CommentsController extends Controller
      *   "total": 210
      * }
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, ListComments $listComments): JsonResponse
     {
-        $comments = QueryBuilder::for(Comment::class)
-            ->with(['user:id,uuid,name', 'post:id,uuid,body'])
-            ->withCount(['likes', 'reports'])
-            ->allowedFilters(...[
-                AllowedFilter::partial('search', 'body'),
-                AllowedFilter::callback('post_uuid', function ($q, $value) {
-                    $q->whereHas('post', fn ($p) => $p->where('uuid', $value));
-                }),
-            ])
-            ->allowedSorts(...['created_at'])
-            ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 30))
-            ->withQueryString();
-
-        return response()->json($comments);
+        return response()->json($listComments->handle($request));
     }
 
     /**
@@ -62,31 +47,11 @@ class CommentsController extends Controller
      *
      * @response 201 { "id": 300, "body": "Admin comment.", "post_id": 1, "user_id": 2 }
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request, CreateComment $createComment): JsonResponse
     {
-        $data = $request->validate([
-            'post_uuid' => ['required', 'uuid', 'exists:posts,uuid'],
-            'body' => ['required', 'string', 'max:2000'],
-            'parent_uuid' => ['nullable', 'uuid', 'exists:comments,uuid'],
-            'user_uuid' => ['nullable', 'uuid', 'exists:users,uuid'],
-        ]);
+        $data = $request->validate(CreateComment::rules());
 
-        $post = Post::where('uuid', $data['post_uuid'])->firstOrFail();
-        $authorId = isset($data['user_uuid'])
-            ? User::where('uuid', $data['user_uuid'])->value('id')
-            : $request->user()->id;
-        $parentId = isset($data['parent_uuid'])
-            ? Comment::where('uuid', $data['parent_uuid'])->value('id')
-            : null;
-
-        $comment = Comment::create([
-            'user_id' => $authorId,
-            'post_id' => $post->id,
-            'parent_id' => $parentId,
-            'body' => $data['body'],
-        ]);
-
-        ActivityLog::record('comment.create', $comment, null, $comment->only(['body', 'post_id', 'user_id', 'parent_id']));
+        $comment = $createComment->handle($data, $request->user());
 
         return response()->json($comment->load(['user:id,uuid,name', 'post:id,uuid']), 201);
     }
@@ -100,17 +65,11 @@ class CommentsController extends Controller
      *
      * @response 200 { "id": 1, "body": "Edited comment." }
      */
-    public function update(Request $request, Comment $comment): JsonResponse
+    public function update(Request $request, Comment $comment, UpdateComment $updateComment): JsonResponse
     {
-        $data = $request->validate([
-            'body' => ['required', 'string', 'max:2000'],
-            'reason' => ['nullable', 'string', 'max:500'],
-        ]);
+        $data = $request->validate(UpdateComment::rules());
 
-        $before = $comment->only(['body']);
-        $comment->update(['body' => $data['body']]);
-
-        ActivityLog::record('comment.update', $comment, $before, ['body' => $data['body'], 'reason' => $data['reason'] ?? null]);
+        $updateComment->handle($comment, $data);
 
         return response()->json($comment->fresh());
     }
@@ -122,10 +81,9 @@ class CommentsController extends Controller
      *
      * @response 200 { "message": "Comment deleted." }
      */
-    public function destroy(Comment $comment): JsonResponse
+    public function destroy(Comment $comment, DeleteComment $deleteComment): JsonResponse
     {
-        ActivityLog::record('comment.delete', $comment, $comment->only(['body']));
-        $comment->delete();
+        $deleteComment->handle($comment);
 
         return response()->json(['message' => 'Comment deleted.']);
     }
