@@ -96,7 +96,7 @@
                     <div class="space-y-3">
                         <div
                             v-for="row in rows"
-                            :key="row.key + row.group"
+                            :key="row.id"
                             class="grid grid-cols-[1fr_2fr_auto] items-center gap-3"
                         >
                             <Input
@@ -158,7 +158,12 @@ const brandingForm = useForm({
     remove_logo: false,
 });
 
-const logoPreview = computed(() => localPreview.value ?? props.branding.logo ?? null);
+// Honour a staged removal, otherwise the trash button reads as a no-op: the
+// computed would immediately fall back to the still-stored logo.
+const logoPreview = computed(() => {
+    if (brandingForm.remove_logo) return null;
+    return localPreview.value ?? props.branding.logo ?? null;
+});
 const initial = computed(() => (brandingForm.app_name || 'b').slice(0, 1).toLowerCase());
 
 const onLogoChange = (e) => {
@@ -191,12 +196,19 @@ const submitBranding = () => {
 
 // ─── Generic key/value settings (branding group is managed above) ──────
 // Flatten groups into editable rows
+// Stable per-row identity. The v-for key must NOT derive from `row.key`,
+// which is bound with v-model: every keystroke would change the key, remount
+// the input and drop focus after a single character.
+let rowId = 0;
+const nextRowId = () => ++rowId;
+
 const rowsFromGroups = () => {
     const rows = [];
     for (const [group, items] of Object.entries(props.groups)) {
         if (group === 'branding') continue;
         for (const s of items) {
             rows.push({
+                id: nextRowId(),
                 key: s.key,
                 group,
                 value: typeof s.value === 'string' ? s.value : JSON.stringify(s.value ?? ''),
@@ -218,7 +230,7 @@ const groupedRows = computed(() => {
 });
 
 const addRow = () => {
-    state.rows.push({ key: '', group: 'general', value: '' });
+    state.rows.push({ id: nextRowId(), key: '', group: 'general', value: '' });
 };
 const removeRow = (row) => {
     state.rows.splice(state.rows.indexOf(row), 1);

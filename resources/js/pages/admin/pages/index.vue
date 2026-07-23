@@ -67,6 +67,25 @@
         <div v-if="!pages.data.length" class="glass rounded-3xl py-16 text-center text-sm text-muted-foreground">
             No pages yet. Create one to get started.
         </div>
+
+        <!-- The list is paginated at 25; without these links later pages were unreachable. -->
+        <div v-if="pages.data.length" class="flex items-center justify-between text-xs text-muted-foreground">
+            <span>Showing {{ pages.from }}–{{ pages.to }} of {{ pages.total }}</span>
+            <div class="flex items-center gap-1">
+                <Link
+                    v-for="link in pages.links"
+                    :key="link.label"
+                    :href="link.url || '#'"
+                    v-html="link.label"
+                    :class="[
+                        'inline-flex min-w-8 items-center justify-center rounded-full px-2.5 py-1 text-xs',
+                        link.active ? 'bg-moss text-paper' : link.url ? 'hover:bg-secondary' : 'opacity-40',
+                    ]"
+                    preserve-scroll
+                    preserve-state
+                />
+            </div>
+        </div>
     </AdminLayout>
 </template>
 

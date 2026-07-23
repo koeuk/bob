@@ -13,7 +13,7 @@
                     <div class="flex items-center gap-5">
                         <div class="relative size-16 shrink-0">
                             <div class="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-forest text-base font-semibold text-paper">
-                                <img v-if="avatarPreview" :src="avatarPreview" class="size-16 object-cover" alt="" />
+                                <img v-if="avatarSrc" :src="avatarSrc" class="size-16 object-cover" alt="" />
                                 <template v-else>{{ initials(createForm.name) }}</template>
                             </div>
                             <button type="button" class="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-card border-2 border-white dark:border-white/10 shadow-sm shadow-sm hover:bg-secondary transition-colors" @click="$refs.avatarInput.click()">
@@ -24,7 +24,7 @@
                         <div>
                             <p class="text-sm font-medium">Profile photo</p>
                             <p class="text-xs text-muted-foreground mt-0.5">JPG, PNG or GIF · max 2 MB</p>
-                            <button v-if="avatarPreview" type="button" class="mt-1 text-xs text-rust hover:underline" @click="clearAvatar">Remove</button>
+                            <button v-if="avatarSrc" type="button" class="mt-1 text-xs text-rust hover:underline" @click="clearAvatar">Remove</button>
                         </div>
                     </div>
 
@@ -126,7 +126,7 @@
                         <div class="flex items-start gap-5">
                             <div class="relative size-16 shrink-0">
                                 <div class="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-forest text-base font-semibold text-paper">
-                                    <img v-if="avatarPreview" :src="avatarPreview" class="size-16 object-cover" alt="" />
+                                    <img v-if="avatarSrc" :src="avatarSrc" class="size-16 object-cover" alt="" />
                                     <template v-else>{{ initials(profileForm.name || user.name) }}</template>
                                 </div>
                                 <button type="button" class="absolute -bottom-1 -right-1 flex size-6 items-center justify-center rounded-full bg-card border-2 border-white dark:border-white/10 shadow-sm shadow-sm hover:bg-secondary transition-colors" @click="$refs.avatarInput.click()">
@@ -137,7 +137,7 @@
                             <div>
                                 <p class="text-sm font-medium">Profile photo</p>
                                 <p class="text-xs text-muted-foreground mt-0.5">JPG, PNG or GIF · max 2 MB</p>
-                                <button v-if="avatarPreview" type="button" class="mt-1 text-xs text-rust hover:underline" @click="clearAvatar">Remove</button>
+                                <button v-if="avatarSrc" type="button" class="mt-1 text-xs text-rust hover:underline" @click="clearAvatar">Remove</button>
                             </div>
                         </div>
 
@@ -284,16 +284,31 @@ const initials = (name) => (name ?? '').split(' ').filter(Boolean).slice(0, 2).m
 // Shared avatar state
 const avatarInput = ref(null);
 const avatarPreview = ref(null);
+const avatarRemoved = ref(false);
+
+// Show the newly picked file if there is one, otherwise the user's stored
+// photo — without this the edit screen always rendered initials, as if the
+// user had no avatar, and offered no way to delete the stored one.
+const avatarSrc = computed(() => {
+    if (avatarRemoved.value) return null;
+    return avatarPreview.value ?? props.user?.avatar ?? null;
+});
+
 const onAvatarChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     createForm.avatar = file;
     profileForm.avatar = file;
+    profileForm.remove_avatar = false;
+    avatarRemoved.value = false;
     avatarPreview.value = URL.createObjectURL(file);
 };
 const clearAvatar = () => {
     createForm.avatar = null;
     profileForm.avatar = null;
+    // Stage removal of the stored photo; applied on save.
+    profileForm.remove_avatar = true;
+    avatarRemoved.value = true;
     avatarPreview.value = null;
     if (avatarInput.value) avatarInput.value.value = '';
 };
@@ -319,7 +334,7 @@ const goPrev = () => { if (currentIndex.value > 0) currentStep.value = stepKeys.
 
 // Step 1 — Profile
 const profileSaved = ref(false);
-const profileForm = useForm({ name: props.user?.name ?? '', email: props.user?.email ?? '', avatar: null });
+const profileForm = useForm({ name: props.user?.name ?? '', email: props.user?.email ?? '', avatar: null, remove_avatar: false });
 const submitProfile = () => {
     profileForm.patch(`/admin/users/${props.user.uuid}`, {
         forceFormData: true,

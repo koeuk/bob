@@ -1,1 +1,0 @@
-import{a as r}from"./appearance-dropdown--04GeXjJ.js";import{L as e}from"./loader-circle-B9F3S3k7.js";import{j as n,n as o,u as s,o as p}from"./app-Q1qH0rty.js";const _={__name:"Spinner",setup(c){return(a,t)=>(p(),n(s(e),{"data-slot":"spinner",class:o(s(r)("size-4 animate-spin",a.$props.class))},null,8,["class"]))}};export{_};

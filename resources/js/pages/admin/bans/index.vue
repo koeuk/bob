@@ -71,7 +71,10 @@
                         <div class="mt-0.5 text-sm">{{ b.reason }}</div>
                         <div class="mt-1 text-xs text-muted-foreground">
                             by {{ b.banned_by?.name ?? 'system' }} · {{ dateFmt(b.created_at) }}
-                            <span v-if="b.expires_at"> · expires {{ dateFmt(b.expires_at) }}</span>
+                            <!-- Lifting a ban back-dates expires_at, so a lifted
+                                 permanent ban must not read as "expires <date>". -->
+                            <span v-if="!isActive(b)"> · ended {{ dateFmt(b.expires_at) }}</span>
+                            <span v-else-if="b.expires_at"> · expires {{ dateFmt(b.expires_at) }}</span>
                             <span v-else> · permanent</span>
                         </div>
                     </div>

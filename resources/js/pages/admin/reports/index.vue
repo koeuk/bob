@@ -122,7 +122,10 @@ onMounted(() => nextTick(updateSlider));
 watch(activeTab, () => nextTick(updateSlider));
 
 const tabs = computed(() => [
-    { key: 'all', label: 'All', count: props.reports.total },
+    // `reports.total` is the *filtered* paginator total, so it would shrink to
+    // the active tab's size. Sum the per-status counts (the status enum is
+    // exactly these four) for the true queue size.
+    { key: 'all', label: 'All', count: Object.values(props.counts).reduce((a, b) => a + (b ?? 0), 0) },
     { key: 'pending', label: 'Pending', count: props.counts.pending, tone: 'rust' },
     { key: 'reviewed', label: 'Reviewed', count: props.counts.reviewed },
     { key: 'resolved', label: 'Resolved', count: props.counts.resolved, tone: 'moss' },
