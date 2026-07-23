@@ -11,6 +11,12 @@ use Illuminate\Support\Str;
 class UserFactory extends Factory
 {
     /**
+     * The plain-text password given to every factory-made user.
+     * Tests should reference this instead of hard-coding the value.
+     */
+    public const PASSWORD = '12345678';
+
+    /**
      * The current password being used by the factory.
      */
     protected static ?string $password;
@@ -43,7 +49,7 @@ class UserFactory extends Factory
             'name' => $lastName . ' ' . $firstName,
             'email' => fake()->unique()->userName() . '@gmail.com',
             'email_verified_at' => now(),
-            'password' => static::$password ??= '12345678',
+            'password' => static::$password ??= self::PASSWORD,
             'remember_token' => Str::random(10),
             'two_factor_secret' => Str::random(10),
             'two_factor_recovery_codes' => Str::random(10),
