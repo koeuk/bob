@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 
 /**
@@ -140,14 +141,21 @@ class AuthController extends Controller
             $data['email_verified_at'] = null;
         }
 
+        // Delete the replaced files so uploads don't accumulate. Read the raw
+        // columns — the accessors return /storage/... URLs, which never match a
+        // disk path.
         if ($request->hasFile('avatar')) {
-            $path = $request->file('avatar')->store('avatars', 'public');
-            $data['avatar'] = $path;
+            if ($old = $user->getRawOriginal('avatar')) {
+                Storage::disk('public')->delete($old);
+            }
+            $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
 
         if ($request->hasFile('cover')) {
-            $path = $request->file('cover')->store('covers', 'public');
-            $data['cover'] = $path;
+            if ($old = $user->getRawOriginal('cover')) {
+                Storage::disk('public')->delete($old);
+            }
+            $data['cover'] = $request->file('cover')->store('covers', 'public');
         }
 
         $user->update($data);

@@ -39,15 +39,20 @@ class ProfileController extends Controller
             $user->email_verified_at = null;
         }
 
+        // NB: read the raw column, not $user->avatar — the accessor returns a
+        // public URL (/storage/...), which never matches a disk path, so the
+        // old file was never actually deleted.
+        $currentAvatar = $user->getRawOriginal('avatar');
+
         if ($request->hasFile('avatar')) {
-            if ($user->avatar) {
-                Storage::disk('public')->delete($user->avatar);
+            if ($currentAvatar) {
+                Storage::disk('public')->delete($currentAvatar);
             }
             $user->avatar = $request->file('avatar')->store('avatars', 'public');
         }
 
-        if (!empty($data['remove_avatar']) && $user->avatar) {
-            Storage::disk('public')->delete($user->avatar);
+        if (! empty($data['remove_avatar']) && $currentAvatar) {
+            Storage::disk('public')->delete($currentAvatar);
             $user->avatar = null;
         }
 
