@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Actions\ActivityLogs\ListActivityLogs;
 use App\Http\Controllers\Controller;
-use App\Models\ActivityLog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
 
 /**
  * @group Admin: Activity Logs
@@ -29,26 +27,11 @@ class ActivityLogsController extends Controller
      *
      * @response 200 {
      *   "data": [{ "id": 1, "action": "user.ban", "target_type": "App\\Models\\User", "before": null, "after": {}, "admin": {} }],
-     *   "total": 50
+     *   "total": 120
      * }
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, ListActivityLogs $listLogs): JsonResponse
     {
-        $logs = QueryBuilder::for(ActivityLog::class)
-            ->with('admin:id,uuid,name')
-            ->allowedFilters(...[
-                AllowedFilter::partial('action'),
-                AllowedFilter::callback('admin_uuid', function ($q, $value) {
-                    $q->whereHas('admin', fn ($a) => $a->where('uuid', $value));
-                }),
-                AllowedFilter::callback('from', fn ($q, $v) => $q->where('created_at', '>=', $v)),
-                AllowedFilter::callback('to', fn ($q, $v) => $q->where('created_at', '<=', $v)),
-            ])
-            ->allowedSorts(...['created_at'])
-            ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 50))
-            ->withQueryString();
-
-        return response()->json($logs);
+        return response()->json($listLogs->handle($request));
     }
 }

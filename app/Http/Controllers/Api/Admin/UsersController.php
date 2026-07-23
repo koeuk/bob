@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Actions\Users\AssignUserRole;
-use App\Actions\Users\BanUser;
+use App\Actions\Bans\IssueBan;
 use App\Actions\Users\CreateUser;
 use App\Actions\Users\DeleteUser;
 use App\Actions\Users\ListUsers;
@@ -145,13 +145,13 @@ class UsersController extends Controller
      *
      * @response 201 { "id": 10, "uuid": "...", "user_id": 23, "reason": "Repeated spam.", "expires_at": null }
      */
-    public function ban(Request $request, User $user, BanUser $banUser): JsonResponse
+    public function ban(Request $request, User $user, IssueBan $issueBan): JsonResponse
     {
         $this->authorize('ban', $user);
 
-        $data = $request->validate(BanUser::rules());
+        $data = $request->validate(IssueBan::rules());
 
-        $ban = $banUser->handle($user, $data, $request->user());
+        $ban = $issueBan->handle($user, $data, $request->user(), 'user.ban');
 
         return response()->json($ban, 201);
     }

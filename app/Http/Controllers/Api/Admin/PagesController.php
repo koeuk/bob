@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Actions\Pages\ListPages;
+use App\Actions\Pages\SavePage;
 use App\Http\Controllers\Controller;
-use App\Models\ActivityLog;
 use App\Models\Page;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
 
 /**
  * @group Admin: Pages
@@ -28,25 +27,13 @@ class PagesController extends Controller
      * @queryParam page int Page number. Example: 1
      *
      * @response 200 {
-     *   "data": [{ "id": 1, "uuid": "...", "slug": "about", "title": "About", "status": "published" }],
-     *   "total": 5
+     *   "data": [{ "id": 1, "uuid": "...", "slug": "about-us", "title": "About Us", "status": "published" }],
+     *   "total": 6
      * }
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, ListPages $listPages): JsonResponse
     {
-        $pages = QueryBuilder::for(Page::class)
-            ->with('updatedBy:id,uuid,name')
-            ->allowedFilters(...[
-                AllowedFilter::exact('status'),
-                AllowedFilter::partial('title'),
-                AllowedFilter::partial('slug'),
-            ])
-            ->allowedSorts(...['title', 'slug', 'updated_at', 'status'])
-            ->defaultSort('-updated_at')
-            ->paginate($request->integer('per_page', 25))
-            ->withQueryString();
-
-        return response()->json($pages);
+        return response()->json($listPages->handle($request));
     }
 
     /**
@@ -59,20 +46,11 @@ class PagesController extends Controller
      *
      * @response 201 { "id": 6, "uuid": "...", "slug": "about-us", "title": "About Us", "status": "draft" }
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request, SavePage $savePage): JsonResponse
     {
-        $data = $request->validate([
-            'slug' => ['required', 'string', 'max:255', 'unique:pages,slug'],
-            'title' => ['required', 'string', 'max:255'],
-            'body' => ['required', 'string'],
-            'status' => ['required', 'in:draft,published'],
-        ]);
+        $data = $request->validate(SavePage::createRules());
 
-        $page = Page::create([...$data, 'updated_by' => $request->user()->id]);
-
-        ActivityLog::record('page.create', $page, null, $page->only(['slug', 'title', 'status']));
-
-        return response()->json($page, 201);
+        return response()->json($savePage->create($data, $request->user()), 201);
     }
 
     /**
@@ -86,19 +64,11 @@ class PagesController extends Controller
      *
      * @response 200 { "id": 1, "slug": "about-us", "title": "About Us", "status": "published" }
      */
-    public function update(Request $request, Page $page): JsonResponse
+    public function update(Request $request, Page $page, SavePage $savePage): JsonResponse
     {
-        $data = $request->validate([
-            'slug' => ['sometimes', 'string', 'max:255', 'unique:pages,slug,'.$page->id],
-            'title' => ['sometimes', 'string', 'max:255'],
-            'body' => ['sometimes', 'string'],
-            'status' => ['sometimes', 'in:draft,published'],
-        ]);
+        $data = $request->validate(SavePage::updateRules($page));
 
-        $before = $page->only(array_keys($data));
-        $page->update([...$data, 'updated_by' => $request->user()->id]);
-
-        ActivityLog::record('page.update', $page, $before, $page->only(array_keys($data)));
+        $savePage->update($page, $data, $request->user());
 
         return response()->json($page->fresh());
     }
@@ -110,10 +80,9 @@ class PagesController extends Controller
      *
      * @response 200 { "message": "Page deleted." }
      */
-    public function destroy(Page $page): JsonResponse
+    public function destroy(Page $page, SavePage $savePage): JsonResponse
     {
-        ActivityLog::record('page.delete', $page, $page->only(['slug', 'title']));
-        $page->delete();
+        $savePage->delete($page);
 
         return response()->json(['message' => 'Page deleted.']);
     }

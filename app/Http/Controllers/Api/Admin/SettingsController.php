@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Actions\Settings\SaveSettings;
 use App\Http\Controllers\Controller;
-use App\Models\ActivityLog;
-use App\Models\Setting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -26,13 +25,7 @@ class SettingsController extends Controller
      */
     public function index(): JsonResponse
     {
-        $grouped = Setting::query()
-            ->orderBy('group')
-            ->orderBy('key')
-            ->get()
-            ->groupBy('group');
-
-        return response()->json($grouped);
+        return response()->json(SaveSettings::grouped());
     }
 
     /**
@@ -48,27 +41,12 @@ class SettingsController extends Controller
      * @response 200 [{ "key": "site_name", "value": "Bob", "group": "general" }]
      * @response 403 { "message": "Only admins can update settings." }
      */
-    public function update(Request $request): JsonResponse
+    public function update(Request $request, SaveSettings $saveSettings): JsonResponse
     {
-        if (! $request->user()->isAdmin()) {
-            abort(403, 'Only admins can update settings.');
-        }
+        SaveSettings::assertAllowed($request->user());
 
-        $data = $request->validate([
-            'settings' => ['required', 'array'],
-            'settings.*.key' => ['required', 'string', 'max:255'],
-            'settings.*.value' => ['nullable'],
-            'settings.*.group' => ['nullable', 'string', 'max:255'],
-        ]);
+        $data = $request->validate(SaveSettings::rules());
 
-        $updated = [];
-        foreach ($data['settings'] as $row) {
-            $before = Setting::where('key', $row['key'])->first()?->only(['value']);
-            $setting = Setting::put($row['key'], $row['value'] ?? null, $row['group'] ?? 'general');
-            ActivityLog::record('setting.update', $setting, $before, ['value' => $row['value'] ?? null]);
-            $updated[] = $setting;
-        }
-
-        return response()->json($updated);
+        return response()->json($saveSettings->handle($data['settings']));
     }
 }

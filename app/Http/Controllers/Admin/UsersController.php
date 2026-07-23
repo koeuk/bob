@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Actions\Users\AssignUserRole;
-use App\Actions\Users\BanUser;
+use App\Actions\Bans\IssueBan;
 use App\Actions\Users\CreateUser;
 use App\Actions\Users\DeleteUser;
 use App\Actions\Users\ListUsers;
@@ -86,13 +86,13 @@ class UsersController extends Controller
         return redirect()->route('admin.users.index')->with('status', 'User deleted.');
     }
 
-    public function ban(Request $request, User $user, BanUser $banUser): RedirectResponse
+    public function ban(Request $request, User $user, IssueBan $issueBan): RedirectResponse
     {
         $this->authorize('ban', $user);
 
-        $data = $request->validate(BanUser::rules());
+        $data = $request->validate(IssueBan::rules());
 
-        $banUser->handle($user, $data, $request->user());
+        $issueBan->handle($user, $data, $request->user(), 'user.ban');
 
         return back()->with('status', 'User banned.');
     }

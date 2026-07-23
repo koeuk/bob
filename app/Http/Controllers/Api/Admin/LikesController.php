@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Actions\Likes\DeleteLike;
+use App\Actions\Likes\ListLikes;
 use App\Http\Controllers\Controller;
-use App\Models\ActivityLog;
 use App\Models\Like;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
 
 /**
  * @group Admin: Likes
@@ -32,28 +31,13 @@ class LikesController extends Controller
      *   "counts": { "all": 0, "today": 0 }
      * }
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, ListLikes $listLikes): JsonResponse
     {
-        $likes = QueryBuilder::for(Like::class)
-            ->with(['user:id,uuid,name', 'likeable'])
-            ->allowedFilters(...[
-                AllowedFilter::exact('type'),
-                AllowedFilter::exact('target', 'likeable_type'),
-                AllowedFilter::callback('user_uuid', function ($q, $value) {
-                    $q->whereHas('user', fn ($u) => $u->where('uuid', $value));
-                }),
-            ])
-            ->allowedSorts(...['created_at', 'type'])
-            ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 50))
-            ->withQueryString();
+        ['likes' => $likes, 'counts' => $counts] = $listLikes->handle($request);
 
         return response()->json([
             'data' => $likes,
-            'counts' => [
-                'all' => Like::count(),
-                'today' => Like::whereDate('created_at', today())->count(),
-            ],
+            'counts' => $counts,
         ]);
     }
 
@@ -64,10 +48,9 @@ class LikesController extends Controller
      *
      * @response 200 { "message": "Like removed." }
      */
-    public function destroy(Like $like): JsonResponse
+    public function destroy(Like $like, DeleteLike $deleteLike): JsonResponse
     {
-        ActivityLog::record('like.delete', $like, $like->only(['user_id', 'likeable_type', 'likeable_id', 'type']));
-        $like->delete();
+        $deleteLike->handle($like);
 
         return response()->json(['message' => 'Like removed.']);
     }

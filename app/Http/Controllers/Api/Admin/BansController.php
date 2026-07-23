@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Actions\Bans\IssueBan;
+use App\Actions\Bans\LiftBan;
+use App\Actions\Bans\ListBans;
 use App\Http\Controllers\Controller;
-use App\Models\ActivityLog;
 use App\Models\Ban;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
 
 /**
  * @group Admin: Bans
@@ -32,34 +32,13 @@ class BansController extends Controller
      *   "counts": { "all": 8, "active": 7 }
      * }
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, ListBans $listBans): JsonResponse
     {
-        $bans = QueryBuilder::for(Ban::class)
-            ->with(['user:id,uuid,name,email', 'bannedBy:id,uuid,name'])
-            ->allowedFilters(...[
-                AllowedFilter::callback('search', function ($q, $value) {
-                    $q->whereHas('user', function ($u) use ($value) {
-                        $u->where('name', 'like', "%{$value}%")
-                            ->orWhere('email', 'like', "%{$value}%");
-                    });
-                }),
-                AllowedFilter::callback('active', function ($q, $value) {
-                    if ($value) {
-                        $q->active();
-                    }
-                }),
-            ])
-            ->allowedSorts(...['created_at', 'expires_at'])
-            ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 25))
-            ->withQueryString();
+        ['bans' => $bans, 'counts' => $counts] = $listBans->handle($request);
 
         return response()->json([
             'data' => $bans,
-            'counts' => [
-                'all' => Ban::count(),
-                'active' => Ban::active()->count(),
-            ],
+            'counts' => $counts,
         ]);
     }
 
@@ -73,27 +52,15 @@ class BansController extends Controller
      * @bodyParam expires_at string ISO 8601 datetime for a temporary ban. Omit for permanent. Example: 2026-12-31T23:59:59
      *
      * @response 201 { "id": 10, "user_id": 23, "reason": "Repeated violations.", "expires_at": null }
+     * @response 403 { "message": "This action is unauthorized." }
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request, IssueBan $issueBan): JsonResponse
     {
-        $data = $request->validate([
-            'user_uuid' => ['required', 'uuid', 'exists:users,uuid'],
-            'reason' => ['required', 'string', 'max:2000'],
-            'expires_at' => ['nullable', 'date', 'after:now'],
-        ]);
+        $data = $request->validate(IssueBan::rulesWithUser());
 
         $user = User::where('uuid', $data['user_uuid'])->firstOrFail();
 
-        $ban = Ban::create([
-            'user_id' => $user->id,
-            'banned_by' => $request->user()->id,
-            'reason' => $data['reason'],
-            'expires_at' => $data['expires_at'] ?? null,
-        ]);
-
-        $user->tokens()?->delete();
-
-        ActivityLog::record('ban.create', $user, null, $ban->only(['reason', 'expires_at']));
+        $ban = $issueBan->handle($user, $data, $request->user(), 'ban.create');
 
         return response()->json($ban->load(['user:id,uuid,name,email', 'bannedBy:id,uuid,name']), 201);
     }
@@ -107,11 +74,9 @@ class BansController extends Controller
      *
      * @response 200 { "message": "Ban lifted." }
      */
-    public function destroy(Ban $ban): JsonResponse
+    public function destroy(Ban $ban, LiftBan $liftBan): JsonResponse
     {
-        $ban->update(['expires_at' => now()->subSecond()]);
-
-        ActivityLog::record('ban.remove', $ban->user);
+        $liftBan->handle($ban);
 
         return response()->json(['message' => 'Ban lifted.']);
     }
