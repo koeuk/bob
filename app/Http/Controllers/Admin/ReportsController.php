@@ -2,40 +2,25 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\Reports\ListReports;
+use App\Actions\Reports\TransitionReport;
 use App\Http\Controllers\Controller;
-use App\Models\ActivityLog;
 use App\Models\Report;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
 
 class ReportsController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request, ListReports $listReports): Response
     {
-        $reports = QueryBuilder::for(Report::class)
-            ->with(['reporter:id,uuid,name', 'reviewer:id,uuid,name', 'reportable'])
-            ->allowedFilters(...[
-                AllowedFilter::exact('status'),
-                AllowedFilter::exact('type', 'reportable_type'),
-            ])
-            ->allowedSorts(...['created_at', 'status'])
-            ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 25))
-            ->withQueryString();
+        ['reports' => $reports, 'counts' => $counts] = $listReports->handle($request);
 
         return Inertia::render('admin/reports/index', [
             'reports' => $reports,
             'filters' => $request->only(['filter', 'sort']),
-            'counts' => [
-                'pending' => Report::where('status', 'pending')->count(),
-                'reviewed' => Report::where('status', 'reviewed')->count(),
-                'resolved' => Report::where('status', 'resolved')->count(),
-                'dismissed' => Report::where('status', 'dismissed')->count(),
-            ],
+            'counts' => $counts,
         ]);
     }
 
@@ -48,51 +33,27 @@ class ReportsController extends Controller
         ]);
     }
 
-    public function review(Request $request, Report $report): RedirectResponse
+    public function review(Request $request, Report $report, TransitionReport $transition): RedirectResponse
     {
-        $report->update([
-            'status' => 'reviewed',
-            'reviewed_by' => $request->user()->id,
-            'reviewed_at' => now(),
-        ]);
-
-        ActivityLog::record('report.review', $report);
+        $transition->handle($report, TransitionReport::REVIEWED, $request->user());
 
         return back()->with('status', 'Report marked as reviewed.');
     }
 
-    public function resolve(Request $request, Report $report): RedirectResponse
+    public function resolve(Request $request, Report $report, TransitionReport $transition): RedirectResponse
     {
-        $data = $request->validate([
-            'resolution_note' => ['required', 'string', 'max:2000'],
-        ]);
+        $data = $request->validate(TransitionReport::rules(TransitionReport::RESOLVED));
 
-        $report->update([
-            'status' => 'resolved',
-            'resolution_note' => $data['resolution_note'],
-            'reviewed_by' => $request->user()->id,
-            'reviewed_at' => now(),
-        ]);
-
-        ActivityLog::record('report.resolve', $report, null, ['note' => $data['resolution_note']]);
+        $transition->handle($report, TransitionReport::RESOLVED, $request->user(), $data['resolution_note']);
 
         return back()->with('status', 'Report resolved.');
     }
 
-    public function dismiss(Request $request, Report $report): RedirectResponse
+    public function dismiss(Request $request, Report $report, TransitionReport $transition): RedirectResponse
     {
-        $data = $request->validate([
-            'resolution_note' => ['nullable', 'string', 'max:2000'],
-        ]);
+        $data = $request->validate(TransitionReport::rules(TransitionReport::DISMISSED));
 
-        $report->update([
-            'status' => 'dismissed',
-            'resolution_note' => $data['resolution_note'] ?? null,
-            'reviewed_by' => $request->user()->id,
-            'reviewed_at' => now(),
-        ]);
-
-        ActivityLog::record('report.dismiss', $report);
+        $transition->handle($report, TransitionReport::DISMISSED, $request->user(), $data['resolution_note'] ?? null);
 
         return back()->with('status', 'Report dismissed.');
     }

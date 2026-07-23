@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Actions\Reports\ListReports;
+use App\Actions\Reports\TransitionReport;
 use App\Http\Controllers\Controller;
-use App\Models\ActivityLog;
 use App\Models\Report;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
 
 /**
  * @group Admin: Reports
@@ -31,27 +30,13 @@ class ReportsController extends Controller
      *   "counts": { "pending": 11, "reviewed": 0, "resolved": 0, "dismissed": 0 }
      * }
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, ListReports $listReports): JsonResponse
     {
-        $reports = QueryBuilder::for(Report::class)
-            ->with(['reporter:id,uuid,name', 'reviewer:id,uuid,name', 'reportable'])
-            ->allowedFilters(...[
-                AllowedFilter::exact('status'),
-                AllowedFilter::exact('type', 'reportable_type'),
-            ])
-            ->allowedSorts(...['created_at', 'status'])
-            ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 25))
-            ->withQueryString();
+        ['reports' => $reports, 'counts' => $counts] = $listReports->handle($request);
 
         return response()->json([
             'data' => $reports,
-            'counts' => [
-                'pending' => Report::where('status', 'pending')->count(),
-                'reviewed' => Report::where('status', 'reviewed')->count(),
-                'resolved' => Report::where('status', 'resolved')->count(),
-                'dismissed' => Report::where('status', 'dismissed')->count(),
-            ],
+            'counts' => $counts,
         ]);
     }
 
@@ -78,17 +63,11 @@ class ReportsController extends Controller
      *
      * @response 200 { "id": 1, "status": "reviewed", "reviewed_by": 2, "reviewed_at": "2026-05-11T00:00:00Z" }
      */
-    public function review(Request $request, Report $report): JsonResponse
+    public function review(Request $request, Report $report, TransitionReport $transition): JsonResponse
     {
-        $report->update([
-            'status' => 'reviewed',
-            'reviewed_by' => $request->user()->id,
-            'reviewed_at' => now(),
-        ]);
-
-        ActivityLog::record('report.review', $report);
-
-        return response()->json($report->fresh());
+        return response()->json(
+            $transition->handle($report, TransitionReport::REVIEWED, $request->user())
+        );
     }
 
     /**
@@ -99,22 +78,13 @@ class ReportsController extends Controller
      *
      * @response 200 { "id": 1, "status": "resolved", "resolution_note": "Content removed, user warned." }
      */
-    public function resolve(Request $request, Report $report): JsonResponse
+    public function resolve(Request $request, Report $report, TransitionReport $transition): JsonResponse
     {
-        $data = $request->validate([
-            'resolution_note' => ['required', 'string', 'max:2000'],
-        ]);
+        $data = $request->validate(TransitionReport::rules(TransitionReport::RESOLVED));
 
-        $report->update([
-            'status' => 'resolved',
-            'resolution_note' => $data['resolution_note'],
-            'reviewed_by' => $request->user()->id,
-            'reviewed_at' => now(),
-        ]);
-
-        ActivityLog::record('report.resolve', $report, null, ['note' => $data['resolution_note']]);
-
-        return response()->json($report->fresh());
+        return response()->json(
+            $transition->handle($report, TransitionReport::RESOLVED, $request->user(), $data['resolution_note'])
+        );
     }
 
     /**
@@ -125,21 +95,12 @@ class ReportsController extends Controller
      *
      * @response 200 { "id": 1, "status": "dismissed" }
      */
-    public function dismiss(Request $request, Report $report): JsonResponse
+    public function dismiss(Request $request, Report $report, TransitionReport $transition): JsonResponse
     {
-        $data = $request->validate([
-            'resolution_note' => ['nullable', 'string', 'max:2000'],
-        ]);
+        $data = $request->validate(TransitionReport::rules(TransitionReport::DISMISSED));
 
-        $report->update([
-            'status' => 'dismissed',
-            'resolution_note' => $data['resolution_note'] ?? null,
-            'reviewed_by' => $request->user()->id,
-            'reviewed_at' => now(),
-        ]);
-
-        ActivityLog::record('report.dismiss', $report);
-
-        return response()->json($report->fresh());
+        return response()->json(
+            $transition->handle($report, TransitionReport::DISMISSED, $request->user(), $data['resolution_note'] ?? null)
+        );
     }
 }
