@@ -7,6 +7,11 @@
                 <template v-if="Array.isArray(errors)">
                     <ul class="list-disc pl-4"><li v-for="(e, i) in errors" :key="i">{{ e }}</li></ul>
                 </template>
+                <template v-else>{{ errors }}</template>
+            </AlertDescription>
+        </div>
+    </Alert>
+</template>
 
 <script setup>
 import Alert from '@/components/ui/Alert.vue';
@@ -14,4 +19,8 @@ import AlertDescription from '@/components/ui/AlertDescription.vue';
 import AlertTitle from '@/components/ui/AlertTitle.vue';
 import { AlertCircle } from 'lucide-vue-next';
 
+defineProps({
+    errors: { type: [Array, String], default: null },
+    title: { type: String, default: '' },
+});
 </script>

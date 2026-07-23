@@ -5,6 +5,8 @@
             <Link v-if="i < breadcrumbs.length - 1" :href="item.href" class="hover:text-foreground">{{ item.title }}</Link>
             <span v-else class="font-medium text-foreground">{{ item.title }}</span>
         </template>
+    </nav>
+</template>
 
 <script setup>
 import { Link } from '@inertiajs/vue3';

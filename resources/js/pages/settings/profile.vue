@@ -9,7 +9,7 @@
                     <div class="flex items-center gap-5">
                         <div class="group relative size-20 shrink-0">
                             <div class="flex size-20 items-center justify-center overflow-hidden rounded-full bg-muted text-xl font-semibold">
-                                <img v-if="avatarPreview || user.avatar" :src="avatarPreview || user.avatar" class="size-20 object-cover" alt="Avatar" />
+                                <img v-if="avatarSrc" :src="avatarSrc" class="size-20 object-cover" alt="Avatar" />
                                 <template v-else>{{ initials(user.name) }}</template>
                             </div>
                             <label
@@ -24,7 +24,7 @@
                             <p class="text-sm font-medium">Profile photo</p>
                             <p class="text-xs text-muted-foreground">JPG, PNG or GIF · max 2 MB</p>
                             <button
-                                v-if="avatarPreview || user.avatar"
+                                v-if="avatarSrc"
                                 type="button"
                                 class="text-xs text-destructive hover:underline"
                                 @click="removeAvatar"
@@ -78,19 +78,29 @@ import AppLayout from '@/layouts/app-layout.vue';
 import SettingsLayout from '@/layouts/settings-layout.vue';
 import { Head, Link, useForm, usePage } from '@inertiajs/vue3';
 import { Camera } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 defineProps({ mustVerifyEmail: Boolean, status: String });
 
 const page = usePage();
-const user = page.props.auth.user;
+// Inertia replaces page.props wholesale on every response, so capturing the
+// user object once would render stale values after a save.
+const user = computed(() => page.props.auth.user);
 
 const fileInput = ref(null);
 const avatarPreview = ref(null);
+const avatarRemoved = ref(false);
+
+// Honour a staged removal so the trash action gives immediate feedback
+// instead of falling back to the still-stored photo.
+const avatarSrc = computed(() => {
+    if (avatarRemoved.value) return null;
+    return avatarPreview.value ?? user.value.avatar ?? null;
+});
 
 const form = useForm({
-    name: user.name,
-    email: user.email,
+    name: user.value.name,
+    email: user.value.email,
     avatar: null,
     remove_avatar: false,
 });
@@ -102,12 +112,14 @@ const onFileChange = (e) => {
     if (!file) return;
     form.avatar = file;
     form.remove_avatar = false;
+    avatarRemoved.value = false;
     avatarPreview.value = URL.createObjectURL(file);
 };
 
 const removeAvatar = () => {
     form.avatar = null;
     form.remove_avatar = true;
+    avatarRemoved.value = true;
     avatarPreview.value = null;
     if (fileInput.value) fileInput.value.value = '';
 };
