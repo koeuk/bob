@@ -26,14 +26,25 @@ class UserPolicy
         return $user->id === $target->id || $user->outranks($target);
     }
 
+    /**
+     * Self-targeting is refused for the destructive abilities.
+     *
+     * outranks() returns true for a super_admin against ANY target — including
+     * themselves — and Gate::before grants super_admins everything, so without
+     * this guard the sole super_admin could delete or ban their own account.
+     * Since assignRole requires isSuperAdmin(), that would leave no account
+     * able to promote anyone: an unrecoverable lockout.
+     */
     public function delete(User $user, User $target): bool
     {
-        return $user->outranks($target);
+        return $user->id !== $target->id && $user->outranks($target);
     }
 
     public function ban(User $user, User $target): bool
     {
-        return $user->isModerator() && $user->outranks($target);
+        return $user->id !== $target->id
+            && $user->isModerator()
+            && $user->outranks($target);
     }
 
     public function unban(User $user, User $target): bool

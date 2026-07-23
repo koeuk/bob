@@ -112,7 +112,9 @@ class UsersController extends Controller
             (bool) $request->input('remove_avatar'),
         );
 
-        return response()->json($user->fresh());
+        // append('role') to match store() and assignRole() — clients read
+        // `role` off this response to re-render the row.
+        return response()->json($user->fresh()->append('role'));
     }
 
     /**

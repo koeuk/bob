@@ -31,9 +31,19 @@ class CreateComment
             ? User::where('uuid', $data['user_uuid'])->value('id')
             : $actor->id;
 
-        $parentId = isset($data['parent_uuid'])
-            ? Comment::where('uuid', $data['parent_uuid'])->value('id')
-            : null;
+        // The parent must live on the SAME post. Scoping the lookup by post_id
+        // (rather than just `exists:comments,uuid`) prevents a reply whose
+        // parent belongs to a different post, which would put an orphan in one
+        // thread and a stray child in another.
+        $parentId = null;
+
+        if (isset($data['parent_uuid'])) {
+            $parentId = Comment::where('uuid', $data['parent_uuid'])
+                ->where('post_id', $post->id)
+                ->value('id');
+
+            abort_if($parentId === null, 422, 'The parent comment does not belong to this post.');
+        }
 
         $comment = Comment::create([
             'user_id' => $authorId,

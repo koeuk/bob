@@ -10,6 +10,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class ListActivityLogs
 {
+    use \App\Actions\Concerns\PaginatesLists;
+
     public function handle(Request $request): LengthAwarePaginator
     {
         return QueryBuilder::for(ActivityLog::class)
@@ -24,7 +26,7 @@ class ListActivityLogs
             ])
             ->allowedSorts(...['created_at'])
             ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 50))
+            ->paginate($this->perPage($request, 50))
             ->withQueryString();
     }
 }

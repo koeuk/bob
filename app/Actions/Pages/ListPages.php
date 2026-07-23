@@ -10,6 +10,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class ListPages
 {
+    use \App\Actions\Concerns\PaginatesLists;
+
     public function handle(Request $request): LengthAwarePaginator
     {
         return QueryBuilder::for(Page::class)
@@ -21,7 +23,7 @@ class ListPages
             ])
             ->allowedSorts(...['title', 'slug', 'updated_at', 'status'])
             ->defaultSort('-updated_at')
-            ->paginate($request->integer('per_page', 25))
+            ->paginate($this->perPage($request, 25))
             ->withQueryString();
     }
 }

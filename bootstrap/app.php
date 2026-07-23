@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\EnsureNotBanned;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\TrackLastActive;
@@ -24,14 +25,19 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
+        // EnsureNotBanned runs on every request but no-ops for guests, so a ban
+        // takes effect across the whole authenticated app — not just the staff
+        // routes that CheckRole happens to guard.
         $middleware->web(append: [
             HandleAppearance::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
+            EnsureNotBanned::class,
         ]);
 
         $middleware->api(append: [
             TrackLastActive::class,
+            EnsureNotBanned::class,
         ]);
 
         $middleware->alias([

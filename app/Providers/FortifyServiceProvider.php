@@ -43,6 +43,25 @@ class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::createUsersUsing(CreateNewUser::class);
+
+        // Refuse to issue a web session to a banned account. Without this the
+        // ban only revoked API tokens; the user could sign back in on the web
+        // and keep posting (the API login already performs this check).
+        Fortify::authenticateUsing(function (Request $request) {
+            $user = \App\Models\User::where('email', $request->email)->first();
+
+            if (! $user || ! \Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+                return null;
+            }
+
+            if ($user->isBanned()) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'email' => 'Your account has been banned.',
+                ]);
+            }
+
+            return $user;
+        });
     }
 
     /**

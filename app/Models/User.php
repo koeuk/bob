@@ -8,13 +8,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+/**
+ * Implements the MustVerifyEmail *contract* (the framework base class only
+ * provides the trait). EnsureEmailIsVerified gates on `instanceof` the
+ * contract, so without this every `verified` middleware in the app — including
+ * the one on /admin — silently passed everyone through.
+ */
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, HasRoles, HasUuids, Notifiable, TwoFactorAuthenticatable;
@@ -167,6 +174,14 @@ class User extends Authenticatable
     {
         return $this->hasAnyRole(['moderator', 'admin', 'super_admin']);
     }
+
+    /**
+     * Known roles, most privileged first. Single source of truth for the
+     * hierarchy — also used to mirror the highest role into `users.role`,
+     * and matches the column's enum so the mirror can never write an
+     * out-of-range value.
+     */
+    public const ROLE_HIERARCHY = ['super_admin', 'admin', 'moderator', 'user'];
 
     /**
      * Numeric privilege level derived from the role hierarchy.

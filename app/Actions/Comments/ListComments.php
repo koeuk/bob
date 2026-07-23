@@ -14,6 +14,8 @@ use Spatie\QueryBuilder\QueryBuilder;
  */
 class ListComments
 {
+    use \App\Actions\Concerns\PaginatesLists;
+
     public function handle(Request $request): LengthAwarePaginator
     {
         return QueryBuilder::for(Comment::class)
@@ -27,7 +29,7 @@ class ListComments
             ])
             ->allowedSorts(...['created_at'])
             ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 30))
+            ->paginate($this->perPage($request, 30))
             ->withQueryString();
     }
 }

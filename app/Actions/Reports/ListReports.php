@@ -13,6 +13,8 @@ use Spatie\QueryBuilder\QueryBuilder;
  */
 class ListReports
 {
+    use \App\Actions\Concerns\PaginatesLists;
+
     /** @return array{reports: \Illuminate\Contracts\Pagination\LengthAwarePaginator, counts: array<string,int>} */
     public function handle(Request $request): array
     {
@@ -24,7 +26,7 @@ class ListReports
             ])
             ->allowedSorts(...['created_at', 'status'])
             ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 25))
+            ->paginate($this->perPage($request, 25))
             ->withQueryString();
 
         return [

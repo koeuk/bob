@@ -45,9 +45,33 @@ class UpdateUser
             $attrs['avatar'] = null;
         }
 
+        $emailChanged = isset($attrs['email']) && $attrs['email'] !== $user->getOriginal('email');
+        $passwordChanged = isset($attrs['password']);
+
         $user->update($attrs);
 
-        ActivityLog::record('user.update', $user, $before, $user->only(['name', 'email']));
+        // A new address has not been proved, so it must not inherit verified
+        // status. forceFill because email_verified_at is deliberately not
+        // mass-assignable.
+        if ($emailChanged) {
+            $user->forceFill(['email_verified_at' => null])->save();
+        }
+
+        // An admin-initiated password reset must invalidate existing sessions
+        // and API tokens, otherwise a compromised token survives the very
+        // remediation meant to cut it off (IssueBan already does this).
+        if ($passwordChanged) {
+            $user->tokens()?->delete();
+        }
+
+        // Record what actually changed — the old payload compared the same two
+        // fields before and after, so every entry read as a no-op and password
+        // resets left no trace at all.
+        ActivityLog::record('user.update', $user, $before, array_merge(
+            $user->only(['name', 'email']),
+            $passwordChanged ? ['password' => 'changed'] : [],
+            $emailChanged ? ['email_verified_at' => null] : [],
+        ));
 
         return $user;
     }

@@ -16,6 +16,8 @@ use Spatie\QueryBuilder\QueryBuilder;
  */
 class ListUsers
 {
+    use \App\Actions\Concerns\PaginatesLists;
+
     public function handle(Request $request): LengthAwarePaginator
     {
         $users = QueryBuilder::for(User::class)
@@ -40,7 +42,7 @@ class ListUsers
             ])
             ->allowedSorts(...['name', 'email', 'created_at'])
             ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 25))
+            ->paginate($this->perPage($request, 25))
             ->withQueryString();
 
         $users->getCollection()->each->append('role');

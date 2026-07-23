@@ -67,8 +67,22 @@ class Post extends Model
         $path = preg_replace('#^https?://[^/]+#', '', $value);
 
         // Strip every leading `storage/` segment so rows already corrupted with
-        // a doubled prefix normalise back to a clean path.
-        return ltrim(preg_replace('#^(?:/*storage/+)+#', '', $path), '/');
+        // a doubled prefix normalise back to a clean path. Anchor on the LAST
+        // occurrence so a sub-path deployment (APP_URL=https://host/app) also
+        // reduces correctly instead of leaving `app/storage/...` behind.
+        if (($pos = strrpos($path, '/storage/')) !== false) {
+            $path = substr($path, $pos + strlen('/storage/'));
+        }
+
+        $path = ltrim(preg_replace('#^(?:/*storage/+)+#', '', $path), '/');
+
+        // Reject traversal: keep_images is client-supplied, and `..` segments
+        // would let a caller pin arbitrary disk paths into the row.
+        if ($path === '' || str_contains($path, '..')) {
+            return null;
+        }
+
+        return $path;
     }
 
     private function normalizeStorageUrl(?string $value): ?string

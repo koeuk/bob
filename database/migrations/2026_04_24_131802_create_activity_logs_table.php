@@ -10,7 +10,11 @@ return new class extends Migration {
         Schema::create('activity_logs', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->foreignId('admin_id')->constrained('users')->cascadeOnDelete();
+            // Nullable + nullOnDelete: cascading would erase an admin's entire
+            // audit trail at the moment they are removed — destroying the
+            // evidence of what they did. Nullable also lets non-HTTP callers
+            // (console commands, queued jobs) write logs with no auth() user.
+            $table->foreignId('admin_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('action');
             $table->string('target_type')->nullable();
             $table->unsignedBigInteger('target_id')->nullable();

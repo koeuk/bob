@@ -39,9 +39,9 @@ class BansController extends Controller
         return back()->with('status', 'Ban created.');
     }
 
-    public function destroy(Ban $ban, LiftBan $liftBan): RedirectResponse
+    public function destroy(Request $request, Ban $ban, LiftBan $liftBan): RedirectResponse
     {
-        $liftBan->handle($ban);
+        $liftBan->handle($ban, $request->user());
 
         return back()->with('status', 'Ban lifted.');
     }

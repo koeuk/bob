@@ -34,10 +34,23 @@ class AppServiceProvider extends ServiceProvider
         Event::listen([RoleAttachedEvent::class, RoleDetachedEvent::class], function ($event): void {
             $model = $event->model;
 
-            if ($model instanceof User) {
-                $model->unsetRelation('roles');
-                $model->forceFill(['role' => $model->getRoleNames()->first() ?? 'user'])->saveQuietly();
+            if (! $model instanceof User) {
+                return;
             }
+
+            $model->unsetRelation('roles');
+            $names = $model->getRoleNames();
+
+            // Pick the highest-ranked *known* role rather than
+            // getRoleNames()->first(), which reads from an unordered query and
+            // so mirrored an arbitrary role for multi-role users. Restricting
+            // to known names also keeps the write inside the column's enum —
+            // a custom role would otherwise throw AFTER the pivot committed,
+            // leaving the mirror stale (the exact desync it exists to prevent).
+            $mirror = collect(User::ROLE_HIERARCHY)
+                ->first(fn (string $role) => $names->contains($role)) ?? 'user';
+
+            $model->forceFill(['role' => $mirror])->saveQuietly();
         });
     }
 }

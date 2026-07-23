@@ -43,8 +43,29 @@ class TransitionReport
         };
     }
 
+    /** Statuses that may still be transitioned. Terminal states are final. */
+    private const OPEN_STATUSES = [self::PENDING, self::REVIEWED];
+
     public function handle(Report $report, string $status, User $actor, ?string $note = null): Report
     {
+        // Guard the target status: LOG_ACTIONS has no `pending` key, so a
+        // transition back to pending would commit the update and *then* fatal
+        // on a null action name.
+        abort_unless(
+            isset(self::LOG_ACTIONS[$status]),
+            422,
+            'Unsupported report status: '.$status,
+        );
+
+        // Guard the source state: resolved/dismissed are terminal. Without
+        // this, re-posting a decided report overwrote resolution_note,
+        // reviewed_by and reviewed_at, erasing the original reviewer's record.
+        abort_unless(
+            in_array($report->status, self::OPEN_STATUSES, true),
+            422,
+            'This report has already been '.$report->status.'.',
+        );
+
         $attrs = [
             'status' => $status,
             'reviewed_by' => $actor->id,

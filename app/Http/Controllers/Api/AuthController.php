@@ -137,9 +137,7 @@ class AuthController extends Controller
             'cover'  => ['sometimes', 'image', 'max:8192'],
         ]);
 
-        if (isset($data['email']) && $data['email'] !== $user->email) {
-            $data['email_verified_at'] = null;
-        }
+        $emailChanged = isset($data['email']) && $data['email'] !== $user->email;
 
         // Delete the replaced files so uploads don't accumulate. Read the raw
         // columns — the accessors return /storage/... URLs, which never match a
@@ -159,6 +157,13 @@ class AuthController extends Controller
         }
 
         $user->update($data);
+
+        // Must be force-filled: email_verified_at is intentionally not
+        // mass-assignable, so passing it through update() was silently
+        // discarded and the account stayed "verified" on an unproven address.
+        if ($emailChanged) {
+            $user->forceFill(['email_verified_at' => null])->save();
+        }
 
         return response()->json($user->fresh()->append('role'));
     }

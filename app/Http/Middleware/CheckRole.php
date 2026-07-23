@@ -23,8 +23,16 @@ class CheckRole
             abort(403, 'Required role: '.implode('|', $roles));
         }
 
+        // EnsureNotBanned (global) normally handles this first; kept as
+        // defence in depth. Log out via the session guard explicitly — the
+        // sanctum RequestGuard has no logout(), so calling auth()->logout()
+        // on an API request threw BadMethodCallException (a 500) instead of
+        // returning the intended 403.
         if ($user->isBanned()) {
-            auth()->logout();
+            if (! $request->expectsJson()) {
+                auth('web')->logout();
+            }
+
             abort(403, 'Account is banned.');
         }
 

@@ -11,6 +11,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 /** Paginated admin post list (moderation view). */
 class ListPosts
 {
+    use \App\Actions\Concerns\PaginatesLists;
+
     public function handle(Request $request): LengthAwarePaginator
     {
         return QueryBuilder::for(Post::class)
@@ -22,7 +24,7 @@ class ListPosts
             ])
             ->allowedSorts(...['created_at', 'status'])
             ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 25))
+            ->paginate($this->perPage($request, 25))
             ->withQueryString();
     }
 

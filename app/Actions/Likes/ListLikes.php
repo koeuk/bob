@@ -9,6 +9,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class ListLikes
 {
+    use \App\Actions\Concerns\PaginatesLists;
+
     /** @return array{likes: \Illuminate\Contracts\Pagination\LengthAwarePaginator, counts: array{all:int, today:int}} */
     public function handle(Request $request): array
     {
@@ -23,7 +25,7 @@ class ListLikes
             ])
             ->allowedSorts(...['created_at', 'type'])
             ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 50))
+            ->paginate($this->perPage($request, 50))
             ->withQueryString();
 
         return [

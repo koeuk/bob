@@ -9,6 +9,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class ListBans
 {
+    use \App\Actions\Concerns\PaginatesLists;
+
     /** @return array{bans: \Illuminate\Contracts\Pagination\LengthAwarePaginator, counts: array{all:int, active:int}} */
     public function handle(Request $request): array
     {
@@ -29,7 +31,7 @@ class ListBans
             ])
             ->allowedSorts(...['created_at', 'expires_at'])
             ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 25))
+            ->paginate($this->perPage($request, 25))
             ->withQueryString();
 
         return [

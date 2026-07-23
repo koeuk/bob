@@ -51,9 +51,15 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= self::PASSWORD,
             'remember_token' => Str::random(10),
-            'two_factor_secret' => Str::random(10),
-            'two_factor_recovery_codes' => Str::random(10),
-            'two_factor_confirmed_at' => now(),
+            // No 2FA by default. Previously this seeded a raw (unencrypted)
+            // secret plus a confirmed timestamp, which sent every factory user
+            // — including all the demo accounts — into the Fortify 2FA
+            // challenge, where decrypting that secret throws. They could not
+            // log in through the web form at all. Use withTwoFactor() when a
+            // test actually needs it.
+            'two_factor_secret' => null,
+            'two_factor_recovery_codes' => null,
+            'two_factor_confirmed_at' => null,
         ];
     }
 
@@ -92,7 +98,8 @@ class UserFactory extends Factory
     }
 
     /**
-     * Indicate that the model does not have two-factor authentication configured.
+     * Indicate that the model does not have two-factor authentication
+     * configured. This is now the default; kept for explicitness.
      */
     public function withoutTwoFactor(): static
     {
@@ -100,6 +107,19 @@ class UserFactory extends Factory
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
+        ]);
+    }
+
+    /**
+     * Confirmed two-factor authentication with a *properly encrypted* secret,
+     * so Fortify can actually decrypt it during the challenge.
+     */
+    public function withTwoFactor(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'two_factor_secret' => encrypt('JBSWY3DPEHPK3PXP'),
+            'two_factor_recovery_codes' => encrypt(json_encode(['code-one', 'code-two'])),
+            'two_factor_confirmed_at' => now(),
         ]);
     }
 }

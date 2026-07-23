@@ -23,6 +23,11 @@ class SettingsController extends Controller
 
     public function updateBranding(Request $request, UpdateBranding $updateBranding): RedirectResponse
     {
+        // Branding writes to the same settings table as update(), so it gets
+        // the same admin check — otherwise the two writers on this controller
+        // would disagree the moment settings.manage is granted more widely.
+        SaveSettings::assertAllowed($request->user());
+
         $data = $request->validate(UpdateBranding::rules());
 
         $updateBranding->handle(

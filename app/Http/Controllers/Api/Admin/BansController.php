@@ -74,9 +74,9 @@ class BansController extends Controller
      *
      * @response 200 { "message": "Ban lifted." }
      */
-    public function destroy(Ban $ban, LiftBan $liftBan): JsonResponse
+    public function destroy(Request $request, Ban $ban, LiftBan $liftBan): JsonResponse
     {
-        $liftBan->handle($ban);
+        $liftBan->handle($ban, $request->user());
 
         return response()->json(['message' => 'Ban lifted.']);
     }
