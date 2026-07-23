@@ -147,7 +147,7 @@ endpoints:
       deprecated: false
     headers:
       Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
+      Content-Type: multipart/form-data
       Accept: application/json
     urlParameters: []
     cleanUrlParameters: []
@@ -198,12 +198,24 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         deprecated: false
+      avatar:
+        custom: []
+        name: avatar
+        description: 'Optional avatar image (max 2MB).'
+        required: false
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
     cleanBodyParameters:
       name: 'Jane Doe'
       email: jane@example.com
       password: secret123
       role: user
-    fileParameters: []
+    fileParameters:
+      avatar: null
     responses:
       -
         custom: []
@@ -313,12 +325,12 @@ endpoints:
       subgroup: ''
       subgroupDescription: ''
       title: 'Update user'
-      description: 'Requires `admin+`. Can only update `name` and `email`.'
+      description: 'Requires `admin+`.'
       authenticated: true
       deprecated: false
     headers:
       Authorization: 'Bearer {YOUR_AUTH_KEY}'
-      Content-Type: application/json
+      Content-Type: multipart/form-data
       Accept: application/json
     urlParameters:
       user_uuid:
@@ -371,10 +383,46 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         deprecated: false
+      password:
+        custom: []
+        name: password
+        description: 'New password (min 8 characters).'
+        required: false
+        example: secret123
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      avatar:
+        custom: []
+        name: avatar
+        description: 'Replacement avatar image (max 2MB).'
+        required: false
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      remove_avatar:
+        custom: []
+        name: remove_avatar
+        description: 'Set to true to clear the current avatar.'
+        required: false
+        example: false
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
     cleanBodyParameters:
       name: 'Jane Doe'
       email: jane@example.com
-    fileParameters: []
+      password: secret123
+      remove_avatar: false
+    fileParameters:
+      avatar: null
     responses:
       -
         custom: []
@@ -535,7 +583,7 @@ endpoints:
         type: string
         enumValues: []
         exampleWasSpecified: true
-        nullable: true
+        nullable: false
         deprecated: false
     cleanBodyParameters:
       reason: 'Repeated spam.'

@@ -220,7 +220,7 @@ endpoints:
         name: type
         description: ''
         required: false
-        example: wow
+        example: haha
         type: string
         enumValues:
           - like
@@ -233,7 +233,7 @@ endpoints:
         nullable: true
         deprecated: false
     cleanBodyParameters:
-      type: wow
+      type: haha
     fileParameters: []
     responses:
       -
