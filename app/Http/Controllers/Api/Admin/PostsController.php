@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Api\Admin;
 
+use App\Actions\Posts\ListPosts;
+use App\Actions\Posts\ManagePost;
 use App\Http\Controllers\Controller;
-use App\Models\ActivityLog;
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
 
 /**
  * @group Admin: Posts
@@ -32,21 +30,9 @@ class PostsController extends Controller
      *   "total": 83
      * }
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, ListPosts $listPosts): JsonResponse
     {
-        $posts = QueryBuilder::for(Post::class)
-            ->with('user:id,uuid,name')
-            ->withCount(['comments', 'likes', 'reports'])
-            ->allowedFilters(...[
-                AllowedFilter::exact('status'),
-                AllowedFilter::partial('search', 'body'),
-            ])
-            ->allowedSorts(...['created_at', 'status'])
-            ->defaultSort('-created_at')
-            ->paginate($request->integer('per_page', 25))
-            ->withQueryString();
-
-        return response()->json($posts);
+        return response()->json($listPosts->handle($request));
     }
 
     /**
@@ -58,15 +44,9 @@ class PostsController extends Controller
      *
      * @response 200 { "id": 1, "body": "...", "status": "active", "likes_count": 3, "user": {}, "comments": [], "reports": [] }
      */
-    public function show(Post $post): JsonResponse
+    public function show(Post $post, ListPosts $listPosts): JsonResponse
     {
-        $post->load([
-            'user:id,uuid,name',
-            'comments' => fn ($q) => $q->with('user:id,uuid,name')->latest()->limit(50),
-            'reports' => fn ($q) => $q->with('reporter:id,uuid,name')->latest(),
-        ])->loadCount(['likes']);
-
-        return response()->json($post);
+        return response()->json($listPosts->loadDetail($post));
     }
 
     /**
@@ -78,25 +58,11 @@ class PostsController extends Controller
      *
      * @response 201 { "id": 85, "uuid": "...", "body": "Admin-created post.", "status": "active" }
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request, ManagePost $managePost): JsonResponse
     {
-        $data = $request->validate([
-            'body' => ['required', 'string', 'max:5000'],
-            'status' => ['required', 'in:active,flagged,hidden'],
-            'user_uuid' => ['nullable', 'uuid', 'exists:users,uuid'],
-        ]);
+        $data = $request->validate(ManagePost::createRules());
 
-        $authorId = isset($data['user_uuid'])
-            ? User::where('uuid', $data['user_uuid'])->value('id')
-            : $request->user()->id;
-
-        $post = Post::create([
-            'user_id' => $authorId,
-            'body' => $data['body'],
-            'status' => $data['status'],
-        ]);
-
-        ActivityLog::record('post.create', $post, null, $post->only(['body', 'status', 'user_id']));
+        $post = $managePost->create($data, $request->user());
 
         return response()->json($post->load('user:id,uuid,name'), 201);
     }
@@ -112,25 +78,11 @@ class PostsController extends Controller
      *
      * @response 200 { "id": 1, "body": "Updated body.", "status": "active" }
      */
-    public function update(Request $request, Post $post): JsonResponse
+    public function update(Request $request, Post $post, ManagePost $managePost): JsonResponse
     {
-        $data = $request->validate([
-            'body' => ['sometimes', 'string', 'max:5000'],
-            'status' => ['sometimes', 'in:active,flagged,hidden'],
-            'user_uuid' => ['sometimes', 'uuid', 'exists:users,uuid'],
-            'reason' => ['nullable', 'string', 'max:500'],
-        ]);
+        $data = $request->validate(ManagePost::updateRules());
 
-        $before = $post->only(['body', 'status', 'user_id']);
-
-        $attrs = [];
-        if (array_key_exists('body', $data)) $attrs['body'] = $data['body'];
-        if (array_key_exists('status', $data)) $attrs['status'] = $data['status'];
-        if (array_key_exists('user_uuid', $data)) $attrs['user_id'] = User::where('uuid', $data['user_uuid'])->value('id');
-
-        $post->update($attrs);
-
-        ActivityLog::record('post.update', $post, $before, [...$post->only(['body', 'status', 'user_id']), 'reason' => $data['reason'] ?? null]);
+        $managePost->update($post, $data);
 
         return response()->json($post->fresh());
     }
@@ -142,10 +94,9 @@ class PostsController extends Controller
      *
      * @response 200 { "message": "Post deleted." }
      */
-    public function destroy(Post $post): JsonResponse
+    public function destroy(Post $post, ManagePost $managePost): JsonResponse
     {
-        ActivityLog::record('post.delete', $post, $post->only(['body', 'status']));
-        $post->delete();
+        $managePost->delete($post);
 
         return response()->json(['message' => 'Post deleted.']);
     }
@@ -153,23 +104,18 @@ class PostsController extends Controller
     /**
      * Flag post
      *
-     * Change a post's moderation status without editing its content.
+     * Sets the moderation status without touching the body.
      *
      * @urlParam post string required Post UUID. Example: 019e1791-7e47-71c8-9da2-4a2e7fbd0c6f
      * @bodyParam status string required One of: `active`, `flagged`, `hidden`. Example: flagged
      *
      * @response 200 { "id": 1, "status": "flagged" }
      */
-    public function flag(Request $request, Post $post): JsonResponse
+    public function flag(Request $request, Post $post, ManagePost $managePost): JsonResponse
     {
-        $data = $request->validate([
-            'status' => ['required', 'in:active,flagged,hidden'],
-        ]);
+        $data = $request->validate(ManagePost::statusRules());
 
-        $before = ['status' => $post->status];
-        $post->update(['status' => $data['status']]);
-
-        ActivityLog::record('post.flag', $post, $before, ['status' => $data['status']]);
+        $managePost->setStatus($post, $data['status']);
 
         return response()->json($post->fresh());
     }
