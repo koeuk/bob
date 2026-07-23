@@ -134,6 +134,7 @@
                     v-for="u in users.data"
                     :key="u.uuid"
                     class="grid grid-cols-[1.8fr_1fr_0.8fr_0.6fr_0.8fr_2.5rem] items-center gap-4 px-6 py-3 text-sm"
+                    :class="openRow === u.uuid ? 'relative z-30' : ''"
                 >
                     <div class="flex min-w-0 items-center gap-3">
                         <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-forest text-xs font-semibold text-paper overflow-hidden">
@@ -167,7 +168,7 @@
                         </button>
                         <div
                             v-if="openRow === u.uuid"
-                            class="absolute right-0 top-10 z-10 w-44 overflow-hidden rounded-2xl border-2 border-white dark:border-white/10 shadow-sm bg-popover shadow-lg"
+                            class="absolute right-0 top-10 z-50 w-44 overflow-hidden rounded-2xl border-2 border-white dark:border-white/10 shadow-sm bg-popover shadow-lg"
                         >
                             <Link :href="`/admin/users/${u.uuid}`" class="block px-4 py-2 text-sm hover:bg-secondary">View profile</Link>
                             <Link :href="`/admin/users/${u.uuid}/edit`" class="block px-4 py-2 text-sm hover:bg-secondary">Edit user</Link>

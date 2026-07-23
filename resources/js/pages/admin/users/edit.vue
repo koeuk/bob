@@ -2,14 +2,8 @@
     <Head :title="isNew ? 'New user' : `Edit · ${user.name}`" />
     <AdminLayout>
         <Link :href="isNew ? '/admin/users' : `/admin/users/${user.uuid}`" class="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-moss transition-colors">
-            <ArrowLeft class="size-4" /> {{ isNew ? 'Back to users' : `Back to ${user.name}` }}
+            <ArrowLeft class="size-4" /> {{ isNew ? 'Back to users' : 'Back to profile' }}
         </Link>
-
-        <div class="flex items-center justify-between gap-4">
-            <h1 class="font-sans text-3xl font-semibold tracking-tight">
-                {{ isNew ? 'New user' : `Edit · ${user.name}` }}
-            </h1>
-        </div>
 
         <!-- ── CREATE: single flat form ── -->
         <template v-if="isNew">

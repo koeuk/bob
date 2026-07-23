@@ -38,6 +38,18 @@ class DatabaseSeeder extends Seeder
         );
         $superAdmin->syncRoles(['super_admin']);
 
+        // Personal admin account — local/testing only, always seeded.
+        if (app()->environment('local', 'testing')) {
+            User::firstOrCreate(
+                ['email' => 'koeukkos@gmail.com'],
+                [
+                    'name' => 'Koeuk',
+                    'password' => '12345678',
+                    'email_verified_at' => now(),
+                ],
+            )->syncRoles(['admin']);
+        }
+
         if (app()->environment('local', 'testing') && User::count() < 30) {
             // Extra fixed dev accounts — never created outside local/testing.
             $admin = User::firstOrCreate(
