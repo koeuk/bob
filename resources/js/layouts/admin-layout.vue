@@ -64,9 +64,12 @@
                             </DropdownMenuTrigger>
                             <DropdownMenuContent side="top" align="start" class="w-56">
                                 <DropdownMenuItem as-child>
-                                    <Link href="/dashboard" class="block w-full" prefetch>
+                                    <!-- Points at the React SPA (a separate app),
+                                         so this is a real navigation, not an
+                                         Inertia visit. -->
+                                    <a :href="frontendUrl" class="block w-full">
                                         <LayoutGrid class="mr-2 size-4" /> App
-                                    </Link>
+                                    </a>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem as-child>
                                     <Link href="/admin/dashboard" class="block w-full" prefetch>
@@ -191,6 +194,7 @@ defineProps({ title: { type: String, default: '' } });
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
 const branding = computed(() => page.props.branding ?? {});
+const frontendUrl = computed(() => page.props.frontendUrl ?? '/dashboard');
 const appName = computed(() => branding.value.name || 'bob');
 const appLogo = computed(() => branding.value.logo || null);
 const initials = computed(() => {

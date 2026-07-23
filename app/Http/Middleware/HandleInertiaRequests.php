@@ -42,6 +42,9 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            // The React SPA is the real user-facing app; the admin panel links
+            // out to it rather than to the older Inertia user pages.
+            'frontendUrl' => rtrim(config('app.frontend_url'), '/'),
             'branding' => fn () => Setting::branding(),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
