@@ -9,7 +9,7 @@
                     <div class="flex items-center gap-5">
                         <div class="group relative size-20 shrink-0">
                             <div class="flex size-20 items-center justify-center overflow-hidden rounded-full bg-muted text-xl font-semibold">
-                                <img v-if="avatarPreview || user.avatar" :src="avatarPreview || `/storage/${user.avatar}`" class="size-20 object-cover" alt="Avatar" />
+                                <img v-if="avatarPreview || user.avatar" :src="avatarPreview || user.avatar" class="size-20 object-cover" alt="Avatar" />
                                 <template v-else>{{ initials(user.name) }}</template>
                             </div>
                             <label

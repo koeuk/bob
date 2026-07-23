@@ -53,14 +53,31 @@ class Post extends Model
         return $this->status !== 'hidden' && $this->visibility !== 'private';
     }
 
-    private function normalizeStorageUrl(?string $value): ?string
+    /**
+     * Reduce any stored/submitted image reference to a bare disk path.
+     *
+     * Clients echo back the *display* URL (e.g. `/storage/posts/x.jpg`) when
+     * they keep existing images, so writes must be normalised or the path gets
+     * re-prefixed on every round-trip (`/storage//storage/posts/x.jpg`).
+     */
+    public static function toStoragePath(?string $value): ?string
     {
         if (! $value) return null;
-        if (str_starts_with($value, 'http')) {
-            $path = preg_replace('#^https?://[^/]+/storage/#', '', $value);
-            return Storage::url($path);
-        }
-        return Storage::url($value);
+
+        $path = preg_replace('#^https?://[^/]+#', '', $value);
+
+        // Strip every leading `storage/` segment so rows already corrupted with
+        // a doubled prefix normalise back to a clean path.
+        return ltrim(preg_replace('#^(?:/*storage/+)+#', '', $path), '/');
+    }
+
+    private function normalizeStorageUrl(?string $value): ?string
+    {
+        // Normalising first makes reads self-healing for rows already written
+        // with a doubled `/storage/` prefix.
+        $path = self::toStoragePath($value);
+
+        return $path ? Storage::url($path) : null;
     }
 
     public function getImageAttribute(?string $value): ?string

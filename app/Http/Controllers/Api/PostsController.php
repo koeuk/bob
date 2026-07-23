@@ -218,9 +218,11 @@ class PostsController extends Controller
             'visibility'      => ['nullable', 'in:public,private'],
         ]);
 
-        $kept = $data['keep_images'] ?? [];
-
-        $imageUrls = $kept;
+        // Clients send back display URLs for kept images; store bare disk paths.
+        $imageUrls = array_values(array_filter(array_map(
+            fn ($v) => Post::toStoragePath($v),
+            $data['keep_images'] ?? []
+        )));
         foreach ($request->file('new_images', []) as $file) {
             $path = $file->store('posts', 'public');
             $imageUrls[] = $path;

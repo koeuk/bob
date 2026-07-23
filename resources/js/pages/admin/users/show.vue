@@ -30,7 +30,7 @@
             <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
                 <div class="flex items-center gap-5">
                     <div class="relative size-20 shrink-0">
-                        <img v-if="user.avatar" :src="`/storage/${user.avatar}`" :alt="user.name" class="size-20 rounded-2xl object-cover" />
+                        <img v-if="user.avatar" :src="user.avatar" :alt="user.name" class="size-20 rounded-2xl object-cover" />
                         <span v-else class="flex size-20 items-center justify-center rounded-2xl bg-forest font-sans text-2xl font-semibold text-paper">
                             {{ initials(user.name) }}
                         </span>

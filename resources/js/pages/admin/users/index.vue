@@ -118,8 +118,8 @@
             </div>
         </Card>
 
-        <!-- Table -->
-        <Card class="rounded-3xl border-white gap-0 overflow-hidden">
+        <!-- Table — no overflow-hidden: it would clip the row actions dropdown -->
+        <Card class="rounded-3xl border-white gap-0">
             <div class="grid grid-cols-[1.8fr_1fr_0.8fr_0.6fr_0.8fr_2.5rem] items-center gap-4 border-b border-white px-6 py-3 text-[11px] uppercase tracking-wide text-muted-foreground">
                 <span>User</span>
                 <span>Email</span>
@@ -138,7 +138,7 @@
                 >
                     <div class="flex min-w-0 items-center gap-3">
                         <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-forest text-xs font-semibold text-paper overflow-hidden">
-                            <img v-if="u.avatar" :src="`/storage/${u.avatar}`" :alt="u.name" class="size-9 object-cover" />
+                            <img v-if="u.avatar" :src="u.avatar" :alt="u.name" class="size-9 object-cover" />
                             <template v-else>{{ initials(u.name) }}</template>
                         </span>
                         <div class="min-w-0">
@@ -159,7 +159,7 @@
                     </div>
                     <div class="text-muted-foreground">{{ u.posts_count ?? 0 }}</div>
                     <div class="text-muted-foreground">{{ dateFmt(u.created_at) }}</div>
-                    <div class="relative flex justify-end">
+                    <div class="relative flex justify-end" data-row-menu>
                         <button
                             class="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
                             @click="toggleRow(u.uuid)"
@@ -237,7 +237,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 import { cn } from '@/lib/utils';
 import { Check, ChevronsUpDown, Filter, MoreHorizontal, Plus, Search, ShieldBan, Trash2, UserCheck, UserX } from 'lucide-vue-next';
-import { computed, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
 const props = defineProps({
     users: { type: Object, required: true },
@@ -290,6 +290,23 @@ const isBanned = (u) => (u.bans ?? []).length > 0;
 
 const openRow = ref(null);
 const toggleRow = (uuid) => (openRow.value = openRow.value === uuid ? null : uuid);
+
+// Close the row actions menu on outside click / Escape.
+const closeRowMenu = (e) => {
+    if (!openRow.value) return;
+    if (e.type === 'keydown' && e.key !== 'Escape') return;
+    if (e.type === 'pointerdown' && e.target.closest('[data-row-menu]')) return;
+    openRow.value = null;
+};
+
+onMounted(() => {
+    document.addEventListener('pointerdown', closeRowMenu);
+    document.addEventListener('keydown', closeRowMenu);
+});
+onBeforeUnmount(() => {
+    document.removeEventListener('pointerdown', closeRowMenu);
+    document.removeEventListener('keydown', closeRowMenu);
+});
 
 const deleteTarget = ref(null);
 const confirmDelete = () => {

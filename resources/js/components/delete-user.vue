@@ -60,13 +60,16 @@ const open = ref(false);
 const passwordInput = ref(null);
 
 function submit() {
-    form.delete('/profile', {
+    form.delete('/settings/profile', {
         preserveScroll: true,
         onSuccess: () => {
             open.value = false;
             form.reset();
         },
-        onError: () => passwordInput.value?.focus(),
+        // Input.vue is a single-root <input> SFC with no defineExpose, so the
+        // DOM node is reached via $el — calling .focus() on the component
+        // instance itself would throw.
+        onError: () => passwordInput.value?.$el?.focus?.(),
         onFinish: () => form.reset(),
     });
 }
